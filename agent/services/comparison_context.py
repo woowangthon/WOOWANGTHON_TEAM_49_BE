@@ -1,11 +1,10 @@
 """Read-only source summaries and comparison compatibility, without model calls."""
 
-import re
-import unicodedata
 from datetime import date
 
 from agent.services.extraction_profiles import IDENTITY_FIELDS
 from agent.services.extraction_review import candidate_value, validation_metadata
+from agent.services.identity import identity_key
 
 
 def source_summary(store, case):
@@ -89,10 +88,6 @@ def list_comparison_sources(store):
     ]
 
 
-def _identity_key(value):
-    return re.sub(r"\s+", "", unicodedata.normalize("NFC", value)).casefold()
-
-
 def _period(start, end):
     try:
         if start and end:
@@ -139,7 +134,7 @@ def comparison_compatibility(materials, draft=None):
         ("employer_name", "사업장명"),
     ):
         known = [(source, identity[key]) for source, identity in identities if identity[key]]
-        if len({_identity_key(value) for _, value in known}) > 1:
+        if len({identity_key(value, company=key == "employer_name") for _, value in known}) > 1:
             names = " / ".join(dict.fromkeys(value for _, value in known))
             add(
                 "SUBJECT_MISMATCH",

@@ -553,3 +553,39 @@ def test_verifying_one_field_keeps_other_confirmations_edits_and_candidates(revi
     for field in after.values():
         ids = [c['id'] for c in field['candidates']]
         assert len(ids) == len(set(ids)), field['field_id']
+
+
+def test_company_form_spelling_does_not_block_a_ready_review_export(review_api):
+    """Review readiness and the group snapshot must use the same company-name comparison."""
+    client, app, _, _ = review_api
+    review = run(client, app, upload(client, create(client, auto_process=True), sample_pdf(('contract', 'payslip'))))
+    spelling = {'contract': '(주)카페나무', 'payslip': '주식회사 카페나무'}
+    for document in review['documents']:
+        for part in document['parts']:
+            field = next(f for f in part['fields'] if f['field_id'] == 'employer_name')
+            review = checked(client.put('/api/v1/reviews/' + review['id'] + '/fields', json={
+                'revision': review['revision'], 'field_id': field['id'], 'value': spelling[part['document_type']]}))
+    review = checked(client.put('/api/v1/reviews/' + review['id'], json={'revision': review['revision'],
+        'basic': {'employer_name': '카페나무', 'pay_type': 'MONTHLY', 'period_start': '2026-10-01', 'period_end': '2026-10-31'},
+        'options': {'subjects_confirmed': True}, 'confirm_basic': True}))
+    review = checked(client.post('/api/v1/reviews/' + review['id'] + '/confirm', json={
+        'revision': review['revision'], 'source_seen': True, 'field_ids': [f['id'] for f in all_fields(review) if f['value']]}))
+    assert review['readiness']['status'] == 'ready', review['readiness']
+    response = client.post('/api/v1/reviews/' + review['id'] + '/complete',
+        json={'revision': review['revision'], 'analyze': False})
+    assert response.status_code == 202, response.text
+
+
+@pytest.mark.parametrize('names, blocked', [
+    (('(주)카페나무', '주식회사 카페나무'), False),
+    (('카페나무', '카페소나무'), True),
+])
+def test_subject_check_ignores_only_company_form_spelling(names, blocked):
+    from agent.services.comparison_context import comparison_compatibility
+
+    sources = [{'case_id': str(index), 'document_type': kind, 'title': kind,
+        'identity': {'employee_name': 'Alex', 'employee_id': '', 'employer_name': name}}
+        for index, (kind, name) in enumerate(zip(('contract', 'payslip'), names))]
+    result = comparison_compatibility({'sources': sources}, {'subjects_confirmed': True})
+    assert result['blocked'] is blocked
+    assert any(issue['code'] == 'SUBJECT_MISMATCH' for issue in result['issues']) is blocked
