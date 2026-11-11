@@ -1,0 +1,623 @@
+{
+  "base_url": "http://127.0.0.1:18086",
+  "scope": "local Docker real TCP; unauthenticated route probes are not successful DTO tests",
+  "route_probes": [
+    {
+      "id": "B-01",
+      "method": "POST",
+      "path": "/auth/signup",
+      "http_status": 422
+    },
+    {
+      "id": "B-02",
+      "method": "POST",
+      "path": "/auth/login",
+      "http_status": 422
+    },
+    {
+      "id": "B-03",
+      "method": "POST",
+      "path": "/auth/refresh",
+      "http_status": 401
+    },
+    {
+      "id": "B-04",
+      "method": "POST",
+      "path": "/auth/logout",
+      "http_status": 401
+    },
+    {
+      "id": "B-05",
+      "method": "POST",
+      "path": "/auth/forgot-password",
+      "http_status": 422
+    },
+    {
+      "id": "B-06",
+      "method": "POST",
+      "path": "/auth/reset-password",
+      "http_status": 422
+    },
+    {
+      "id": "B-07",
+      "method": "GET",
+      "path": "/users/me",
+      "http_status": 401
+    },
+    {
+      "id": "B-08",
+      "method": "DELETE",
+      "path": "/users/me",
+      "http_status": 401
+    },
+    {
+      "id": "B-09",
+      "method": "GET",
+      "path": "/users/me/deletion",
+      "http_status": 401
+    },
+    {
+      "id": "B-10",
+      "method": "GET",
+      "path": "/workplaces",
+      "http_status": 401
+    },
+    {
+      "id": "B-11",
+      "method": "POST",
+      "path": "/workplaces",
+      "http_status": 401
+    },
+    {
+      "id": "B-12",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-13",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-14",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-15",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/cases",
+      "http_status": 401
+    },
+    {
+      "id": "B-16",
+      "method": "GET",
+      "path": "/cases",
+      "http_status": 401
+    },
+    {
+      "id": "B-17",
+      "method": "POST",
+      "path": "/cases",
+      "http_status": 401
+    },
+    {
+      "id": "B-18",
+      "method": "GET",
+      "path": "/cases/{caseId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-19",
+      "method": "PATCH",
+      "path": "/cases/{caseId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-20",
+      "method": "DELETE",
+      "path": "/cases/{caseId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-21",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/workflow",
+      "http_status": 401
+    },
+    {
+      "id": "B-22",
+      "method": "GET",
+      "path": "/cases/{caseId}/deletion-impact",
+      "http_status": 401
+    },
+    {
+      "id": "B-23",
+      "method": "GET",
+      "path": "/documents",
+      "http_status": 401
+    },
+    {
+      "id": "B-24",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents",
+      "http_status": 401
+    },
+    {
+      "id": "B-25",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/documents",
+      "http_status": 401
+    },
+    {
+      "id": "B-26",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-27",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-28",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/deletion-impact",
+      "http_status": 401
+    },
+    {
+      "id": "B-29",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/preview",
+      "http_status": 401
+    },
+    {
+      "id": "B-30",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/file",
+      "http_status": 401
+    },
+    {
+      "id": "B-31",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents",
+      "http_status": 401
+    },
+    {
+      "id": "B-32",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents",
+      "http_status": 401
+    },
+    {
+      "id": "B-33",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-34",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents/{documentId}/retry",
+      "http_status": 401
+    },
+    {
+      "id": "B-35",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents/{documentId}/replace",
+      "http_status": 401
+    },
+    {
+      "id": "B-36",
+      "method": "POST",
+      "path": "/cases/{caseId}/document-links",
+      "http_status": 401
+    },
+    {
+      "id": "B-37",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/document-links/{linkId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-38",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/document-links/{linkId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-39",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}/fields",
+      "http_status": 401
+    },
+    {
+      "id": "B-40",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/documents/{documentId}/fields/{fieldId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-41",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}/fields/{fieldId}/history",
+      "http_status": 401
+    },
+    {
+      "id": "B-42",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/fields/{fieldId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-43",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/documents/{documentId}/field-overrides/{fieldId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-44",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}/review",
+      "http_status": 401
+    },
+    {
+      "id": "B-45",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents/{documentId}/review/confirm",
+      "http_status": 401
+    },
+    {
+      "id": "B-46",
+      "method": "POST",
+      "path": "/cases/{caseId}/manual-records",
+      "http_status": 401
+    },
+    {
+      "id": "B-47",
+      "method": "GET",
+      "path": "/cases/{caseId}/manual-records",
+      "http_status": 401
+    },
+    {
+      "id": "B-48",
+      "method": "GET",
+      "path": "/cases/{caseId}/manual-records/{recordId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-49",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/manual-records/{recordId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-50",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/manual-records/{recordId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-51",
+      "method": "GET",
+      "path": "/cases/{caseId}/conditions",
+      "http_status": 401
+    },
+    {
+      "id": "B-52",
+      "method": "PUT",
+      "path": "/cases/{caseId}/conditions",
+      "http_status": 401
+    },
+    {
+      "id": "B-53",
+      "method": "GET",
+      "path": "/cases/{caseId}/readiness",
+      "http_status": 401
+    },
+    {
+      "id": "B-54",
+      "method": "GET",
+      "path": "/cases/{caseId}/recompute-status",
+      "http_status": 401
+    },
+    {
+      "id": "B-55",
+      "method": "GET",
+      "path": "/cases/{caseId}/recompute-jobs/{jobId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-56",
+      "method": "POST",
+      "path": "/cases/{caseId}/recompute",
+      "http_status": 401
+    },
+    {
+      "id": "B-57",
+      "method": "POST",
+      "path": "/cases/{caseId}/calculations",
+      "http_status": 401
+    },
+    {
+      "id": "B-58",
+      "method": "GET",
+      "path": "/cases/{caseId}/calculations",
+      "http_status": 401
+    },
+    {
+      "id": "B-59",
+      "method": "GET",
+      "path": "/cases/{caseId}/calculations/{calculationId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-60",
+      "method": "POST",
+      "path": "/cases/{caseId}/comparisons",
+      "http_status": 401
+    },
+    {
+      "id": "B-61",
+      "method": "GET",
+      "path": "/cases/{caseId}/comparisons",
+      "http_status": 401
+    },
+    {
+      "id": "B-62",
+      "method": "POST",
+      "path": "/cases/{caseId}/payslip-validations",
+      "http_status": 401
+    },
+    {
+      "id": "B-63",
+      "method": "GET",
+      "path": "/cases/{caseId}/payslip-validations",
+      "http_status": 401
+    },
+    {
+      "id": "B-64",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/payment-transactions",
+      "http_status": 401
+    },
+    {
+      "id": "B-65",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/payment-transactions",
+      "http_status": 401
+    },
+    {
+      "id": "B-66",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/payment-transactions/{transactionId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-67",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}/payment-transactions/{transactionId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-68",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}/payment-transactions/{transactionId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-69",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/payment-transactions/duplicate-candidates",
+      "http_status": 401
+    },
+    {
+      "id": "B-70",
+      "method": "POST",
+      "path": "/cases/{caseId}/deposits",
+      "http_status": 401
+    },
+    {
+      "id": "B-71",
+      "method": "GET",
+      "path": "/cases/{caseId}/deposits",
+      "http_status": 401
+    },
+    {
+      "id": "B-72",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/deposits/{allocationId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-73",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/deposits/{allocationId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-74",
+      "method": "GET",
+      "path": "/cases/{caseId}/deposit-comparison",
+      "http_status": 401
+    },
+    {
+      "id": "B-75",
+      "method": "GET",
+      "path": "/cases/{caseId}/deposit-comparisons",
+      "http_status": 401
+    },
+    {
+      "id": "B-76",
+      "method": "GET",
+      "path": "/cases/{caseId}/results",
+      "http_status": 401
+    },
+    {
+      "id": "B-77",
+      "method": "GET",
+      "path": "/cases/{caseId}/questions",
+      "http_status": 401
+    },
+    {
+      "id": "B-78",
+      "method": "POST",
+      "path": "/cases/{caseId}/company-inquiry",
+      "http_status": 401
+    },
+    {
+      "id": "B-79",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/chats",
+      "http_status": 401
+    },
+    {
+      "id": "B-80",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats",
+      "http_status": 401
+    },
+    {
+      "id": "B-81",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-82",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-83",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}",
+      "http_status": 401
+    },
+    {
+      "id": "B-84",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}/messages",
+      "http_status": 401
+    },
+    {
+      "id": "B-85",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}/messages/{messageId}/retry",
+      "http_status": 401
+    },
+    {
+      "id": "B-86",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}/runs/{runId}/cancel",
+      "http_status": 401
+    },
+    {
+      "id": "B-87",
+      "method": "GET",
+      "path": "/consultation-centers",
+      "http_status": 200
+    },
+    {
+      "id": "B-88",
+      "method": "POST",
+      "path": "/cases/{caseId}/reports",
+      "http_status": 404
+    },
+    {
+      "id": "B-89",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports",
+      "http_status": 404
+    },
+    {
+      "id": "B-90",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports/{reportId}",
+      "http_status": 404
+    },
+    {
+      "id": "B-91",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports/{reportId}/pdf",
+      "http_status": 404
+    },
+    {
+      "id": "B-92",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports/{reportId}/originals",
+      "http_status": 404
+    }
+  ],
+  "cors": {
+    "http_status": 200,
+    "allow_origin": "http://localhost:3000",
+    "allow_credentials": "true"
+  },
+  "http_cookie": {
+    "httponly": true,
+    "secure": false,
+    "same_origin_refresh_http_status": 200,
+    "browser_cross_site_cookie_tested": false
+  },
+  "pasted_document_bearer_without_space_http_status": 401,
+  "case_create": {
+    "http_status": 201,
+    "recompute": {
+      "scheduled": false,
+      "jobId": null,
+      "affectedChecks": [
+        "WAGE_CALCULATION",
+        "CONTRACT_ATTENDANCE_COMPARISON",
+        "PAYSLIP_VALIDATION",
+        "DEPOSIT_COMPARISON"
+      ],
+      "action": "CONFIRM_COMPARISON_GROUP"
+    }
+  },
+  "automatic_upload_result": {
+    "processingStatus": "READ_READY",
+    "field_count": 0,
+    "paid_model_calls": 0
+  },
+  "legacy_manual_validation": {
+    "http_status": 409,
+    "data": {
+      "errorCode": "GROUP_RECONFIRMATION_REQUIRED",
+      "details": null
+    }
+  },
+  "legacy_report_http_status": 404,
+  "no_model_chat": {
+    "http_status": 200,
+    "content_type": "text/event-stream; charset=utf-8",
+    "events": [
+      "message_start",
+      "error"
+    ],
+    "errors": [
+      {
+        "runId": "run-13ab9f044c374f3586b1358796fef6a1",
+        "messageId": 2,
+        "errorCode": "MODEL_NOT_CONFIGURED",
+        "retryable": true
+      }
+    ],
+    "persisted_statuses": [
+      "COMPLETED",
+      "FAILED"
+    ]
+  },
+  "accepted_21_page_PDF": {
+    "synthetic_document": "21 selectable-text pages, not a blank or scanned PDF",
+    "upload_http_status": 202,
+    "processingStatus": "FAILED",
+    "errorCode": "DOCUMENT_UNREADABLE"
+  }
+}

@@ -1,0 +1,560 @@
+{
+  "source": "User-provided API proposal v0.5, B-01 through B-92; proposals are not treated as agreed implementation.",
+  "source_sha256": "042555aa4aae2cad8a93a5ca682dcf2c5279d7b37554cf7db0f58965561be4f7",
+  "endpoints": [
+    {
+      "id": "B-01",
+      "method": "POST",
+      "path": "/auth/signup",
+      "expected_success": "201 `User` (인증 토큰 미발급)."
+    },
+    {
+      "id": "B-02",
+      "method": "POST",
+      "path": "/auth/login",
+      "expected_success": "200 `AuthTokens`; Refresh Token은 Set-Cookie."
+    },
+    {
+      "id": "B-03",
+      "method": "POST",
+      "path": "/auth/refresh",
+      "expected_success": "200 `{accessToken:string,tokenType:\"Bearer\",expiresIn:number}`; Refresh Cookie 재발급은 선택."
+    },
+    {
+      "id": "B-04",
+      "method": "POST",
+      "path": "/auth/logout",
+      "expected_success": "204 No Content; 토큰/세션 폐기."
+    },
+    {
+      "id": "B-05",
+      "method": "POST",
+      "path": "/auth/forgot-password",
+      "expected_success": "202 `{accepted:true}`; 계정 존재 유무와 관계없이 동일 응답."
+    },
+    {
+      "id": "B-06",
+      "method": "POST",
+      "path": "/auth/reset-password",
+      "expected_success": "200 `{passwordReset:true}`."
+    },
+    {
+      "id": "B-07",
+      "method": "GET",
+      "path": "/users/me",
+      "expected_success": "200 `User`."
+    },
+    {
+      "id": "B-08",
+      "method": "DELETE",
+      "path": "/users/me",
+      "expected_success": "202 `DeleteReceipt`."
+    },
+    {
+      "id": "B-09",
+      "method": "GET",
+      "path": "/users/me/deletion",
+      "expected_success": "200 `DeleteReceipt`."
+    },
+    {
+      "id": "B-10",
+      "method": "GET",
+      "path": "/workplaces",
+      "expected_success": "200 `Page<Workplace>`."
+    },
+    {
+      "id": "B-11",
+      "method": "POST",
+      "path": "/workplaces",
+      "expected_success": "201 `Workplace`."
+    },
+    {
+      "id": "B-12",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}",
+      "expected_success": "200 `Workplace`."
+    },
+    {
+      "id": "B-13",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}",
+      "expected_success": "200 `Workplace`."
+    },
+    {
+      "id": "B-14",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}",
+      "expected_success": "202 `DeleteReceipt`."
+    },
+    {
+      "id": "B-15",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/cases",
+      "expected_success": "200 `Page<CaseListItem>`."
+    },
+    {
+      "id": "B-16",
+      "method": "GET",
+      "path": "/cases",
+      "expected_success": "200 `Page<CaseListItem>`."
+    },
+    {
+      "id": "B-17",
+      "method": "POST",
+      "path": "/cases",
+      "expected_success": "201 `{caseId:ID,status:\"CREATED\",inputVersion:number}`."
+    },
+    {
+      "id": "B-18",
+      "method": "GET",
+      "path": "/cases/{caseId}",
+      "expected_success": "200 `CaseDetail`."
+    },
+    {
+      "id": "B-19",
+      "method": "PATCH",
+      "path": "/cases/{caseId}",
+      "expected_success": "200 `CaseDetail & MutationMeta`."
+    },
+    {
+      "id": "B-20",
+      "method": "DELETE",
+      "path": "/cases/{caseId}",
+      "expected_success": "202 `DeleteReceipt`."
+    },
+    {
+      "id": "B-21",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/workflow",
+      "expected_success": "200 `{status:CaseStatus,currentStep:CaseStep,inputVersion:number}`."
+    },
+    {
+      "id": "B-22",
+      "method": "GET",
+      "path": "/cases/{caseId}/deletion-impact",
+      "expected_success": "200 `DeletionImpact`."
+    },
+    {
+      "id": "B-23",
+      "method": "GET",
+      "path": "/documents",
+      "expected_success": "200 `Page<DocumentItem>`."
+    },
+    {
+      "id": "B-24",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents",
+      "expected_success": "200 `Page<DocumentItem>`."
+    },
+    {
+      "id": "B-25",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/documents",
+      "expected_success": "202 `{documentId:ID,processingStatus:ProcessingStatus,reviewStatus:ReviewStatus,progress:number}`."
+    },
+    {
+      "id": "B-26",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}",
+      "expected_success": "200 `DocumentDetail`."
+    },
+    {
+      "id": "B-27",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}",
+      "expected_success": "202 `DeleteReceipt`."
+    },
+    {
+      "id": "B-28",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/deletion-impact",
+      "expected_success": "200 `{documentId:ID,linkedCaseIds:ID[],linkedCaseCount:number,canDeleteOriginal:boolean,reasonCode:string|null}`."
+    },
+    {
+      "id": "B-29",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/preview",
+      "expected_success": "200 `Preview`."
+    },
+    {
+      "id": "B-30",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/file",
+      "expected_success": "200 file Blob/stream; Content-Type = 원본 MIME, Content-Disposition: inline."
+    },
+    {
+      "id": "B-31",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents",
+      "expected_success": "202 `{documentId:ID,linkId:ID,processingStatus:ProcessingStatus,recompute?:MutationMeta[\"recompute\"]}`."
+    },
+    {
+      "id": "B-32",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents",
+      "expected_success": "200 `Page<DocumentItem & {link:DocumentLink}>`."
+    },
+    {
+      "id": "B-33",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}",
+      "expected_success": "200 `DocumentDetail & {link:DocumentLink}`."
+    },
+    {
+      "id": "B-34",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents/{documentId}/retry",
+      "expected_success": "202 `{documentId:ID,processingStatus:\"PROCESSING\",jobId:string}`."
+    },
+    {
+      "id": "B-35",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents/{documentId}/replace",
+      "expected_success": "202 `{previousDocumentId:ID,newDocumentId:ID,newFileVersion:number,processingStatus:ProcessingStatus}`."
+    },
+    {
+      "id": "B-36",
+      "method": "POST",
+      "path": "/cases/{caseId}/document-links",
+      "expected_success": "201 `DocumentLink & MutationMeta`."
+    },
+    {
+      "id": "B-37",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/document-links/{linkId}",
+      "expected_success": "200 `DocumentLink & MutationMeta`."
+    },
+    {
+      "id": "B-38",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/document-links/{linkId}",
+      "expected_success": "200 `{linkId:ID,unlinked:true} & MutationMeta`."
+    },
+    {
+      "id": "B-39",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}/fields",
+      "expected_success": "200 `{documentId:ID,caseId:ID,processingStatus:ProcessingStatus,reviewStatus:ReviewStatus,fields:ExtractedField[]}`."
+    },
+    {
+      "id": "B-40",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/documents/{documentId}/fields/{fieldId}",
+      "expected_success": "200 `ExtractedField & MutationMeta`."
+    },
+    {
+      "id": "B-41",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}/fields/{fieldId}/history",
+      "expected_success": "200 `Page<FieldHistory>`."
+    },
+    {
+      "id": "B-42",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/fields/{fieldId}",
+      "expected_success": "200 `ExtractedField & MutationMeta`; affectedCaseIds 포함."
+    },
+    {
+      "id": "B-43",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/documents/{documentId}/field-overrides/{fieldId}",
+      "expected_success": "200 `{fieldId:ID,effectiveValueOrigin:\"SHARED_DEFAULT\"} & MutationMeta`."
+    },
+    {
+      "id": "B-44",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}/review",
+      "expected_success": "200 `DocumentReview`."
+    },
+    {
+      "id": "B-45",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents/{documentId}/review/confirm",
+      "expected_success": "200 `DocumentReview & {confirmed:boolean,reasonCodes:string[]} & MutationMeta`."
+    },
+    {
+      "id": "B-46",
+      "method": "POST",
+      "path": "/cases/{caseId}/manual-records",
+      "expected_success": "201 `ManualRecord & MutationMeta`."
+    },
+    {
+      "id": "B-47",
+      "method": "GET",
+      "path": "/cases/{caseId}/manual-records",
+      "expected_success": "200 `Page<ManualRecord>`."
+    },
+    {
+      "id": "B-48",
+      "method": "GET",
+      "path": "/cases/{caseId}/manual-records/{recordId}",
+      "expected_success": "200 `ManualRecord`."
+    },
+    {
+      "id": "B-49",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/manual-records/{recordId}",
+      "expected_success": "200 `ManualRecord & MutationMeta`."
+    },
+    {
+      "id": "B-50",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/manual-records/{recordId}",
+      "expected_success": "200 `{recordId:ID,deleted:true} & MutationMeta`."
+    },
+    {
+      "id": "B-51",
+      "method": "GET",
+      "path": "/cases/{caseId}/conditions",
+      "expected_success": "200 `{conditions:Condition[],inputVersion:number}`."
+    },
+    {
+      "id": "B-52",
+      "method": "PUT",
+      "path": "/cases/{caseId}/conditions",
+      "expected_success": "200 `{remainingQuestions:number,calculationAvailable:boolean} & MutationMeta`."
+    },
+    {
+      "id": "B-53",
+      "method": "GET",
+      "path": "/cases/{caseId}/readiness",
+      "expected_success": "200 `{caseId:ID,inputVersion:number,checks:CheckReadiness[]}`."
+    },
+    {
+      "id": "B-54",
+      "method": "GET",
+      "path": "/cases/{caseId}/recompute-status",
+      "expected_success": "200 `RecomputeStatus`."
+    },
+    {
+      "id": "B-55",
+      "method": "GET",
+      "path": "/cases/{caseId}/recompute-jobs/{jobId}",
+      "expected_success": "200 `RecomputeJob`."
+    },
+    {
+      "id": "B-56",
+      "method": "POST",
+      "path": "/cases/{caseId}/recompute",
+      "expected_success": "202 `RecomputeJob`."
+    },
+    {
+      "id": "B-57",
+      "method": "POST",
+      "path": "/cases/{caseId}/calculations",
+      "expected_success": "200 `CalculationSnapshot` 또는 비동기 202 `RecomputeJob`."
+    },
+    {
+      "id": "B-58",
+      "method": "GET",
+      "path": "/cases/{caseId}/calculations",
+      "expected_success": "200 `Page<CalculationSnapshot>`."
+    },
+    {
+      "id": "B-59",
+      "method": "GET",
+      "path": "/cases/{caseId}/calculations/{calculationId}",
+      "expected_success": "200 `CalculationSnapshot`."
+    },
+    {
+      "id": "B-60",
+      "method": "POST",
+      "path": "/cases/{caseId}/comparisons",
+      "expected_success": "200 `ComparisonSnapshot` 또는 202 `RecomputeJob`."
+    },
+    {
+      "id": "B-61",
+      "method": "GET",
+      "path": "/cases/{caseId}/comparisons",
+      "expected_success": "200 `Page<ComparisonSnapshot>`."
+    },
+    {
+      "id": "B-62",
+      "method": "POST",
+      "path": "/cases/{caseId}/payslip-validations",
+      "expected_success": "200 `PayslipValidation` 또는 202 `RecomputeJob`."
+    },
+    {
+      "id": "B-63",
+      "method": "GET",
+      "path": "/cases/{caseId}/payslip-validations",
+      "expected_success": "200 `Page<PayslipValidation>`."
+    },
+    {
+      "id": "B-64",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/payment-transactions",
+      "expected_success": "200 `Page<PaymentTransaction>`."
+    },
+    {
+      "id": "B-65",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/payment-transactions",
+      "expected_success": "201 `PaymentTransaction`."
+    },
+    {
+      "id": "B-66",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/payment-transactions/{transactionId}",
+      "expected_success": "200 `PaymentTransaction & {allocations:DepositAllocation[]}`."
+    },
+    {
+      "id": "B-67",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}/payment-transactions/{transactionId}",
+      "expected_success": "200 `PaymentTransaction & {affectedCaseIds:ID[]}`."
+    },
+    {
+      "id": "B-68",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}/payment-transactions/{transactionId}",
+      "expected_success": "202 `DeleteReceipt & {affectedCaseIds:ID[]}`."
+    },
+    {
+      "id": "B-69",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/payment-transactions/duplicate-candidates",
+      "expected_success": "200 `{items:Array<{transactionId:ID,matchReasons:string[]}>}`."
+    },
+    {
+      "id": "B-70",
+      "method": "POST",
+      "path": "/cases/{caseId}/deposits",
+      "expected_success": "201 `DepositAllocation & MutationMeta`."
+    },
+    {
+      "id": "B-71",
+      "method": "GET",
+      "path": "/cases/{caseId}/deposits",
+      "expected_success": "200 `Page<DepositAllocation>`."
+    },
+    {
+      "id": "B-72",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/deposits/{allocationId}",
+      "expected_success": "200 `DepositAllocation & MutationMeta`."
+    },
+    {
+      "id": "B-73",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/deposits/{allocationId}",
+      "expected_success": "200 `{allocationId:ID,deleted:true} & MutationMeta`."
+    },
+    {
+      "id": "B-74",
+      "method": "GET",
+      "path": "/cases/{caseId}/deposit-comparison",
+      "expected_success": "200 `DepositComparison` 또는 생성 전 `{status:\"INSUFFICIENT_INFORMATION\",...}` [제안]."
+    },
+    {
+      "id": "B-75",
+      "method": "GET",
+      "path": "/cases/{caseId}/deposit-comparisons",
+      "expected_success": "200 `Page<DepositComparison>`."
+    },
+    {
+      "id": "B-76",
+      "method": "GET",
+      "path": "/cases/{caseId}/results",
+      "expected_success": "200 `CaseResults`."
+    },
+    {
+      "id": "B-77",
+      "method": "GET",
+      "path": "/cases/{caseId}/questions",
+      "expected_success": "200 `{questions:Question[]}`."
+    },
+    {
+      "id": "B-78",
+      "method": "POST",
+      "path": "/cases/{caseId}/company-inquiry",
+      "expected_success": "200 `CompanyInquiry`."
+    },
+    {
+      "id": "B-79",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/chats",
+      "expected_success": "200 `Page<ChatSession>`."
+    },
+    {
+      "id": "B-80",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats",
+      "expected_success": "201 `ChatSession`."
+    },
+    {
+      "id": "B-81",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}",
+      "expected_success": "200 `ChatDetail` — `session` + `messages:Page<ChatMessage>`."
+    },
+    {
+      "id": "B-82",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}",
+      "expected_success": "200 `ChatSession`."
+    },
+    {
+      "id": "B-83",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}",
+      "expected_success": "202 `DeleteReceipt`."
+    },
+    {
+      "id": "B-84",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}/messages",
+      "expected_success": "200 SSE `message_start`→`content_delta`→`sources`?→`message_done` 또는 `error`."
+    },
+    {
+      "id": "B-85",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}/messages/{messageId}/retry",
+      "expected_success": "202 `{runId:string,userMessageId:ID,assistantMessageId:ID,status:\"PENDING\"}` 또는 SSE 재시도 [제안: 응답 202 확정 필요]."
+    },
+    {
+      "id": "B-86",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}/runs/{runId}/cancel",
+      "expected_success": "202 `ChatRunReceipt`."
+    },
+    {
+      "id": "B-87",
+      "method": "GET",
+      "path": "/consultation-centers",
+      "expected_success": "200 `CenterPage`; 전국 fallback 여부 포함."
+    },
+    {
+      "id": "B-88",
+      "method": "POST",
+      "path": "/cases/{caseId}/reports",
+      "expected_success": "202 `ReportSnapshot` (PROCESSING)."
+    },
+    {
+      "id": "B-89",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports",
+      "expected_success": "200 `Page<ReportSnapshot>`."
+    },
+    {
+      "id": "B-90",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports/{reportId}",
+      "expected_success": "200 `ReportSnapshot`."
+    },
+    {
+      "id": "B-91",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports/{reportId}/pdf",
+      "expected_success": "200 Blob; Content-Type:application/pdf; Content-Disposition:attachment."
+    },
+    {
+      "id": "B-92",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports/{reportId}/originals",
+      "expected_success": "200 Blob; Content-Type:application/zip; Content-Disposition:attachment."
+    }
+  ],
+  "legacy_integration_source": "User-provided frontend integration guide, 95 HTTP operations, before direct-agent integration",
+  "legacy_integration_sha256": "ebd4e3c3285339a182eae708d9f43a875460ceecc4b77a27f5394b2e50292392"
+}

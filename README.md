@@ -72,6 +72,7 @@ Windows의 제한된 실행 샌드박스는 asyncio 내부 localhost 소켓을 �
 
 ## 문서
 
+- [첨부 프론트 API 명세 대조·전체 테스트 결과](docs/FRONTEND_CONTRACT_AUDIT.md)
 - [EC2 HTTP 환경파일·Docker 빌드·기동](docs/DEPLOY_EC2.md)
 - [폴더·호출·저장 구조](docs/ARCHITECTURE.md)
 - [새 검토 API와 연결 계약](docs/REVIEW_WORKSPACE.md)

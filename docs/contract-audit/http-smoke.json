@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "ai_mode": "direct",
+  "paid_model_calls": 0,
+  "workplace_id": 1,
+  "case_id": 1,
+  "document_id": 1,
+  "result_id": "eba48144cef242a1a3e45bafe2a01d26",
+  "pdf_artifact_id": "2ed2dec105eca3b03a1b27d5a88ea9d3e505af16efb6c95f3e40357b98c2aa3b",
+  "pdf_bytes": 44096,
+  "review_id": "00aff06efbca461cb64f546f6d795560",
+  "review_preview_bytes": 24167
+}

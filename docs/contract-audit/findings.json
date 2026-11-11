@@ -1,0 +1,1471 @@
+{
+  "scope": {
+    "full_suite_separate": true,
+    "contract_operations": 92,
+    "route_probes_are_not_full_DTO_coverage": true,
+    "paid_model_calls": 0,
+    "external_provider": "explicit FixtureProvider + SyntheticChat only",
+    "transport": "FastAPI TestClient; real TCP checked separately"
+  },
+  "openapi": {
+    "paths": 98,
+    "operations": 133,
+    "export_operations_match": true,
+    "json_success_without_schema": 103
+  },
+  "reference_sources": {
+    "source": "User-provided API proposal v0.5, B-01 through B-92; proposals are not treated as agreed implementation.",
+    "source_sha256": "042555aa4aae2cad8a93a5ca682dcf2c5279d7b37554cf7db0f58965561be4f7",
+    "legacy_integration_source": "User-provided frontend integration guide, 95 HTTP operations, before direct-agent integration",
+    "legacy_integration_sha256": "ebd4e3c3285339a182eae708d9f43a875460ceecc4b77a27f5394b2e50292392"
+  },
+  "inventory": [
+    {
+      "id": "B-01",
+      "method": "POST",
+      "path": "/auth/signup",
+      "expected_success": "201 `User` (인증 토큰 미발급).",
+      "registered": true,
+      "unauthenticated_http_status": 422,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-02",
+      "method": "POST",
+      "path": "/auth/login",
+      "expected_success": "200 `AuthTokens`; Refresh Token은 Set-Cookie.",
+      "registered": true,
+      "unauthenticated_http_status": 422,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-03",
+      "method": "POST",
+      "path": "/auth/refresh",
+      "expected_success": "200 `{accessToken:string,tokenType:\"Bearer\",expiresIn:number}`; Refresh Cookie 재발급은 선택.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-04",
+      "method": "POST",
+      "path": "/auth/logout",
+      "expected_success": "204 No Content; 토큰/세션 폐기.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-05",
+      "method": "POST",
+      "path": "/auth/forgot-password",
+      "expected_success": "202 `{accepted:true}`; 계정 존재 유무와 관계없이 동일 응답.",
+      "registered": true,
+      "unauthenticated_http_status": 422,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-06",
+      "method": "POST",
+      "path": "/auth/reset-password",
+      "expected_success": "200 `{passwordReset:true}`.",
+      "registered": true,
+      "unauthenticated_http_status": 422,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-07",
+      "method": "GET",
+      "path": "/users/me",
+      "expected_success": "200 `User`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-08",
+      "method": "DELETE",
+      "path": "/users/me",
+      "expected_success": "202 `DeleteReceipt`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-09",
+      "method": "GET",
+      "path": "/users/me/deletion",
+      "expected_success": "200 `DeleteReceipt`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-10",
+      "method": "GET",
+      "path": "/workplaces",
+      "expected_success": "200 `Page<Workplace>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-11",
+      "method": "POST",
+      "path": "/workplaces",
+      "expected_success": "201 `Workplace`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-12",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}",
+      "expected_success": "200 `Workplace`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-13",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}",
+      "expected_success": "200 `Workplace`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-14",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}",
+      "expected_success": "202 `DeleteReceipt`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-15",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/cases",
+      "expected_success": "200 `Page<CaseListItem>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-16",
+      "method": "GET",
+      "path": "/cases",
+      "expected_success": "200 `Page<CaseListItem>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-17",
+      "method": "POST",
+      "path": "/cases",
+      "expected_success": "201 `{caseId:ID,status:\"CREATED\",inputVersion:number}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-18",
+      "method": "GET",
+      "path": "/cases/{caseId}",
+      "expected_success": "200 `CaseDetail`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-19",
+      "method": "PATCH",
+      "path": "/cases/{caseId}",
+      "expected_success": "200 `CaseDetail & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-20",
+      "method": "DELETE",
+      "path": "/cases/{caseId}",
+      "expected_success": "202 `DeleteReceipt`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-21",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/workflow",
+      "expected_success": "200 `{status:CaseStatus,currentStep:CaseStep,inputVersion:number}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-22",
+      "method": "GET",
+      "path": "/cases/{caseId}/deletion-impact",
+      "expected_success": "200 `DeletionImpact`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-23",
+      "method": "GET",
+      "path": "/documents",
+      "expected_success": "200 `Page<DocumentItem>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-24",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents",
+      "expected_success": "200 `Page<DocumentItem>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-25",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/documents",
+      "expected_success": "202 `{documentId:ID,processingStatus:ProcessingStatus,reviewStatus:ReviewStatus,progress:number}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-26",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}",
+      "expected_success": "200 `DocumentDetail`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-27",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}",
+      "expected_success": "202 `DeleteReceipt`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-28",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/deletion-impact",
+      "expected_success": "200 `{documentId:ID,linkedCaseIds:ID[],linkedCaseCount:number,canDeleteOriginal:boolean,reasonCode:string|null}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-29",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/preview",
+      "expected_success": "200 `Preview`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-30",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/file",
+      "expected_success": "200 file Blob/stream; Content-Type = 원본 MIME, Content-Disposition: inline.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-31",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents",
+      "expected_success": "202 `{documentId:ID,linkId:ID,processingStatus:ProcessingStatus,recompute?:MutationMeta[\"recompute\"]}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-32",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents",
+      "expected_success": "200 `Page<DocumentItem & {link:DocumentLink}>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-33",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}",
+      "expected_success": "200 `DocumentDetail & {link:DocumentLink}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-34",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents/{documentId}/retry",
+      "expected_success": "202 `{documentId:ID,processingStatus:\"PROCESSING\",jobId:string}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-35",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents/{documentId}/replace",
+      "expected_success": "202 `{previousDocumentId:ID,newDocumentId:ID,newFileVersion:number,processingStatus:ProcessingStatus}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-36",
+      "method": "POST",
+      "path": "/cases/{caseId}/document-links",
+      "expected_success": "201 `DocumentLink & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-37",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/document-links/{linkId}",
+      "expected_success": "200 `DocumentLink & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-38",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/document-links/{linkId}",
+      "expected_success": "200 `{linkId:ID,unlinked:true} & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-39",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}/fields",
+      "expected_success": "200 `{documentId:ID,caseId:ID,processingStatus:ProcessingStatus,reviewStatus:ReviewStatus,fields:ExtractedField[]}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-40",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/documents/{documentId}/fields/{fieldId}",
+      "expected_success": "200 `ExtractedField & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-41",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}/fields/{fieldId}/history",
+      "expected_success": "200 `Page<FieldHistory>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-42",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}/documents/{documentId}/fields/{fieldId}",
+      "expected_success": "200 `ExtractedField & MutationMeta`; affectedCaseIds 포함.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-43",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/documents/{documentId}/field-overrides/{fieldId}",
+      "expected_success": "200 `{fieldId:ID,effectiveValueOrigin:\"SHARED_DEFAULT\"} & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-44",
+      "method": "GET",
+      "path": "/cases/{caseId}/documents/{documentId}/review",
+      "expected_success": "200 `DocumentReview`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-45",
+      "method": "POST",
+      "path": "/cases/{caseId}/documents/{documentId}/review/confirm",
+      "expected_success": "200 `DocumentReview & {confirmed:boolean,reasonCodes:string[]} & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-46",
+      "method": "POST",
+      "path": "/cases/{caseId}/manual-records",
+      "expected_success": "201 `ManualRecord & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-47",
+      "method": "GET",
+      "path": "/cases/{caseId}/manual-records",
+      "expected_success": "200 `Page<ManualRecord>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-48",
+      "method": "GET",
+      "path": "/cases/{caseId}/manual-records/{recordId}",
+      "expected_success": "200 `ManualRecord`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-49",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/manual-records/{recordId}",
+      "expected_success": "200 `ManualRecord & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-50",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/manual-records/{recordId}",
+      "expected_success": "200 `{recordId:ID,deleted:true} & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-51",
+      "method": "GET",
+      "path": "/cases/{caseId}/conditions",
+      "expected_success": "200 `{conditions:Condition[],inputVersion:number}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-52",
+      "method": "PUT",
+      "path": "/cases/{caseId}/conditions",
+      "expected_success": "200 `{remainingQuestions:number,calculationAvailable:boolean} & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-53",
+      "method": "GET",
+      "path": "/cases/{caseId}/readiness",
+      "expected_success": "200 `{caseId:ID,inputVersion:number,checks:CheckReadiness[]}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-54",
+      "method": "GET",
+      "path": "/cases/{caseId}/recompute-status",
+      "expected_success": "200 `RecomputeStatus`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-55",
+      "method": "GET",
+      "path": "/cases/{caseId}/recompute-jobs/{jobId}",
+      "expected_success": "200 `RecomputeJob`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-56",
+      "method": "POST",
+      "path": "/cases/{caseId}/recompute",
+      "expected_success": "202 `RecomputeJob`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-57",
+      "method": "POST",
+      "path": "/cases/{caseId}/calculations",
+      "expected_success": "200 `CalculationSnapshot` 또는 비동기 202 `RecomputeJob`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-58",
+      "method": "GET",
+      "path": "/cases/{caseId}/calculations",
+      "expected_success": "200 `Page<CalculationSnapshot>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-59",
+      "method": "GET",
+      "path": "/cases/{caseId}/calculations/{calculationId}",
+      "expected_success": "200 `CalculationSnapshot`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-60",
+      "method": "POST",
+      "path": "/cases/{caseId}/comparisons",
+      "expected_success": "200 `ComparisonSnapshot` 또는 202 `RecomputeJob`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-61",
+      "method": "GET",
+      "path": "/cases/{caseId}/comparisons",
+      "expected_success": "200 `Page<ComparisonSnapshot>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-62",
+      "method": "POST",
+      "path": "/cases/{caseId}/payslip-validations",
+      "expected_success": "200 `PayslipValidation` 또는 202 `RecomputeJob`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-63",
+      "method": "GET",
+      "path": "/cases/{caseId}/payslip-validations",
+      "expected_success": "200 `Page<PayslipValidation>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-64",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/payment-transactions",
+      "expected_success": "200 `Page<PaymentTransaction>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-65",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/payment-transactions",
+      "expected_success": "201 `PaymentTransaction`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-66",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/payment-transactions/{transactionId}",
+      "expected_success": "200 `PaymentTransaction & {allocations:DepositAllocation[]}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-67",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}/payment-transactions/{transactionId}",
+      "expected_success": "200 `PaymentTransaction & {affectedCaseIds:ID[]}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-68",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}/payment-transactions/{transactionId}",
+      "expected_success": "202 `DeleteReceipt & {affectedCaseIds:ID[]}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-69",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/payment-transactions/duplicate-candidates",
+      "expected_success": "200 `{items:Array<{transactionId:ID,matchReasons:string[]}>}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-70",
+      "method": "POST",
+      "path": "/cases/{caseId}/deposits",
+      "expected_success": "201 `DepositAllocation & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-71",
+      "method": "GET",
+      "path": "/cases/{caseId}/deposits",
+      "expected_success": "200 `Page<DepositAllocation>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-72",
+      "method": "PATCH",
+      "path": "/cases/{caseId}/deposits/{allocationId}",
+      "expected_success": "200 `DepositAllocation & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-73",
+      "method": "DELETE",
+      "path": "/cases/{caseId}/deposits/{allocationId}",
+      "expected_success": "200 `{allocationId:ID,deleted:true} & MutationMeta`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-74",
+      "method": "GET",
+      "path": "/cases/{caseId}/deposit-comparison",
+      "expected_success": "200 `DepositComparison` 또는 생성 전 `{status:\"INSUFFICIENT_INFORMATION\",...}` [제안].",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-75",
+      "method": "GET",
+      "path": "/cases/{caseId}/deposit-comparisons",
+      "expected_success": "200 `Page<DepositComparison>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-76",
+      "method": "GET",
+      "path": "/cases/{caseId}/results",
+      "expected_success": "200 `CaseResults`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-77",
+      "method": "GET",
+      "path": "/cases/{caseId}/questions",
+      "expected_success": "200 `{questions:Question[]}`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-78",
+      "method": "POST",
+      "path": "/cases/{caseId}/company-inquiry",
+      "expected_success": "200 `CompanyInquiry`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-79",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/chats",
+      "expected_success": "200 `Page<ChatSession>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-80",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats",
+      "expected_success": "201 `ChatSession`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-81",
+      "method": "GET",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}",
+      "expected_success": "200 `ChatDetail` — `session` + `messages:Page<ChatMessage>`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-82",
+      "method": "PATCH",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}",
+      "expected_success": "200 `ChatSession`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-83",
+      "method": "DELETE",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}",
+      "expected_success": "202 `DeleteReceipt`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-84",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}/messages",
+      "expected_success": "200 SSE `message_start`→`content_delta`→`sources`?→`message_done` 또는 `error`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-85",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}/messages/{messageId}/retry",
+      "expected_success": "202 `{runId:string,userMessageId:ID,assistantMessageId:ID,status:\"PENDING\"}` 또는 SSE 재시도 [제안: 응답 202 확정 필요].",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-86",
+      "method": "POST",
+      "path": "/workplaces/{workplaceId}/chats/{chatId}/runs/{runId}/cancel",
+      "expected_success": "202 `ChatRunReceipt`.",
+      "registered": true,
+      "unauthenticated_http_status": 401,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-87",
+      "method": "GET",
+      "path": "/consultation-centers",
+      "expected_success": "200 `CenterPage`; 전국 fallback 여부 포함.",
+      "registered": true,
+      "unauthenticated_http_status": 200,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-88",
+      "method": "POST",
+      "path": "/cases/{caseId}/reports",
+      "expected_success": "202 `ReportSnapshot` (PROCESSING).",
+      "registered": false,
+      "unauthenticated_http_status": 404,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-89",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports",
+      "expected_success": "200 `Page<ReportSnapshot>`.",
+      "registered": false,
+      "unauthenticated_http_status": 404,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-90",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports/{reportId}",
+      "expected_success": "200 `ReportSnapshot`.",
+      "registered": false,
+      "unauthenticated_http_status": 404,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-91",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports/{reportId}/pdf",
+      "expected_success": "200 Blob; Content-Type:application/pdf; Content-Disposition:attachment.",
+      "registered": false,
+      "unauthenticated_http_status": 404,
+      "scope": "route/authentication probe; not a successful DTO test"
+    },
+    {
+      "id": "B-92",
+      "method": "GET",
+      "path": "/cases/{caseId}/reports/{reportId}/originals",
+      "expected_success": "200 Blob; Content-Type:application/zip; Content-Disposition:attachment.",
+      "registered": false,
+      "unauthenticated_http_status": 404,
+      "scope": "route/authentication probe; not a successful DTO test"
+    }
+  ],
+  "findings": [
+    {
+      "name": "workplace_create_full_DTO",
+      "baseline": "proposal-v0.5",
+      "severity": "P2",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "case_create_automatic_job",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "manual_save_automatic_job",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "legacy_manual_values_are_calculation_input",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": 202,
+      "observed": 409
+    },
+    {
+      "name": "conditions_save_automatic_job",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "readiness_mode_enum",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "proposal_recompute_request_accepted",
+      "baseline": "proposal-v0.5",
+      "severity": "P1",
+      "matches": false,
+      "expected": 202,
+      "observed": 422
+    },
+    {
+      "name": "legacy_document_processing_status_enum",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "legacy_extracted_numeric_keys",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "legacy_extracted_money_type",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": "MONEY_KRW",
+      "observed": "TEXT"
+    },
+    {
+      "name": "legacy_numeric_field_patch",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": 200,
+      "observed": 409
+    },
+    {
+      "name": "legacy_string_field_patch",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": 200,
+      "observed": 409
+    },
+    {
+      "name": "current_candidate_confirmation",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": "CONFIRMED",
+      "observed": "CONFIRMED"
+    },
+    {
+      "name": "accepted_21_page_PDF_can_be_read",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": "COMPLETED",
+      "observed": "FAILED"
+    },
+    {
+      "name": "accepted_21_page_PDF_read_error",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": null,
+      "observed": "DOCUMENT_UNREADABLE",
+      "diagnostic_only": "Same bytes read as 21 text pages with a local max_pages=50 settings copy; production configuration unchanged."
+    },
+    {
+      "name": "real_agent_R05_delta",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": "10000",
+      "observed": "10000"
+    },
+    {
+      "name": "real_agent_R05_difference",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": "difference",
+      "observed": "difference"
+    },
+    {
+      "name": "legacy_result_summary_counts",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "legacy_result_item_DTO",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "legacy_payslip_validation_section",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "legacy_numeric_snapshot_ID",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "legacy_validation_snapshot_DTO",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "independent_result_snapshots",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "legacy_recompute_results_refs",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "legacy_job_camelcase",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "allocation_changes_only_deposit_freshness",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": "CURRENT",
+      "observed": "STALE"
+    },
+    {
+      "name": "legacy_report_create_endpoint",
+      "baseline": "legacy-integration",
+      "severity": "P0",
+      "matches": false,
+      "expected": 202,
+      "observed": 404
+    },
+    {
+      "name": "inquiry_rejects_unknown_or_stale_selection",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "proposal_clientMessageId_accepted",
+      "baseline": "proposal-v0.5",
+      "severity": "P2",
+      "matches": false,
+      "expected": 200,
+      "observed": 422
+    },
+    {
+      "name": "current_SSE_events",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": [
+        "message_start",
+        "content_delta",
+        "sources",
+        "message_done"
+      ],
+      "observed": [
+        "message_start",
+        "content_delta",
+        "sources",
+        "message_done"
+      ]
+    },
+    {
+      "name": "proposal_chat_detail_paginated",
+      "baseline": "proposal-v0.5",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    },
+    {
+      "name": "current_chat_persisted_roles",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": [
+        "USER",
+        "ASSISTANT"
+      ],
+      "observed": [
+        "USER",
+        "ASSISTANT"
+      ]
+    },
+    {
+      "name": "current_chat_history_forwarded",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": 2,
+      "observed": 2
+    },
+    {
+      "name": "current_chat_scope_history_isolation",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "name": "current_explanation_job",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": "COMPLETED",
+      "observed": "COMPLETED"
+    },
+    {
+      "name": "current_report_job",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": "COMPLETED",
+      "observed": "COMPLETED"
+    },
+    {
+      "name": "current_ZIP_contains_same_PDF",
+      "baseline": "agent-orchestration",
+      "severity": "P0",
+      "matches": true,
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "selected_check_forwarded_to_agent",
+      "baseline": "legacy-integration",
+      "severity": "P1",
+      "matches": false,
+      "expected": true,
+      "observed": false
+    }
+  ],
+  "probes": [
+    {
+      "method": "POST",
+      "path": "/auth/signup",
+      "http_status": 201,
+      "expected_current_status": 201,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/workplaces",
+      "http_status": 201,
+      "expected_current_status": 201,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/cases",
+      "http_status": 201,
+      "expected_current_status": 201,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/cases/1/manual-records",
+      "http_status": 201,
+      "expected_current_status": 201,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/cases/1/payslip-validations",
+      "http_status": 409,
+      "expected_current_status": null,
+      "error_code": "GROUP_RECONFIRMATION_REQUIRED"
+    },
+    {
+      "method": "PUT",
+      "path": "/cases/1/conditions",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "GET",
+      "path": "/cases/1/readiness",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/cases/1/recompute",
+      "http_status": 422,
+      "expected_current_status": null,
+      "error_code": "VALIDATION_ERROR"
+    },
+    {
+      "method": "POST",
+      "path": "/cases/1/documents",
+      "http_status": 202,
+      "expected_current_status": 202,
+      "error_code": null
+    },
+    {
+      "method": "GET",
+      "path": "/cases/1/documents/1/fields",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "GET",
+      "path": "/cases/1/documents/1/fields",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "PATCH",
+      "path": "/cases/1/documents/1/fields/1",
+      "http_status": 409,
+      "expected_current_status": null,
+      "error_code": "USE_CANDIDATE_REVIEW_ENDPOINT"
+    },
+    {
+      "method": "PATCH",
+      "path": "/cases/1/documents/1/fields/1",
+      "http_status": 409,
+      "expected_current_status": null,
+      "error_code": "USE_CANDIDATE_REVIEW_ENDPOINT"
+    },
+    {
+      "method": "POST",
+      "path": "/documents/1/candidate-reviews",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/workplaces/1/documents",
+      "http_status": 202,
+      "expected_current_status": 202,
+      "error_code": null
+    },
+    {
+      "method": "GET",
+      "path": "/comparison-groups/default-1",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "PUT",
+      "path": "/comparison-groups/default-1/confirmed-input",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/cases/1/payslip-validations",
+      "http_status": 202,
+      "expected_current_status": 202,
+      "error_code": null
+    },
+    {
+      "method": "GET",
+      "path": "/agent-results/5e99c74409244c5fad667bae5856672b",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "GET",
+      "path": "/cases/1/results",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "GET",
+      "path": "/cases/1/payslip-validations",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "GET",
+      "path": "/cases/1/recompute-status",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/workplaces/1/payment-transactions",
+      "http_status": 201,
+      "expected_current_status": 201,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/cases/1/deposits",
+      "http_status": 201,
+      "expected_current_status": 201,
+      "error_code": null
+    },
+    {
+      "method": "GET",
+      "path": "/cases/1/results",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/cases/1/reports",
+      "http_status": 404,
+      "expected_current_status": null,
+      "error_code": "RESOURCE_NOT_FOUND"
+    },
+    {
+      "method": "POST",
+      "path": "/cases/1/company-inquiry",
+      "http_status": 200,
+      "expected_current_status": null,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/workplaces/1/chats",
+      "http_status": 201,
+      "expected_current_status": 201,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/workplaces/1/chats/1/messages",
+      "http_status": 422,
+      "expected_current_status": null,
+      "error_code": "VALIDATION_ERROR"
+    },
+    {
+      "method": "GET",
+      "path": "/workplaces/1/chats/1",
+      "http_status": 200,
+      "expected_current_status": 200,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/agent-results/5e99c74409244c5fad667bae5856672b/explanations",
+      "http_status": 202,
+      "expected_current_status": 202,
+      "error_code": null
+    },
+    {
+      "method": "POST",
+      "path": "/agent-results/5e99c74409244c5fad667bae5856672b/reports",
+      "http_status": 202,
+      "expected_current_status": 202,
+      "error_code": null
+    }
+  ],
+  "agent_call_trace": [
+    {
+      "task_kind": "extract_document",
+      "payload_type": "ExtractionInput",
+      "outcome": "completed",
+      "real_agent_runner": true
+    },
+    {
+      "task_kind": "analyze_case",
+      "payload_type": "AnalysisJobInput",
+      "outcome": "completed",
+      "real_agent_runner": true
+    },
+    {
+      "task_kind": "explain_result",
+      "payload_type": "ExplanationInput",
+      "outcome": "completed",
+      "real_agent_runner": true
+    },
+    {
+      "task_kind": "build_report",
+      "payload_type": "ReportInput",
+      "outcome": "completed",
+      "real_agent_runner": true
+    }
+  ],
+  "chat_call_trace": [
+    {
+      "scope": {
+        "scopeType": "CASE",
+        "caseId": 1
+      },
+      "history_count": 0,
+      "case_ids": [
+        1
+      ]
+    },
+    {
+      "scope": {
+        "scopeType": "CASE",
+        "caseId": 1
+      },
+      "history_count": 2,
+      "case_ids": [
+        1
+      ]
+    },
+    {
+      "scope": {
+        "scopeType": "WORKPLACE_ALL"
+      },
+      "history_count": 0,
+      "case_ids": [
+        1
+      ]
+    }
+  ],
+  "summary": {
+    "registered": 87,
+    "missing": 5,
+    "scenario_matches": 10,
+    "scenario_differences": 28
+  }
+}
