@@ -109,8 +109,13 @@ def confirm(fields, *, source_seen, acknowledgement=None):
             field["conflict_acknowledgement"] = conflict(field)
 
 
-def merge_parts(previous, incoming):
-    """Never lose edited/deleted/deferred values or pair repeated rows by index alone."""
+def merge_parts(previous, incoming, *, only_field_ids=None):
+    """Never lose edited/deleted/deferred values or pair repeated rows by index alone.
+
+    only_field_ids limits a targeted recheck to those fields. A verification job
+    carries a copy of every current field, so all other fields keep their exact
+    previous state, candidates and confirmation.
+    """
     result = deepcopy(incoming)
     for part in result:
         old = next((p for p in previous if all(p[k] == part[k] for k in
@@ -126,8 +131,14 @@ def merge_parts(previous, incoming):
             if match is None:
                 continue
             field["id"] = match["id"]
+            if only_field_ids is not None and match["id"] not in only_field_ids:
+                field.clear()
+                field.update(deepcopy(match))
+                continue
             if match["touched"] or match["review_state"] in ("confirmed", "deferred"):
-                candidates = deepcopy(field["candidates"])
+                # Append only candidates this job produced; a recheck copies the old ones.
+                known = {c["id"] for c in match["candidates"]}
+                candidates = [deepcopy(c) for c in field["candidates"] if c["id"] not in known]
                 field.update(deepcopy(match))
                 field["candidates"].extend(candidates)
                 field["revision"] += 1

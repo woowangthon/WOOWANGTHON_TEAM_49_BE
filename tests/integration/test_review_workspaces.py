@@ -525,3 +525,31 @@ def test_explicit_standard_conditions_reach_existing_wage_engine(review_api):
     job = checked(client.get('/api/v1/agent-jobs/' + exported['job_id']))
     assert job['status'] == 'COMPLETED', job
     assert job['output']['wage_section']['gross_total'] == '3272727', job['output']['wage_section']
+
+
+# Regressions found by comparing with the original agent review workspace.
+
+
+def test_verifying_one_field_keeps_other_confirmations_edits_and_candidates(review_api):
+    """A targeted image recheck changes only its targets, as in the original workspace."""
+    client, app, _, _ = review_api
+    review = run(client, app, upload(client, create(client, auto_process=True)))
+    by_key = {f['field_id']: f for f in all_fields(review)}
+    review = checked(client.post('/api/v1/reviews/' + review['id'] + '/confirm', json={
+        'revision': review['revision'], 'field_ids': [by_key['deduction']['id']], 'source_seen': True}))
+    confirmation = next(f for f in all_fields(review) if f['field_id'] == 'deduction')['confirmation_id']
+    review = checked(client.put('/api/v1/reviews/' + review['id'] + '/fields', json={
+        'revision': review['revision'], 'field_id': by_key['net']['id'], 'value': '2100000'}))
+    did = review['documents'][0]['id']
+    review = run(client, app, checked(client.post(f"/api/v1/reviews/{review['id']}/documents/{did}", json={
+        'revision': review['revision'], 'action': 'verify', 'field_ids': [by_key['gross']['id']]})))
+    assert review['jobs'][-1]['status'] == 'COMPLETED'
+    after = {f['field_id']: f for f in all_fields(review)}
+    assert after['deduction']['review_state'] == 'confirmed'
+    assert after['deduction']['confirmation_id'] == confirmation
+    assert after['net']['value'] == '2100000' and after['net']['touched']
+    assert 'CONFLICT' not in after['net']['issues'] and after['net']['conflict_id'] is None
+    assert len(after['gross']['candidates']) == 2
+    for field in after.values():
+        ids = [c['id'] for c in field['candidates']]
+        assert len(ids) == len(set(ids)), field['field_id']

@@ -295,7 +295,8 @@ class ReviewService:
                 if document['revision'] != job['document_revision']:
                     raise ApiError(409, 'REVIEW_INPUT_CHANGED')
                 previous = deepcopy(document['parts'])
-                document['parts'] = rules.merge_parts(previous, output['parts'])
+                targets = set(payload['verify_field_ids']) if job['kind'] == 'verify' else None
+                document['parts'] = rules.merge_parts(previous, output['parts'], only_field_ids=targets)
                 document['reading'] = output['reading']
                 document.setdefault('history', []).append({'job_id': job['id'], 'at': now(), 'parts': previous})
                 document['status'] = 'REVIEW_REQUIRED'
