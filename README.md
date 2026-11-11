@@ -4,7 +4,7 @@ FastAPI 백엔드와 agent를 **Python 3.14 한 환경**에서 실행한다. 별
 
 ## 설치와 실행
 
-터미널의 현재 디렉터리를 이 `devmerge` 폴더로 설정한다.
+터미널의 현재 디렉터리를 이 저장소의 루트(`app`, `agent`, `pyproject.toml`이 있는 폴더)로 설정한다.
 
 ```powershell
 uv sync --locked
@@ -72,6 +72,7 @@ Windows의 제한된 실행 샌드박스는 asyncio 내부 localhost 소켓을 �
 
 ## 문서
 
+- [EC2 HTTP 환경파일·Docker 빌드·기동](docs/DEPLOY_EC2.md)
 - [폴더·호출·저장 구조](docs/ARCHITECTURE.md)
 - [새 검토 API와 연결 계약](docs/REVIEW_WORKSPACE.md)
 

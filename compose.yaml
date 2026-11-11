@@ -1,0 +1,31 @@
+name: woowangthon
+services:
+  api:
+    image: ${API_IMAGE:-woowangthon-api:local}
+    build:
+      context: .
+      target: runtime
+    env_file: .env.production
+    environment:
+      HOST: 0.0.0.0
+      PORT: "8000"
+      DATA_DIR: /var/lib/wolgeup
+      AGENT_FONT_PATH: /app/assets/fonts/NotoSansKR-Regular.ttf
+      AGENT_OCR_COMMAND: /usr/bin/tesseract
+      AGENT_OCR_DATA_PATH: /usr/share/tesseract-ocr/5/tessdata
+      WORKERS_ENABLED: "true"
+    ports:
+      - "${API_BIND_HOST:-127.0.0.1}:${API_PORT:-8000}:8000"
+    volumes:
+      - app_data:/var/lib/wolgeup
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 45s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  app_data:
