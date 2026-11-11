@@ -18,7 +18,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           }
@@ -94,7 +96,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -133,7 +137,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -473,7 +479,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -730,7 +738,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -814,7 +824,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -908,7 +920,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -1217,7 +1231,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -1409,7 +1425,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -1854,7 +1872,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -2047,7 +2067,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -2142,7 +2164,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -2247,7 +2271,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -2470,7 +2496,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -2702,7 +2730,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -2806,7 +2836,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -2922,7 +2954,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -3494,7 +3528,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -3703,7 +3739,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -3817,7 +3855,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -4018,7 +4058,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -4122,7 +4164,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -4351,7 +4395,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -4474,7 +4520,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -4587,7 +4635,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -4700,7 +4750,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -4804,7 +4856,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -4908,7 +4962,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -5003,7 +5059,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -5106,7 +5164,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -5201,7 +5261,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -5306,7 +5368,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -5422,7 +5486,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -5526,7 +5592,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -5628,7 +5696,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ManualCreate"
+                "$ref": "#/components/schemas/ManualPatch"
               }
             }
           }
@@ -5638,7 +5706,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -5830,7 +5900,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/API_ResultsDTO_"
+                }
               }
             }
           },
@@ -5925,7 +5997,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/API_RecomputeDTO_"
+                }
               }
             }
           },
@@ -6029,7 +6103,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -6154,7 +6230,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -6279,7 +6357,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -6395,7 +6475,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -6520,7 +6602,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -6636,7 +6720,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -6761,7 +6847,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -6877,7 +6965,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -6981,7 +7071,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -7076,7 +7168,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -7181,7 +7275,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -7286,7 +7382,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -7402,7 +7500,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -7497,7 +7597,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -7601,7 +7703,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -7713,7 +7817,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -7943,7 +8049,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -8059,7 +8167,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -8173,7 +8283,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -8365,7 +8477,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -8483,7 +8597,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -8588,7 +8704,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -8704,7 +8822,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -8801,6 +8921,35 @@
               "type": "integer",
               "title": "Chat Id"
             }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Page"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Size"
+            }
           }
         ],
         "responses": {
@@ -8808,7 +8957,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -8920,7 +9071,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -9361,7 +9514,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -9466,7 +9621,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -9559,7 +9716,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -9654,7 +9813,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -9847,7 +10008,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -9942,7 +10105,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10047,7 +10212,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10142,7 +10309,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10237,7 +10406,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10332,7 +10503,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10427,7 +10600,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10534,7 +10709,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10639,7 +10816,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10734,7 +10913,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10839,7 +11020,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -10932,7 +11115,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -11027,7 +11212,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -11122,7 +11309,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -11217,7 +11406,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -11312,7 +11503,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -11417,7 +11610,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -11512,7 +11707,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -11617,7 +11814,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -11711,8 +11910,17 @@
           "200": {
             "description": "Successful Response",
             "content": {
-              "application/json": {
-                "schema": {}
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             }
           },
@@ -11879,7 +12087,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -11970,7 +12180,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -12064,7 +12276,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -12171,7 +12385,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -12266,7 +12482,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -12369,7 +12587,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -12572,7 +12792,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -12686,7 +12908,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -12790,7 +13014,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -12903,7 +13129,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -13008,7 +13236,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -13111,7 +13341,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -13216,7 +13448,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -13320,7 +13554,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -13432,7 +13668,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -13538,7 +13776,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
           },
@@ -13643,9 +13883,558 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
               }
             }
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cases/{case_id}/reports": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Create Report",
+        "operationId": "create_report_api_v1_cases__case_id__reports_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "List Reports",
+        "operationId": "list_reports_api_v1_cases__case_id__reports_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cases/{case_id}/reports/{report_id}": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Get Report",
+        "operationId": "get_report_api_v1_cases__case_id__reports__report_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Report Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cases/{case_id}/reports/{report_id}/pdf": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Pdf",
+        "operationId": "pdf_api_v1_cases__case_id__reports__report_id__pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Report Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cases/{case_id}/reports/{report_id}/originals": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Originals",
+        "operationId": "originals_api_v1_cases__case_id__reports__report_id__originals_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Report Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
           },
           "401": {
             "description": "인증 필요/토큰 만료",
@@ -13888,6 +14677,50 @@
           "data"
         ],
         "title": "API[Page[WorkplaceDTO]]"
+      },
+      "API_RecomputeDTO_": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RecomputeDTO"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "title": "API[RecomputeDTO]"
+      },
+      "API_ResultsDTO_": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ResultsDTO"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "title": "API[ResultsDTO]"
       },
       "API_UserDTO_": {
         "properties": {
@@ -14431,7 +15264,7 @@
           "latestCalculationId": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "integer"
               },
               {
                 "type": "null"
@@ -14915,6 +15748,28 @@
         ],
         "title": "DocumentDTO"
       },
+      "Envelope": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "data": {
+            "$ref": "#/components/schemas/JsonValue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "title": "Envelope"
+      },
       "ErrorData": {
         "properties": {
           "errorCode": {
@@ -14963,6 +15818,42 @@
             "type": "boolean",
             "title": "Confirmed",
             "default": true
+          },
+          "checks": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "WAGE_CALCULATION",
+                    "CONTRACT_ATTENDANCE_COMPARISON",
+                    "PAYSLIP_VALIDATION",
+                    "DEPOSIT_COMPARISON"
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checks"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "USER_RETRY",
+                  "MANUAL_RECHECK"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
           }
         },
         "additionalProperties": false,
@@ -15065,6 +15956,17 @@
           },
           "value": {
             "$ref": "#/components/schemas/JsonValue"
+          },
+          "agentKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agentkey"
           },
           "valueType": {
             "type": "string",
@@ -15568,11 +16470,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "enum": [
-                  "payroll",
-                  "context",
-                  "both"
-                ]
+                "maxLength": 100
               },
               {
                 "type": "null"
@@ -15630,11 +16528,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "enum": [
-                  "payroll",
-                  "context",
-                  "both"
-                ]
+                "maxLength": 100
               },
               {
                 "type": "null"
@@ -15762,6 +16656,56 @@
         ],
         "title": "ManualCreate"
       },
+      "ManualPatch": {
+        "properties": {
+          "expectedInputVersion": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expectedinputversion"
+          },
+          "recordType": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "CONTRACT",
+                  "ATTENDANCE",
+                  "PAYSLIP",
+                  "DEPOSIT"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recordtype"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          },
+          "source": {
+            "type": "string",
+            "const": "USER_INPUT",
+            "title": "Source",
+            "default": "USER_INPUT"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "ManualPatch"
+      },
       "MessageCreate": {
         "properties": {
           "content": {
@@ -15779,6 +16723,19 @@
                 "type": "null"
               }
             ]
+          },
+          "clientMessageId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clientmessageid"
           }
         },
         "additionalProperties": false,
@@ -16045,6 +17002,92 @@
         ],
         "title": "Period"
       },
+      "RecomputeDTO": {
+        "properties": {
+          "caseId": {
+            "type": "integer",
+            "title": "Caseid"
+          },
+          "currentInputVersion": {
+            "type": "integer",
+            "title": "Currentinputversion"
+          },
+          "activeJob": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activejob"
+          },
+          "latestJob": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestjob"
+          },
+          "results": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/VersionRef"
+            },
+            "type": "object",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "caseId",
+          "currentInputVersion",
+          "activeJob",
+          "latestJob",
+          "results"
+        ],
+        "title": "RecomputeDTO"
+      },
+      "ReportCreate": {
+        "properties": {
+          "includeOriginalDocuments": {
+            "type": "boolean",
+            "title": "Includeoriginaldocuments",
+            "default": true
+          },
+          "documentIds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Documentids"
+          },
+          "useLatestAvailableResults": {
+            "type": "boolean",
+            "title": "Uselatestavailableresults",
+            "default": true
+          },
+          "acknowledgeOutdatedResults": {
+            "type": "boolean",
+            "title": "Acknowledgeoutdatedresults",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ReportCreate"
+      },
       "ReportRequest": {
         "properties": {
           "explanationJobId": {
@@ -16089,6 +17132,302 @@
           "newPassword"
         ],
         "title": "ResetPassword"
+      },
+      "ResultItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "MATCH",
+              "DIFFERENCE",
+              "INSUFFICIENT_INFORMATION",
+              "REVIEW_REQUIRED"
+            ],
+            "title": "Status"
+          },
+          "calculatedValue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calculatedvalue"
+          },
+          "documentValue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Documentvalue"
+          },
+          "difference": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Difference"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "periodStart": {
+            "type": "string",
+            "title": "Periodstart"
+          },
+          "periodEnd": {
+            "type": "string",
+            "title": "Periodend"
+          },
+          "formula": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formula"
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule"
+          },
+          "comparisonBasis": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparisonbasis"
+          },
+          "sources": {
+            "items": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/JsonValue"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "confirmedAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmedat"
+          },
+          "nextAction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextaction"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "status",
+          "calculatedValue",
+          "documentValue",
+          "difference",
+          "unit",
+          "periodStart",
+          "periodEnd",
+          "formula",
+          "rule",
+          "comparisonBasis",
+          "sources",
+          "confirmedAt",
+          "nextAction"
+        ],
+        "title": "ResultItem"
+      },
+      "ResultsDTO": {
+        "properties": {
+          "caseId": {
+            "type": "integer",
+            "title": "Caseid"
+          },
+          "currentInputVersion": {
+            "type": "integer",
+            "title": "Currentinputversion"
+          },
+          "resultVersion": {
+            "type": "integer",
+            "title": "Resultversion"
+          },
+          "summary": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "title": "Summary"
+          },
+          "freshness": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "title": "Freshness"
+          },
+          "versions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/VersionRef"
+            },
+            "type": "object",
+            "title": "Versions"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ResultItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "calculation": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calculation"
+          },
+          "comparison": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparison"
+          },
+          "payslipValidation": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payslipvalidation"
+          },
+          "depositComparison": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Depositcomparison"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          }
+        },
+        "type": "object",
+        "required": [
+          "caseId",
+          "currentInputVersion",
+          "resultVersion",
+          "summary",
+          "freshness",
+          "versions",
+          "items",
+          "calculation",
+          "comparison",
+          "payslipValidation",
+          "depositComparison"
+        ],
+        "title": "ResultsDTO"
       },
       "ReviewCreate": {
         "properties": {
@@ -16613,6 +17952,66 @@
         ],
         "title": "ValidationError"
       },
+      "VersionRef": {
+        "properties": {
+          "snapshotId": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshotid"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          },
+          "inputVersion": {
+            "type": "integer",
+            "title": "Inputversion"
+          },
+          "createdAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Createdat"
+          },
+          "freshness": {
+            "type": "string",
+            "enum": [
+              "CURRENT",
+              "STALE",
+              "UPDATING",
+              "FAILED"
+            ],
+            "title": "Freshness"
+          }
+        },
+        "type": "object",
+        "required": [
+          "snapshotId",
+          "version",
+          "inputVersion",
+          "createdAt",
+          "freshness"
+        ],
+        "title": "VersionRef"
+      },
       "WageCondition_Annotated_Decimal__BeforeValidator__": {
         "properties": {
           "state": {
@@ -17019,6 +18418,18 @@
       },
       "Workflow": {
         "properties": {
+          "expectedInputVersion": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expectedinputversion"
+          },
           "status": {
             "anyOf": [
               {

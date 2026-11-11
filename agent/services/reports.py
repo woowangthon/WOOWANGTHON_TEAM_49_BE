@@ -364,6 +364,7 @@ async def build_report(runtime):
     with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("summary.pdf", pdf)
         archive.writestr("result.json", result.model_dump_json(indent=2))
+        archive.writestr("result-snapshot.json", result.model_dump_json(indent=2))
         archive.writestr("explanation.json", explanation.model_dump_json(indent=2))
         archive.writestr(
             "report_context.json",

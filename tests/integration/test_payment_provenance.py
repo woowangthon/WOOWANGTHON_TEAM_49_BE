@@ -77,6 +77,19 @@ async def test_document_row_provenance_reaches_real_bank_comparison(h):
     assert comparison.status == "match"
     assert set(stored["evidence_refs"]) <= set(comparison.evidence_refs)
     assert set(stored["evidence_refs"]) <= {item["evidence_id"] for item in snapshot["evidence_catalog"]}
+    # The restored Case API must retain the same original-document lineage.
+    from app.compatibility import schedule, execute_next
+    from app.engine import results
+    from app.db import dump, now
+    with h.db.connect(write=True) as con:
+        con.execute("INSERT INTO manual_records(case_id,record_type,data_json,created_at) VALUES(1,'PAYSLIP',?,?)",(dump({'netPay':1800000}),now()))
+        schedule(con,1,delay=0)
+    await execute_next(SimpleNamespace(db=h.db,service=h.service))
+    with h.db.connect() as con:
+        legacy=results(con,1)['depositComparison']
+        assert legacy['status']=='MATCH',legacy
+        assert legacy['deposits'][0]['sourceDocumentId']==doc_id
+        assert legacy['deposits'][0]['provenance']['source_row_id']=='transaction_1'
     with h.db.connect(write=True) as con:
         con.execute("UPDATE allocations SET allocated_amount=900000 WHERE transaction_id=?", (transaction_id,))
         insert_allocation(con, 2, transaction_id, 900000)

@@ -1,3 +1,4 @@
+from app.schemas import Envelope
 import sqlite3
 import os
 import secrets
@@ -29,7 +30,7 @@ def session_response(con, user, settings):
     return response
 
 
-@router.post('/auth/signup', status_code=201)
+@router.post('/auth/signup', status_code=201, response_model=Envelope)
 def signup(body: Signup, request: Request):
     hashed = password_hash(body.password)
     try:
@@ -71,7 +72,7 @@ def logout(request: Request, user=Depends(current_user)):
     return response
 
 
-@router.post('/auth/forgot-password', status_code=202)
+@router.post('/auth/forgot-password', status_code=202, response_model=Envelope)
 def forgot_password(body: ForgotPassword, request: Request):
     settings = request.app.state.settings
     if settings.password_reset_delivery != 'file':
@@ -115,7 +116,7 @@ def me(user=Depends(current_user)):
     return ok(user_dto(user))
 
 
-@router.delete('/users/me', status_code=202)
+@router.delete('/users/me', status_code=202, response_model=Envelope)
 def delete_account(body: DeleteAccount, request: Request, user=Depends(current_user)):
     timestamp = now()
     receipt = secrets.token_urlsafe(32)
@@ -135,7 +136,7 @@ def delete_account(body: DeleteAccount, request: Request, user=Depends(current_u
     return response
 
 
-@router.get('/users/me/deletion')
+@router.get('/users/me/deletion', response_model=Envelope)
 def deletion_status(request: Request):
     receipt = request.cookies.get('deletion_receipt', '')
     with request.app.state.db.connect() as con:

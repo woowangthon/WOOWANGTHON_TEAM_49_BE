@@ -1,3 +1,4 @@
+from app.schemas import Envelope
 from fastapi import APIRouter, Depends, Query, Request, Response
 
 from app.db import now
@@ -23,8 +24,8 @@ def workplace_dto(con, row):
 def case_dto(con, row):
     w = con.execute('SELECT * FROM workplaces WHERE id=?', (row['workplace_id'],)).fetchone()
     result = results(con, row['id'])
-    attention = sum(item['status'] != 'match' for item in result['items'])
-    attention += sum(item['status'] in ('insufficient', 'needs_review')
+    attention = sum(item['status'] != 'MATCH' for item in result['items'])
+    attention += sum(item['status'] in ('INSUFFICIENT_INFORMATION', 'REVIEW_REQUIRED')
         for item in (result['calculation'] or {}).get('items', []))
     return {'caseId': row['id'], 'workplaceId': row['workplace_id'],
         'workplace': {'workplaceId': w['id'], 'name': w['name'], 'industry': w['industry'], 'region': w['region']},
@@ -36,13 +37,14 @@ def case_dto(con, row):
         'attentionRequired': bool(attention or result['freshness']['hasOutdatedResults']), 'attentionCount': attention}
 
 
-@router.post('/workplaces', status_code=201)
+@router.post('/workplaces', status_code=201, response_model=Envelope)
 def create_workplace(body: WorkplaceCreate, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         timestamp = now()
         wid = con.execute('INSERT INTO workplaces(user_id,name,industry,region,employment_status,created_at,updated_at) VALUES(?,?,?,?,?,?,?)',
             (user['id'], body.name, body.industry, body.region, body.employmentStatus, timestamp, timestamp)).lastrowid
-    return ok({'workplaceId': wid}, 201)
+    with request.app.state.db.connect() as con:
+        return ok(workplace_dto(con,workplace(con,wid,user['id'])),201)
 
 
 @router.get('/workplaces', response_model=API[Page[WorkplaceDTO]])
@@ -58,7 +60,7 @@ def get_workplace(workplace_id: int, request: Request, user=Depends(current_user
         return ok(workplace_dto(con, workplace(con, workplace_id, user['id'])))
 
 
-@router.patch('/workplaces/{workplace_id}')
+@router.patch('/workplaces/{workplace_id}', response_model=Envelope)
 def patch_workplace(workplace_id: int, body: WorkplacePatch, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         workplace(con, workplace_id, user['id'])
@@ -81,7 +83,7 @@ def delete_workplace(workplace_id: int, request: Request, confirm: bool = False,
     return Response(status_code=204)
 
 
-@router.post('/cases', status_code=201)
+@router.post('/cases', status_code=201, response_model=Envelope)
 def create_case(body: CaseCreate, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         workplace(con, body.workplaceId, user['id'])
@@ -116,7 +118,7 @@ def get_case(case_id: int, request: Request, user=Depends(current_user)):
         return ok(case_dto(con, case(con, case_id, user['id'])))
 
 
-@router.patch('/cases/{case_id}')
+@router.patch('/cases/{case_id}', response_model=Envelope)
 def patch_case(case_id: int, body: CasePatch, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         row = case(con, case_id, user['id'])
@@ -132,18 +134,19 @@ def patch_case(case_id: int, body: CasePatch, request: Request, user=Depends(cur
         return ok({'caseId': case_id, **schedule(con, case_id, delay=request.app.state.settings.recompute_debounce_seconds)})
 
 
-@router.patch('/cases/{case_id}/workflow')
+@router.patch('/cases/{case_id}/workflow', response_model=Envelope)
 def workflow(case_id: int, body: Workflow, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
-        case(con, case_id, user['id'])
-        for key, value in body.model_dump(exclude_unset=True).items():
+        c=case(con,case_id,user['id'])
+        check_version(c,body.expectedInputVersion)
+        for key, value in body.model_dump(exclude_unset=True,exclude={'expectedInputVersion'}).items():
             if value is None:
                 raise ApiError(422, 'INVALID_INPUT')
             con.execute(f'UPDATE cases SET {"current_step" if key == "currentStep" else "status"}=?,updated_at=? WHERE id=?', (value, now(), case_id))
         return ok(case_dto(con, case(con, case_id, user['id'])))
 
 
-@router.get('/cases/{case_id}/deletion-impact')
+@router.get('/cases/{case_id}/deletion-impact', response_model=Envelope)
 def deletion_impact(case_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         case(con, case_id, user['id'])

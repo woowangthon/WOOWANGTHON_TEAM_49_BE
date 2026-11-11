@@ -3,6 +3,28 @@
     "AnalysisJobInput": {
       "additionalProperties": false,
       "properties": {
+        "checks": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "WAGE_CALCULATION",
+                  "CONTRACT_ATTENDANCE_COMPARISON",
+                  "PAYSLIP_VALIDATION",
+                  "DEPOSIT_COMPARISON"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checks"
+        },
         "snapshot": {
           "$ref": "#/$defs/InputSnapshot"
         },

@@ -17,15 +17,23 @@ TaskKind = Literal["extract_document", "analyze_case", "explain_result", "build_
 
 
 class JobContext(ContractModel):
-    model_config = ConfigDict(json_schema_extra={
-        "allOf": [{
-            "if": {"properties": {"case_id": {"type": "null"}}},
-            "then": {"properties": {"schema_version": {"const": "1.1"},
-                                     "task_kind": {"const": "extract_document"}},
-                     "required": ["schema_version"]},
-            "else": {"properties": {"case_id": {"type": "string", "minLength": 1}}},
-        }],
-    })
+    model_config = ConfigDict(
+        json_schema_extra={
+            "allOf": [
+                {
+                    "if": {"properties": {"case_id": {"type": "null"}}},
+                    "then": {
+                        "properties": {
+                            "schema_version": {"const": "1.1"},
+                            "task_kind": {"const": "extract_document"},
+                        },
+                        "required": ["schema_version"],
+                    },
+                    "else": {"properties": {"case_id": {"type": "string", "minLength": 1}}},
+                }
+            ],
+        }
+    )
     job_id: str
     run_id: str
     execution_token: SecretStr
@@ -78,6 +86,17 @@ class ExtractionInput(ContractModel):
 
 
 class AnalysisJobInput(ContractModel):
+    checks: (
+        list[
+            Literal[
+                "WAGE_CALCULATION",
+                "CONTRACT_ATTENDANCE_COMPARISON",
+                "PAYSLIP_VALIDATION",
+                "DEPOSIT_COMPARISON",
+            ]
+        ]
+        | None
+    ) = Field(default=None, min_length=1, exclude_if=lambda value: value is None)
     snapshot: InputSnapshot
     snapshot_id: str
     snapshot_hash: str

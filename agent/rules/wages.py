@@ -336,6 +336,33 @@ def evaluate_wage(rule_id, context):
         rule_version=RULE_VERSION,
         official_sources=[*OFFICIAL_SOURCES[rule_id], ORDINARY_SOURCE],
     )
+    legacy = any(
+        src.kind == "manual" and src.source_id.startswith("legacy-api:") for src in s.authorized_sources
+    )
+    if rule_id == "W-01" and c is None and legacy:
+        values = {f.field_id: f for f in s.confirmed_fields if f.state == "known"}
+        accepted = values.get("legacy_base_confirmed")
+        base, refs, operands = None, [], {}
+        if accepted and accepted.value == 1:
+            if s.profile == "H-STD" and "contract_rate" in values and "regular_minutes" in values:
+                rate, minutes = values["contract_rate"], values["regular_minutes"]
+                base = _round(rate.value * minutes.value / Decimal(60))
+                refs = rate.evidence_refs + minutes.evidence_refs + accepted.evidence_refs
+                operands = {"base_hourly_rate": str(rate.value), "regular_minutes": str(minutes.value)}
+            elif s.profile == "M-STD" and "monthly_base" in values:
+                monthly = values["monthly_base"]
+                base, refs = monthly.value, monthly.evidence_refs + accepted.evidence_refs
+                operands = {"monthly_contract_amount": str(base), "separated_fixed_allowances": "0"}
+        return WageItemResult(
+            rule_id=rule_id,
+            rule_version="confirmed-base-arithmetic-v1",
+            status="calculated" if base is not None else "insufficient",
+            amount=base,
+            formula_id="CONFIRMED_BASE_SUBTOTAL",
+            reason_codes=["BASE_ONLY_SCOPE"],
+            evidence_refs=sorted(set(refs)),
+            operands=operands,
+        )
     if not date(2025, 1, 1) <= s.period.start <= s.period.end <= date(2026, 12, 31):
         return WageItemResult(**common, status="needs_review", reason_codes=["RULE_PERIOD_UNSUPPORTED"])
     try:
@@ -531,6 +558,18 @@ def wage_section(items, snapshot):
 
 def compare_wages(context, section):
     s, c = context.snapshot, context.snapshot.wage_conditions
+    legacy = any(
+        src.kind == "manual" and src.source_id.startswith("legacy-api:") for src in s.authorized_sources
+    )
+    if c is None and legacy:
+        values = {f.field_id: f for f in s.confirmed_fields if f.state == "known"}
+        accepted = values.get("legacy_base_compare")
+        base = next((i for i in section.items if i.rule_id == "W-01"), None)
+        stated = values.get("base")
+        if accepted and accepted.value == 1 and base and base.status == "calculated" and stated:
+            return comparison(
+                "R-07", base.amount, stated.value, refs=base.evidence_refs + stated.evidence_refs
+            )
     if c is None or not c.statement_mappings:
         return comparison("R-07", reasons=["WAGE_MAPPING_UNCONFIRMED"])
     wages = {i.rule_id: i for i in section.items}

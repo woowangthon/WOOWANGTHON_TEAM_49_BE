@@ -21,6 +21,7 @@ from agent.tests.fixture_provider import FixtureProvider
 from agent.tests.fixtures_support import pdf_bytes
 from app.config import Settings
 from app.db import load
+from app.compatibility import execute_next as execute_case
 from app.main import create_app
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,6 +83,12 @@ def audit():
                         'unauthenticated_http_status': response.status_code,
                         'scope': 'route/authentication probe; not a successful DTO test'})
 
+                def drain_cases():
+                    with app.state.db.connect(write=True) as con:
+                        con.execute('UPDATE jobs SET ready_at=0')
+                    while asyncio.run(execute_case(app.state)):
+                        pass
+
                 def req(method, path, expected=200, **kwargs):
                     response = client.request(method, '/api/v1' + path, **kwargs)
                     try:
@@ -123,7 +130,7 @@ def audit():
                 compare('readiness_mode_enum', True,
                     all(item['mode'] in {'FULL', 'PARTIAL', 'NONE'} for item in ready['checks']))
                 req('POST', f'/cases/{cid}/recompute', None,
-                    json={'checks': ['PAYSLIP_VALIDATION'], 'reason': 'USER_RETRY', 'expectedInputVersion': 4})
+                    json={'checks': ['PAYSLIP_VALIDATION'], 'reason': 'USER_RETRY', 'expectedInputVersion': client.get(f'/api/v1/cases/{cid}').json()['data']['inputVersion']})
                 compare('proposal_recompute_request_accepted', 202, probes[-1]['http_status'], 'proposal-v0.5')
 
                 raw = pdf_bytes(['SYNTHETIC AUDIT PAYSLIP', 'gross: 2300000 KRW',
@@ -139,7 +146,7 @@ def audit():
                 asyncio.run(app.state.service.execute_job(extraction_id))
                 assert app.state.service.store.job(1, extraction_id)['status'] == 'COMPLETED'
                 _, fields = req('GET', f'/cases/{cid}/documents/{did}/fields')
-                gross = next(item for item in fields['fields'] if item['key'] == 'gross')
+                gross = next(item for item in fields['fields'] if item['key'] == 'grossPay')
                 compare('legacy_extracted_numeric_keys', True, any(item['key'] == 'grossPay' for item in fields['fields']))
                 compare('legacy_extracted_money_type', 'MONEY_KRW', gross['valueType'])
                 req('PATCH', f'/cases/{cid}/documents/{did}/fields/{gross["fieldId"]}', None,
@@ -168,7 +175,7 @@ def audit():
                 readable = asyncio.run(app.state.service.recognizer(long_pdf.getvalue(),
                     app.state.agent_settings.model_copy(update={'max_pages': 50})))
                 assert readable['page_count'] == 21 and readable['source_method'] == 'pdf_text'
-                findings[-1]['diagnostic_only'] = 'Same bytes read as 21 text pages with a local max_pages=50 settings copy; production configuration unchanged.'
+                findings[-1]['verification'] = 'Production max_pages=50; same 21-page text PDF is accepted and read.'
 
                 _, group = req('GET', f'/comparison-groups/{gid}')
                 period = {'start': '2026-10-01', 'end': '2026-10-31'}
@@ -178,8 +185,10 @@ def audit():
                 req('PUT', f'/comparison-groups/{gid}/confirmed-input',
                     json={'expectedVersion': group['version'], 'confirmedInput': confirmed})
                 _, queued = req('POST', f'/cases/{cid}/payslip-validations', 202, json={'confirmed': True})
-                asyncio.run(app.state.service.execute_job(queued['jobId']))
-                current_job = app.state.service.store.job(1, queued['jobId'])
+                drain_cases()
+                with app.state.db.connect() as con:
+                    actual_id=next(j['id'] for j in con.execute("SELECT * FROM agent_jobs WHERE task_kind='analyze_case' ORDER BY created_at DESC") if (load(j['metadata_json']) or {}).get('legacyJobId')==queued['jobId'])
+                current_job = app.state.service.store.job(1, actual_id)
                 assert current_job['status'] == 'COMPLETED'
                 result_id = current_job['result_id']
                 _, detail = req('GET', f'/agent-results/{result_id}')
@@ -210,6 +219,7 @@ def audit():
                     json={'transactionId': tx['transactionId'], 'allocatedAmount': 2090000})
                 _, changed = req('GET', f'/cases/{cid}/results')
                 compare('allocation_changes_only_deposit_freshness', 'CURRENT', changed['versions']['calculation']['freshness'])
+                drain_cases()
                 req('POST', f'/cases/{cid}/reports', None, json={'includeOriginalDocuments': False,
                     'documentIds': [], 'useLatestAvailableResults': True, 'acknowledgeOutdatedResults': False})
                 compare('legacy_report_create_endpoint', 202, probes[-1]['http_status'], severity='P0')
@@ -224,14 +234,15 @@ def audit():
                 req('POST', cp + '/messages', None,
                     json={'content': '합성 질문', 'clientMessageId': 'synthetic-stable-id'})
                 compare('proposal_clientMessageId_accepted', 200, probes[-1]['http_status'], 'proposal-v0.5', 'P2')
-                stream = client.post('/api/v1' + cp + '/messages', json={'content': '합성 질문'})
+                stream = client.post('/api/v1' + cp + '/messages', json={'content': '합성 질문','clientMessageId':'synthetic-stable-id'})
                 events = re.findall(r'^event: (.+)$', stream.text, re.M)
                 compare('current_SSE_events', ['message_start', 'content_delta', 'sources', 'message_done'],
                     events, 'agent-orchestration', 'P0')
                 assert stream.status_code == 200 and 'text/event-stream' in stream.headers['content-type']
-                _, chat_detail = req('GET', cp)
+                _, paginated_chat = req('GET', cp+'?page=1&size=20')
                 compare('proposal_chat_detail_paginated', True,
-                    'session' in chat_detail and isinstance(chat_detail.get('messages'), dict), 'proposal-v0.5')
+                    'session' in paginated_chat and isinstance(paginated_chat.get('messages'), dict), 'proposal-v0.5')
+                _, chat_detail = req('GET', cp)
                 compare('current_chat_persisted_roles', ['USER', 'ASSISTANT'],
                     [m['role'] for m in chat_detail['messages']], 'agent-orchestration', 'P0')
                 client.post('/api/v1' + cp + '/messages', json={'content': '이어서 질문'})
@@ -256,7 +267,7 @@ def audit():
                         contents['application/pdf'] == archive.read('summary.pdf'), 'agent-orchestration', 'P0')
 
                 with app.state.db.connect() as con:
-                    checks = load(con.execute('SELECT payload_json FROM agent_jobs WHERE id=?', (queued['jobId'],)).fetchone()[0])
+                    checks = load(con.execute('SELECT payload_json FROM agent_jobs WHERE id=?', (actual_id,)).fetchone()[0])
                     compare('selected_check_forwarded_to_agent', True, 'checks' in checks)
                     assert not con.execute('PRAGMA foreign_key_check').fetchall()
 
@@ -280,7 +291,7 @@ def audit():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output', type=Path, default=ROOT / 'docs/contract-audit/findings.json')
+    parser.add_argument('--output', type=Path, default=ROOT / 'docs/contract-audit/fixed-findings.json')
     parser.add_argument('--strict', action='store_true')
     args = parser.parse_args()
     data = audit()

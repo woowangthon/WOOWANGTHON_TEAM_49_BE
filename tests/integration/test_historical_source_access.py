@@ -61,7 +61,8 @@ async def test_link_metadata_edit_keeps_stale_result_pdf_and_pinned_followup_tas
         assert snapshot == original_snapshot
         assert snapshot_accessible(con, row)
         assert results(con, 1)['result']['result_id'] == result.result_id
-        assert results(con, 1)['freshness']['overall'] == 'STALE'
+        # A metadata edit now durably schedules automatic recomputation.
+        assert results(con, 1)['freshness']['overall'] == 'UPDATING'
     assert h.row('agent_results', result.result_id)['data_json'] == original_result_json
     assert h.store.artifact(1, pdf_id)[0].read_bytes() == original_pdf
     for jid in (analysis_job, explanation['id'], report['id']):

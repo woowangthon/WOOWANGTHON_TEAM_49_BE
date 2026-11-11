@@ -1,4 +1,5 @@
 """Next.js-facing orchestration API; no frontend or development-store dependency."""
+from app.schemas import Envelope
 import uuid
 from typing import Literal
 
@@ -92,7 +93,7 @@ def set_documents(con, group, owner_id, ids):
         [(group['id'], int(ref.document_id), ref.document_version, ref.link_version) for ref in refs])
 
 
-@router.post('/cases/{case_id}/comparison-groups', status_code=201)
+@router.post('/cases/{case_id}/comparison-groups', status_code=201, response_model=Envelope)
 def create_group(case_id: int, body: GroupCreate, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         case(con, case_id, user['id'])
@@ -104,21 +105,21 @@ def create_group(case_id: int, body: GroupCreate, request: Request, user=Depends
         return ok(group_dto(con, group), 201)
 
 
-@router.get('/cases/{case_id}/comparison-groups')
+@router.get('/cases/{case_id}/comparison-groups', response_model=Envelope)
 def list_groups(case_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         case(con, case_id, user['id'])
         return ok({'items': [group_dto(con, row) for row in con.execute(
-            'SELECT * FROM comparison_groups WHERE case_id=? AND deleted_at IS NULL ORDER BY created_at', (case_id,))]})
+            "SELECT * FROM comparison_groups WHERE case_id=? AND deleted_at IS NULL AND id NOT LIKE 'compat-%' ORDER BY created_at", (case_id,))]})
 
 
-@router.get('/comparison-groups/{group_id}')
+@router.get('/comparison-groups/{group_id}', response_model=Envelope)
 def get_group(group_id: str, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         return ok(group_dto(con, owned_group(con, group_id, user['id'])))
 
 
-@router.put('/comparison-groups/{group_id}/documents')
+@router.put('/comparison-groups/{group_id}/documents', response_model=Envelope)
 def select_documents(group_id: str, body: GroupDocuments, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         group = owned_group(con, group_id, user['id'])
@@ -128,13 +129,13 @@ def select_documents(group_id: str, body: GroupDocuments, request: Request, user
         return ok(group_dto(con, owned_group(con, group_id, user['id'])))
 
 
-@router.get('/comparison-groups/{group_id}/materials')
+@router.get('/comparison-groups/{group_id}/materials', response_model=Envelope)
 def materials(group_id: str, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         return ok(group_materials(con, group_id, user['id']))
 
 
-@router.put('/comparison-groups/{group_id}/confirmed-input')
+@router.put('/comparison-groups/{group_id}/confirmed-input', response_model=Envelope)
 def confirm_input(group_id: str, body: ConfirmedInput, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         group = owned_group(con, group_id, user['id'])
@@ -169,12 +170,12 @@ def queued(job_id):
     return ok({'jobId': job_id, 'status': 'PENDING', 'statusUrl': f'/api/v1/agent-jobs/{job_id}'}, 202)
 
 
-@router.post('/comparison-groups/{group_id}/analyze', status_code=202)
+@router.post('/comparison-groups/{group_id}/analyze', status_code=202, response_model=Envelope)
 def analyze(group_id: str, request: Request, user=Depends(current_user)):
     return queued(request.app.state.service.enqueue_analysis(user['id'], group_id, idempotency_key=request.headers.get('Idempotency-Key')))
 
 
-@router.get('/comparison-groups/{group_id}/results')
+@router.get('/comparison-groups/{group_id}/results', response_model=Envelope)
 def result_history(group_id: str, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         group = owned_group(con, group_id, user['id'])
@@ -191,19 +192,19 @@ def result_history(group_id: str, request: Request, user=Depends(current_user)):
         return ok({'groupId': group_id, 'latestResultId': group['latest_result_id'], 'items': items})
 
 
-@router.get('/agent-results/{result_id}')
+@router.get('/agent-results/{result_id}', response_model=Envelope)
 def get_result(result_id: str, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         result, row, snapshot = request.app.state.service.store.result(con, user['id'], result_id)
         return ok({'groupId': row['group_id'], 'result': result_response(result), 'snapshot': snapshot})
 
 
-@router.post('/documents/{document_id}/read', status_code=202)
+@router.post('/documents/{document_id}/read', status_code=202, response_model=Envelope)
 def read_document(document_id: int, request: Request, user=Depends(current_user)):
     return queued(request.app.state.service.enqueue_read(user['id'], document_id, idempotency_key=request.headers.get('Idempotency-Key')))
 
 
-@router.post('/documents/{document_id}/extract', status_code=202)
+@router.post('/documents/{document_id}/extract', status_code=202, response_model=Envelope)
 def extract(document_id: int, request: Request, body: ExtractionRequest = ExtractionRequest(), user=Depends(current_user)):
     if body.targetFields:
         raise ApiError(422, 'USE_SUPPLEMENT_ENDPOINT')
@@ -211,13 +212,13 @@ def extract(document_id: int, request: Request, body: ExtractionRequest = Extrac
         document_type=body.documentType, idempotency_key=request.headers.get('Idempotency-Key')))
 
 
-@router.post('/documents/{document_id}/supplement', status_code=202)
+@router.post('/documents/{document_id}/supplement', status_code=202, response_model=Envelope)
 def supplement(document_id: int, body: ExtractionRequest, request: Request, user=Depends(current_user)):
     return queued(request.app.state.service.enqueue_extraction(user['id'], document_id,
         method='pdf_supplement', target_fields=body.targetFields, idempotency_key=request.headers.get('Idempotency-Key')))
 
 
-@router.get('/documents/{document_id}/processing-history')
+@router.get('/documents/{document_id}/processing-history', response_model=Envelope)
 def processing_history(document_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         doc = owned_document(con, document_id, user['id'])
@@ -229,7 +230,7 @@ def processing_history(document_id: int, request: Request, user=Depends(current_
             'originalHash': doc['sha256'], 'readings': readings, 'candidates': candidates})
 
 
-@router.post('/documents/{document_id}/candidate-reviews')
+@router.post('/documents/{document_id}/candidate-reviews', response_model=Envelope)
 def review(document_id: int, body: CandidateReview, request: Request, user=Depends(current_user)):
     from app.agent_review import confirm_candidate
     with request.app.state.db.connect(write=True) as con:
@@ -237,35 +238,35 @@ def review(document_id: int, body: CandidateReview, request: Request, user=Depen
             value=body.value, manual=body.manual, defer=body.defer, unit=body.unit))
 
 
-@router.get('/documents/{document_id}/candidate-reviews')
+@router.get('/documents/{document_id}/candidate-reviews', response_model=Envelope)
 def review_history(document_id: int, request: Request, user=Depends(current_user)):
     from app.agent_review import confirmation_history
     with request.app.state.db.connect() as con:
         return ok({'items': confirmation_history(con, user['id'], document_id)})
 
 
-@router.get('/agent-jobs/{job_id}')
+@router.get('/agent-jobs/{job_id}', response_model=Envelope)
 def get_job(job_id: str, request: Request, user=Depends(current_user)):
     return ok(request.app.state.service.store.job(user['id'], job_id))
 
 
-@router.post('/agent-jobs/{job_id}/cancel', status_code=202)
+@router.post('/agent-jobs/{job_id}/cancel', status_code=202, response_model=Envelope)
 def cancel(job_id: str, request: Request, user=Depends(current_user)):
     request.app.state.service.store.cancel(user['id'], job_id)
     return ok(request.app.state.service.store.job(user['id'], job_id), 202)
 
 
-@router.post('/agent-jobs/{job_id}/retry', status_code=202)
+@router.post('/agent-jobs/{job_id}/retry', status_code=202, response_model=Envelope)
 def retry(job_id: str, request: Request, user=Depends(current_user)):
     return queued(request.app.state.service.store.retry(user['id'], job_id))
 
 
-@router.post('/agent-results/{result_id}/explanations', status_code=202)
+@router.post('/agent-results/{result_id}/explanations', status_code=202, response_model=Envelope)
 def explain(result_id: str, request: Request, user=Depends(current_user)):
     return queued(request.app.state.service.enqueue_explanation(user['id'], result_id, idempotency_key=request.headers.get('Idempotency-Key')))
 
 
-@router.post('/agent-results/{result_id}/inquiry')
+@router.post('/agent-results/{result_id}/inquiry', response_model=Envelope)
 def inquiry(result_id: str, request: Request, body: InquiryRequest = InquiryRequest(), user=Depends(current_user)):
     try:
         return ok(request.app.state.service.inquiry(user['id'], result_id, question_ids=body.questionIds, text=body.text))
@@ -273,7 +274,7 @@ def inquiry(result_id: str, request: Request, body: InquiryRequest = InquiryRequ
         raise ApiError(422, 'INVALID_INQUIRY_SELECTION') from exc
 
 
-@router.get('/agent-results/{result_id}/inquiries')
+@router.get('/agent-results/{result_id}/inquiries', response_model=Envelope)
 def inquiries(result_id: str, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         request.app.state.service.store.result(con, user['id'], result_id)
@@ -282,13 +283,13 @@ def inquiries(result_id: str, request: Request, user=Depends(current_user)):
         return ok({'items': [load(row['data_json']) for row in rows]})
 
 
-@router.post('/agent-results/{result_id}/reports', status_code=202)
+@router.post('/agent-results/{result_id}/reports', status_code=202, response_model=Envelope)
 def report(result_id: str, body: ReportRequest, request: Request, user=Depends(current_user)):
     return queued(request.app.state.service.enqueue_report(user['id'], result_id, body.explanationJobId,
         selected_document_ids=body.documentIds, idempotency_key=request.headers.get('Idempotency-Key')))
 
 
-@router.get('/artifacts/{artifact_id}')
+@router.get('/artifacts/{artifact_id}', response_class=FileResponse, responses={200:{'content':{'application/pdf':{'schema':{'type':'string','format':'binary'}},'application/zip':{'schema':{'type':'string','format':'binary'}}}}})
 def download_artifact(artifact_id: str, request: Request, user=Depends(current_user)):
     path, row = request.app.state.service.store.artifact(user['id'], artifact_id)
     suffix = '.zip' if row['mime_type'] == 'application/zip' else '.pdf'
@@ -305,7 +306,7 @@ def delete_artifact(artifact_id: str, request: Request, user=Depends(current_use
     return Response(status_code=204)
 
 
-@router.get('/agent-contracts')
+@router.get('/agent-contracts', response_model=Envelope)
 def contracts():
     from agent.schemas.public.inputs import InputSnapshot
     from agent.schemas.public.tasks import AgentTask
@@ -314,7 +315,7 @@ def contracts():
     return ok({'task': AgentTask.model_json_schema(), 'snapshot': InputSnapshot.model_json_schema(), 'support': support_manifest(default_rule_registry())})
 
 
-@router.get('/glossary')
+@router.get('/glossary', response_model=Envelope)
 def glossary(q: str = ''):
     from agent.services.glossary import glossary_entries
     return ok({'items': glossary_entries(q)})

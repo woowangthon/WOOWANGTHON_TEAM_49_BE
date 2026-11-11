@@ -119,7 +119,7 @@ def source_ref(con, document_id, owner_id, case_id=None):
         if link['purpose']:
             usage = link['purpose'].lower()
             if usage not in ('payroll','context','both'):
-                raise ApiError(422,'INVALID_SOURCE_USAGE',details={'allowed':['payroll','context','both']})
+                usage = 'payroll'  # Legacy purpose strings are labels, not authorization grants.
         if link['applicable_from'] and link['applicable_to']:
             applicable = {'start': link['applicable_from'], 'end': link['applicable_to']}
     return SourceRef(source_id=f'doc:{doc["id"]}', owner_id=str(owner_id), workplace_id=str(doc['workplace_id']),
@@ -348,6 +348,8 @@ class IntegrationStore:
                 raise ApiError(404, 'RESOURCE_NOT_FOUND')
             if row['status'] in ('PENDING', 'RUNNING'):
                 con.execute("UPDATE agent_jobs SET cancel_requested=1,status='CANCELLED',execution_hash=NULL,completed_at=? WHERE id=?", (now(), job_id))
+                from app.compatibility import complete_job
+                complete_job(con,row,error_code='JOB_CANCELLED')
                 if row['document_id'] is not None:
                     con.execute("UPDATE documents SET processing_status='FAILED',error_code='JOB_CANCELLED',progress=100 WHERE id=? AND deleted_at IS NULL",(row['document_id'],))
 

@@ -26,9 +26,8 @@ def test_replacement_preserves_group_confirmation_and_case_override(api):
     saved=save_input(client,gid,version=selected.json()['data']['version'])
     before=saved['confirmedInput']
     fields=client.get(f'/api/v1/cases/{cid}/documents/{did}/fields').json()['data']['fields']
-    gross=next(f for f in fields if f['key']=='gross')
-    # Existing legacy case edits may remain after migration; the obsolete edit
-    # endpoint is intentionally blocked in the new explicit confirmation flow.
+    gross=next(f for f in fields if f['key']=='grossPay')
+    # Simulate a persisted case override and verify it survives replacement.
     from app.db import dump, now
     with app.state.db.connect(write=True) as con:
         con.execute('INSERT INTO field_overrides(case_id,field_id,value_json,status,confirmed_at) VALUES(?,?,?,?,?)',
@@ -48,5 +47,5 @@ def test_replacement_preserves_group_confirmation_and_case_override(api):
     assert client.get(f'/api/v1/cases/{other}/documents/{did}').status_code==200
     assert client.get(f'/api/v1/cases/{cid}/documents/{did}').status_code==404
     fields=client.get(f'/api/v1/cases/{cid}/documents/{new_id}/fields').json()['data']['fields']
-    carried=next(f for f in fields if f['key']=='gross')
-    assert carried['value']=='2100000' and carried['status']=='UNCONFIRMED'
+    carried=next(f for f in fields if f['key']=='grossPay')
+    assert carried['value']==2100000 and carried['status']=='UNCONFIRMED'

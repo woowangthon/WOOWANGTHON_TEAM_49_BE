@@ -1,0 +1,13 @@
+{
+  "transport": "real Docker TCP HTTP",
+  "manual_to_real_agent": true,
+  "net_delta": 10000,
+  "deduction_delta": -10000,
+  "independent_versions": true,
+  "cash_reported_status_preserved": true,
+  "inquiry_selection": true,
+  "legacy_report_pdf_zip": true,
+  "idempotency": true,
+  "cors": true,
+  "paid_model_calls": 0
+}

@@ -22,3 +22,15 @@
 - 실제 TCP CORS/Bearer/동일 origin 쿠키·refresh·업로드 READ_READY·키 없는 SSE error 및 FAILED 저장 확인. 외부 프론트 브라우저·EC2·실제 모델 품질은 미검증.
 - scripts/audit_frontend_contract.py와 92개 참조 fixture·원시 JSON/회귀 로그·endpoint matrix·FRONTEND_CONTRACT_AUDIT.md 추가. --strict는 차이 발견 시 종료 코드 1이며 현재 정상적으로 계약 불합격을 나타냄.
 - 앱 런타임 수정 없이 검증 코드/기록만 추가. 호환 adapter 또는 프론트 계약/호출 순서 동시 개정이 필요하다는 결과를 남김.
+
+
+## 2026-11-12 — 프론트 계약 오류 수정·기존 Case API 복구
+
+- 사용자 요청: 로컬 프론트 부재는 실패로 취급하지 않고 첨부 API 계약 기준으로 오류 수정. 실제 통합 저장소 woowangthon-be 루트 대상으로 격리된 사본에서 구현 후 반영.
+- 기존 수기·확인 필드·조건·배분을 소유권/원본 출처를 가진 agent InputSnapshot으로 고정하고 실제 run_task에 전달. 저장 후 영속 자동 검사, checks 전달, 검사별 정수 snapshot/독립 버전, ResultsDTO·recompute-status·readiness 복구.
+- legacy fields PATCH의 후보 확인·수기 정정·Case override·공유값·재추출 후 재확인 지원. 숫자형 공개 키와 원시 agentKey를 병행하고 잘못된 금액·소수 절삭을 막음. PDF 판독 한도 20→50으로 업로드와 일치.
+- 기존 보고서 5개 경로를 실제 분석→설명→보고서 파이프라인에 연결. 입력·원본 고정, idempotency, 재시작 단계 복구, PDF/ZIP 동일 바이트, 연결 철회 후 접근 차단 확인. 원본 ZIP에 result-snapshot.json 별칭 추가.
+- 문의문 선택 항목/참조 버전 검증·실제 선택 내용 반영. 채팅 clientMessageId 중복 저장/호출 방지, 재생 시 출처 재검사, page 쿼리로 페이지 응답 제공(기본 messages 배열 유지). 새 비교 묶음·검토 작업실 흐름 유지.
+- 최종 전체 회귀 752 passed / 9 skipped / 13 warnings, 32.96초. Ruff·컴파일 통과. 첨부 92개 경로 모두 등록, 계약 비교 38/38 일치. OpenAPI 102 path/138 HTTP 작업, 빈 JSON 성공 스키마 0(일부 동적 응답은 JsonValue envelope).
+- linux/amd64 Docker 이미지 빌드 및 실제 HTTP의 기존/신규 흐름 성공. 유료 모델 호출 0회, 사용자 DB·파일 미사용. 프론트 브라우저·원격 EC2 배포·실제 모델 품질은 검증하지 않음.
+- 상세: docs/FRONTEND_CONTRACT_FIXES.md, contract-audit/fixed-* 증거. 이전 감사는 수정 전 기록으로 표시해 보존. 원격 push는 수행하지 않음.

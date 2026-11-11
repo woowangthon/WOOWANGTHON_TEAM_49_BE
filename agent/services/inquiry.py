@@ -5,7 +5,7 @@ from agent.services.facts import result_fact_lines
 INQUIRY_TEMPLATE_VERSION = "inquiry-ko-v1"
 
 
-def compose_inquiry(result, question_ids, *, workplace_name="", period=None):
+def compose_inquiry(result, question_ids, *, workplace_name="", period=None, rule_ids=None):
     ids = list(dict.fromkeys(question_ids))
     questions = {q.question_id: q for q in result.questions}
     if any(identifier not in questions for identifier in ids):
@@ -18,7 +18,7 @@ def compose_inquiry(result, question_ids, *, workplace_name="", period=None):
             (period["start"], period["end"]) if isinstance(period, dict) else (period.start, period.end)
         )
         lines.append(f"확인할 급여기간: {start} ~ {end}")
-    lines.extend(["", "제가 확인한 자료의 계산·대조 결과입니다.", *result_fact_lines(result)])
+    lines.extend(["", "제가 확인한 자료의 계산·대조 결과입니다.", *result_fact_lines(result, rule_ids)])
     if ids:
         lines.extend(["", "다음 내용을 확인해 주실 수 있을까요?"])
         for index, identifier in enumerate(ids, 1):

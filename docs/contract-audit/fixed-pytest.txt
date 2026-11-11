@@ -1,0 +1,21 @@
+........................................................................ [  9%]
+........................................................................ [ 18%]
+........................................................................ [ 28%]
+........................................................................ [ 37%]
+.............s................sss.................s.............ss...... [ 47%]
+........................................................................ [ 56%]
+........................................................................ [ 66%]
+........................................................................ [ 75%]
+....................................s................................... [ 85%]
+........................................................................ [ 94%]
+..s......................................                                [100%]
+=========================== short test summary info ============================
+SKIPPED [1] agent/tests/test_comparison_workspaces.py:170: Authored four-PDF corpus is not distributed with the source
+SKIPPED [1] agent/tests/test_contract_corpus.py:29: The original validation corpus is not distributed with the source.
+SKIPPED [1] agent/tests/test_contract_corpus.py:44: The original validation corpus is not distributed with the source.
+SKIPPED [1] agent/tests/test_contract_corpus.py:77: The original validation corpus is not distributed with the source.
+SKIPPED [1] agent/tests/test_contract_corpus.py:170: The original validation corpus is not distributed with the source.
+SKIPPED [2] agent/tests/test_document_text_reading.py:216: Optional authored payroll PDF fixture is not present
+SKIPPED [1] agent/tests/test_payroll_pages.py:19: Authored local PDF corpus is optional
+SKIPPED [1] agent/tests/test_server_binding.py:31: Windows socket option
+752 passed, 9 skipped, 13 warnings in 32.96s

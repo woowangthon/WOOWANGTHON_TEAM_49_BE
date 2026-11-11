@@ -1,3 +1,4 @@
+from app.schemas import Envelope
 import sqlite3
 
 from fastapi import APIRouter, Depends, Query, Request, Response
@@ -59,7 +60,7 @@ def insert_allocation(con, case_id, transaction_id, amount):
             'transactionAmount': tx['amount'], 'totalAllocatedAcrossCases': used + amount, 'remainingUnallocated': tx['amount'] - used - amount}
 
 
-@router.post('/workplaces/{workplace_id}/payment-transactions', status_code=201)
+@router.post('/workplaces/{workplace_id}/payment-transactions', status_code=201, response_model=Envelope)
 def create_transaction(workplace_id: int, body: TransactionCreate, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         workplace(con, workplace_id, user['id'])
@@ -67,7 +68,7 @@ def create_transaction(workplace_id: int, body: TransactionCreate, request: Requ
         return ok(transaction_dto(con, transaction(con, workplace_id, tid)), 201)
 
 
-@router.get('/workplaces/{workplace_id}/payment-transactions')
+@router.get('/workplaces/{workplace_id}/payment-transactions', response_model=Envelope)
 def list_transactions(workplace_id: int, request: Request, page: int = Query(1, ge=1),
                       size: int = Query(20, ge=1, le=100), user=Depends(current_user)):
     with request.app.state.db.connect() as con:
@@ -76,7 +77,7 @@ def list_transactions(workplace_id: int, request: Request, page: int = Query(1, 
         return ok(page_data([transaction_dto(con, row) for row in rows], page, size))
 
 
-@router.get('/workplaces/{workplace_id}/payment-transactions/duplicate-candidates')
+@router.get('/workplaces/{workplace_id}/payment-transactions/duplicate-candidates', response_model=Envelope)
 def duplicate_candidates(workplace_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         workplace(con, workplace_id, user['id'])
@@ -86,7 +87,7 @@ def duplicate_candidates(workplace_id: int, request: Request, user=Depends(curre
         return ok({'candidates': [{'transactionIds': list(pair), 'reason': 'SAME_DATE_AMOUNT_METHOD'} for pair in pairs]})
 
 
-@router.get('/workplaces/{workplace_id}/payment-transactions/{transaction_id}')
+@router.get('/workplaces/{workplace_id}/payment-transactions/{transaction_id}', response_model=Envelope)
 def get_transaction(workplace_id: int, transaction_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         workplace(con, workplace_id, user['id'])
@@ -96,7 +97,7 @@ def get_transaction(workplace_id: int, transaction_id: int, request: Request, us
         return ok(dto)
 
 
-@router.patch('/workplaces/{workplace_id}/payment-transactions/{transaction_id}')
+@router.patch('/workplaces/{workplace_id}/payment-transactions/{transaction_id}', response_model=Envelope)
 def patch_transaction(workplace_id: int, transaction_id: int, body: TransactionPatch, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         workplace(con, workplace_id, user['id'])
@@ -145,7 +146,7 @@ def delete_transaction(workplace_id: int, transaction_id: int, request: Request,
     return Response(status_code=204)
 
 
-@router.post('/cases/{case_id}/deposits', status_code=201, dependencies=[Depends(idempotency_header)])
+@router.post('/cases/{case_id}/deposits', status_code=201, dependencies=[Depends(idempotency_header)], response_model=Envelope)
 def allocate(case_id: int, body: AllocationCreate, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         c = case(con, case_id, user['id'])
@@ -157,7 +158,7 @@ def allocate(case_id: int, body: AllocationCreate, request: Request, user=Depend
             **schedule(con, case_id, ['DEPOSIT_COMPARISON'], request.app.state.settings.recompute_debounce_seconds)}, 201)
 
 
-@router.get('/cases/{case_id}/deposits')
+@router.get('/cases/{case_id}/deposits', response_model=Envelope)
 def allocations(case_id: int, request: Request, page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=100), user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         case(con, case_id, user['id'])
@@ -173,7 +174,7 @@ def allocation(con, case_id, allocation_id):
     return row
 
 
-@router.patch('/cases/{case_id}/deposits/{allocation_id}')
+@router.patch('/cases/{case_id}/deposits/{allocation_id}', response_model=Envelope)
 def patch_allocation(case_id: int, allocation_id: int, body: AllocationPatch, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect(write=True) as con:
         c = case(con, case_id, user['id'])
@@ -198,7 +199,7 @@ def delete_allocation(case_id: int, allocation_id: int, request: Request, user=D
     return Response(status_code=204)
 
 
-@router.get('/cases/{case_id}/deposit-comparison')
+@router.get('/cases/{case_id}/deposit-comparison', response_model=Envelope)
 def deposit_comparison(case_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         case(con, case_id, user['id'])
@@ -208,7 +209,7 @@ def deposit_comparison(case_id: int, request: Request, user=Depends(current_user
             'linkedPaymentTotal': None, 'difference': None})
 
 
-@router.get('/cases/{case_id}/deposit-comparisons')
+@router.get('/cases/{case_id}/deposit-comparisons', response_model=Envelope)
 def deposit_comparisons(case_id: int, request: Request, page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=100), user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         case(con, case_id, user['id'])

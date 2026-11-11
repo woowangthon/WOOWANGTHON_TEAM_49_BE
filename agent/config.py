@@ -19,7 +19,7 @@ class AgentSettings(BaseModel):
     explanation_model: str = "gpt-6-luna"
     model_config_version: str = "luna-v1"
     max_file_bytes: int = Field(default=20 * 1024 * 1024, gt=0)
-    max_pages: int = Field(default=20, gt=0)
+    max_pages: int = Field(default=50, gt=0)
     max_stage_calls: int = Field(default=3, ge=1, le=3)
     max_output_tokens: int = Field(default=8192, gt=0)
     timeout_seconds: float = Field(default=120, gt=0)

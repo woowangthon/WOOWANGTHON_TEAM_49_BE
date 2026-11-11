@@ -5,7 +5,7 @@
 ## 폴더와 역할
 
 ```text
-devmerge/
+저장소 루트/
   app/
     main.py                  FastAPI 시작/설정 주입/worker 수명/오류
     config.py                백엔드 환경설정 → AgentSettings
@@ -13,7 +13,8 @@ devmerge/
     integration_store.py     비교 묶음·작업·스냅샷·결과·OCR·산출물 저장
     security.py              로그인/사용자별 자원 소유권
     worker.py                로컬 읽기 등록 + 제한된 작업 소비
-    engine.py                기존 URL용 결과 조회·입력 무효화 (계산식 없음)
+    engine.py                기존 URL용 독립 버전 결과 조회 (계산식 없음)
+    compatibility.py         확인 필드·수기·배분 → agent 입력 및 기존 DTO 변환
     agent_service.py         선점/원문 읽기/run_task/최종 확정
     agent_mapping.py         확인값·원문 의미·배분 → 공개 입력/결과
     agent_ports.py           DB·파일 기반 AgentPorts
@@ -81,6 +82,6 @@ flowchart TD
 
 ## 기존 API 조정
 
-`/cases/{id}/comparisons`는 결과 이력으로 유지한다. 묶음 관리는 `/cases/{id}/comparison-groups`다. 기존 자동 재계산을 명시적 확인 후 analyze로 바꾸었으며, 기존 prototype 숫자 입력으로 부족한 임금 조건을 임의 생성하지 않는다. 반환되는 agent 금액은 decimal string이며 비교의 부호는 lhs-rhs다. 옛 숫자형 ResultsDTO를 새 결과에 적용하지 않는다.
+`/cases/{id}/comparisons`는 결과 이력으로 유지한다. 묶음 관리는 `/cases/{id}/comparison-groups`다. 기존 Case 수기·필드·조건 저장은 영속 jobs를 통해 실제 agent 자동 검사로 연결한다. 숨겨진 compat 묶음에서 확인된 입력만 고정하며, 새 비교 묶음의 명시적 확인→analyze도 유지한다. 원시 agent 금액은 decimal string/lhs-rhs, 기존 Case API는 독립 정수 snapshot과 숫자형 ResultsDTO로 투영한다. 확인한 기본급 산술 외 부족한 임금 조건은 임의 생성하지 않는다.
 
-보고서는 확정 agent 결과의 `/agent-results/{id}/reports`와 `agent/services/reports.py`를 사용한다. 사용하지 않는 이전 보고서 구현·라우터와 최초 복사용 스크립트는 정리했다. 이전 HTTP AIAdapter의 추출 및 고정 mock은 제거했으며 자유 채팅은 외부 모델을 직접 호출한다.
+보고서는 확정 agent 결과의 `/agent-results/{id}/reports`와 `agent/services/reports.py`를 사용한다. 기존 `/cases/{id}/reports`도 영속 reports 단계에서 실제 분석→설명→같은 보고서 생성기로 연결한다. 생성 시 입력·선택 원본을 고정하고, 각 조회/다운로드에서 원본 접근을 재검사한다. 이전 HTTP AIAdapter의 추출 및 고정 mock은 제거했으며 자유 채팅은 외부 모델을 직접 호출한다.

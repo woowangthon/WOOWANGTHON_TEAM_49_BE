@@ -13,8 +13,9 @@ from app.config import Settings
 from app.centers import seed_centers
 from app.db import Database, load
 from app.errors import ApiError, ok
+from app.schemas import Envelope
 from app.outputs import API, ErrorData
-from app.routers import analysis, auth, chats, documents, payments, workspaces, integration, reviews
+from app.routers import analysis, auth, chats, documents, payments, workspaces, integration, reviews, reports
 from app.worker import document_worker, agent_worker
 from app.agent_service import AgentService
 from agent.schemas.public.errors import AgentError
@@ -43,7 +44,7 @@ def create_app(settings=None, ai_client=None, *, provider=None, recognizer=None,
         app.state.reviews.store.initialize()
         with app.state.db.connect(write=True) as con:
             seed_centers(con)
-            con.execute("UPDATE jobs SET status='SUPERSEDED' WHERE status IN ('PENDING','RUNNING')")
+            con.execute("UPDATE jobs SET status='PENDING' WHERE status='RUNNING'")
             con.execute("UPDATE messages SET status='FAILED' WHERE status='STREAMING'")
         app.state.ai = AIAdapter(settings, ai_client)
         app.state.chat_runs = {}
@@ -104,11 +105,11 @@ def create_app(settings=None, ai_client=None, *, provider=None, recognizer=None,
         return JSONResponse(status_code=500, content={'code': 500, 'message': '서버 처리에 실패했습니다.',
                                                       'data': {'errorCode': 'INTERNAL_SERVER_ERROR'}})
 
-    @app.get('/health', tags=['System'])
+    @app.get('/health', tags=['System'], response_model=Envelope)
     def health():
         return ok({'status': 'ok', 'aiMode': 'direct', 'version': '1.0.0'})
 
-    @app.get('/api/v1/consultation-centers', tags=['Consultation'])
+    @app.get('/api/v1/consultation-centers', tags=['Consultation'], response_model=Envelope)
     def centers(request: Request, region: str | None = None, category: str | None = None,
                 page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=100)):
         from app.routers.workspaces import page_data
@@ -121,7 +122,7 @@ def create_app(settings=None, ai_client=None, *, provider=None, recognizer=None,
                    'nationwideFallbackUsed': bool(region and not regional and nationwide),
                    'dataStatus': 'NATIONWIDE_ONLY' if not regional else 'AVAILABLE'})
 
-    for router in (auth.router, workspaces.router, documents.router, analysis.router, payments.router, chats.router, integration.router, reviews.router):
+    for router in (auth.router, workspaces.router, documents.router, analysis.router, payments.router, chats.router, integration.router, reviews.router, reports.router):
         app.include_router(router, prefix='/api/v1', responses={
             code: {'model': API[ErrorData], 'description': description} for code, description in {
                 401: '인증 필요/토큰 만료', 404: '없는 자원/권한 없음/삭제',

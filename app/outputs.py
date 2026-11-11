@@ -65,7 +65,7 @@ class CaseDTO(BaseModel):
     status: Literal['CREATED', 'IN_PROGRESS', 'COMPLETED', 'ARCHIVED']
     currentStep: Literal['UPLOAD', 'REVIEW', 'CONDITIONS', 'COMPARE', 'RESULT']
     documentCount: int
-    latestCalculationId: str | None
+    latestCalculationId: int | None
     inputVersion: int
     attentionRequired: bool
     attentionCount: int
@@ -93,6 +93,7 @@ class FieldDTO(BaseModel):
     key: str
     label: str
     value: JsonValue
+    agentKey: str | None = None
     valueType: str
     status: Literal['UNCONFIRMED', 'CONFIRMED', 'MISSING', 'UNREADABLE', 'CONFLICTED', 'DEFERRED', 'NEEDS_RECONFIRMATION']
     editedByUser: bool
@@ -148,6 +149,7 @@ class ResultsDTO(BaseModel):
     comparison: dict[str, JsonValue] | None
     payslipValidation: dict[str, JsonValue] | None
     depositComparison: dict[str, JsonValue] | None
+    result: dict[str, JsonValue] | None = None
 
 
 class RecomputeDTO(BaseModel):

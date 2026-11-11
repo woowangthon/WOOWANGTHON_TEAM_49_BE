@@ -1,4 +1,5 @@
 """Next.js review API; authentication is the same as the existing backend."""
+from app.schemas import Envelope
 
 from datetime import date
 from typing import Annotated, Literal
@@ -130,12 +131,12 @@ def values(body, *exclude):
     return body.model_dump(mode='json', exclude_unset=True, exclude=set(exclude), exclude_none=True)
 
 
-@router.post('/reviews', status_code=201)
+@router.post('/reviews', status_code=201, response_model=Envelope)
 def create(body: ReviewCreate, request: Request, user=Depends(current_user)):
     return ok(request.app.state.reviews.create(user['id'], **body.model_dump()), 201)
 
 
-@router.get('/reviews')
+@router.get('/reviews', response_model=Envelope)
 def list_reviews(request: Request, page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=100), user=Depends(current_user)):
     store = request.app.state.reviews.store
     with store.db.connect() as con:
@@ -148,12 +149,12 @@ def list_reviews(request: Request, page: int = Query(1, ge=1), size: int = Query
     return ok({'items': items, 'page': page, 'size': size, 'profiles': profiles()})
 
 
-@router.get('/reviews/{rid}')
+@router.get('/reviews/{rid}', response_model=Envelope)
 def get_review(rid: str, request: Request, user=Depends(current_user)):
     return ok(request.app.state.reviews.store.view(user['id'], rid))
 
 
-@router.put('/reviews/{rid}')
+@router.put('/reviews/{rid}', response_model=Envelope)
 def update(rid: str, body: ReviewUpdate, request: Request, user=Depends(current_user)):
     return ok(request.app.state.reviews.update(user['id'], rid, body.revision, values(body, 'revision')))
 
@@ -169,7 +170,7 @@ def delete(rid: str, request: Request, revision: int = Query(ge=1), user=Depends
     return Response(status_code=204)
 
 
-@router.post('/reviews/{rid}/documents', status_code=202)
+@router.post('/reviews/{rid}/documents', status_code=202, response_model=Envelope)
 async def upload(rid: str, request: Request, revision: Annotated[int, Form(ge=1)],
                  files: Annotated[list[UploadFile], File()], user=Depends(current_user)):
     if not 1 <= len(files) <= 20:
@@ -185,41 +186,41 @@ async def upload(rid: str, request: Request, revision: Annotated[int, Form(ge=1)
     return ok(await request.app.state.reviews.upload(user['id'], rid, revision, content), 202)
 
 
-@router.post('/reviews/{rid}/documents/{did}')
+@router.post('/reviews/{rid}/documents/{did}', response_model=Envelope)
 def document_action(rid: str, did: str, body: DocumentAction, request: Request, user=Depends(current_user)):
     return ok(request.app.state.reviews.document_action(user['id'], rid, did, body.revision,
         body.action, body.model_dump(mode='json', exclude={'revision', 'action'})))
 
 
-@router.get('/reviews/{rid}/documents/{did}/original')
+@router.get('/reviews/{rid}/documents/{did}/original', response_model=Envelope)
 def original(rid: str, did: str, request: Request, user=Depends(current_user)):
     document, data = request.app.state.reviews.source(user['id'], rid, did)
     return Response(data, media_type=document['media_type'], headers={'Content-Disposition': 'inline'})
 
 
-@router.get('/reviews/{rid}/documents/{did}/pages/{page}.png')
+@router.get('/reviews/{rid}/documents/{did}/pages/{page}.png', response_model=Envelope)
 async def page_image(rid: str, did: str, page: int, request: Request, user=Depends(current_user)):
     return Response(await request.app.state.reviews.page(user['id'], rid, did, page), media_type='image/png')
 
 
-@router.put('/reviews/{rid}/fields')
+@router.put('/reviews/{rid}/fields', response_model=Envelope)
 def edit(rid: str, body: FieldEdit, request: Request, user=Depends(current_user)):
     return ok(request.app.state.reviews.edit(user['id'], rid, body.revision, values(body, 'revision')))
 
 
-@router.post('/reviews/{rid}/fields')
+@router.post('/reviews/{rid}/fields', response_model=Envelope)
 def add(rid: str, body: FieldAdd, request: Request, user=Depends(current_user)):
     return ok(request.app.state.reviews.add_fields(user['id'], rid, body.revision,
         body.part_id, body.row_type, body.label))
 
 
-@router.post('/reviews/{rid}/confirm')
+@router.post('/reviews/{rid}/confirm', response_model=Envelope)
 def confirm(rid: str, body: Confirm, request: Request, user=Depends(current_user)):
     return ok(request.app.state.reviews.confirm(user['id'], rid, body.revision,
         body.field_ids, body.source_seen, body.conflict_acknowledgement))
 
 
-@router.get('/reviews/{rid}/jobs/{jid}')
+@router.get('/reviews/{rid}/jobs/{jid}', response_model=Envelope)
 def job(rid: str, jid: str, request: Request, user=Depends(current_user)):
     store = request.app.state.reviews.store
     with store.db.connect() as con:
@@ -230,12 +231,12 @@ def job(rid: str, jid: str, request: Request, user=Depends(current_user)):
         return ok(store.job_view(row))
 
 
-@router.post('/reviews/{rid}/jobs/{jid}')
+@router.post('/reviews/{rid}/jobs/{jid}', response_model=Envelope)
 def job_action(rid: str, jid: str, body: JobAction, request: Request, user=Depends(current_user)):
     return ok(request.app.state.reviews.control_job(user['id'], rid, jid, body.action, body.revision))
 
 
-@router.get('/reviews/{rid}/history')
+@router.get('/reviews/{rid}/history', response_model=Envelope)
 def history(rid: str, request: Request, page: int = Query(1, ge=1), user=Depends(current_user)):
     store = request.app.state.reviews.store
     with store.db.connect() as con:
@@ -245,7 +246,7 @@ def history(rid: str, request: Request, page: int = Query(1, ge=1), user=Depends
         return ok({'items': [dict(row) | {'data': load(row['data_json'])} for row in rows], 'page': page})
 
 
-@router.post('/reviews/{rid}/complete', status_code=202)
+@router.post('/reviews/{rid}/complete', status_code=202, response_model=Envelope)
 async def complete(rid: str, body: Complete, request: Request, user=Depends(current_user)):
     return ok(await complete_review(request.app.state.reviews, user['id'], rid, body.revision,
         body.model_dump(mode='json', exclude={'revision'})), 202)

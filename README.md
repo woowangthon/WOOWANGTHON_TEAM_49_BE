@@ -42,7 +42,7 @@ uv run python -m app
 
 ## 1차 문서 검토 작업실 API
 
-사업장·사례 생성 전에도 로그인한 사용자 소유의 검토 초안을 만든다. 여러 원본, 페이지별 판독·좌표, 구간별 후보, 사용자 수정·확정 이력과 작업 상태를 SQLite에 저장한다. 기존 업로드 API는 계속 로컬 읽기만 자동 실행한다.
+사업장·사례 생성 전에도 로그인한 사용자 소유의 검토 초안을 만든다. 여러 원본, 페이지별 판독·좌표, 구간별 후보, 사용자 수정·확정 이력과 작업 상태를 SQLite에 저장한다. 기존 업로드 API는 판독 후 A 추출까지 자동 실행한다(API 키 필요). B는 별도 명시 요청이다.
 
 1. `POST /api/v1/reviews`로 초안 생성. `auto_process=false`, `auto_verify=false`가 기본이다.
 2. `POST /api/v1/reviews/{id}/documents`에 multipart `revision`과 반복 `files`를 전송한다. 한 번에 최대 20개, 파일당 설정 한도(기본 20MB), 요청 합계 80MB다. 같은 검토의 동일 바이트 재등록은 자료·모델 호출을 중복 생성하지 않는다.
@@ -77,4 +77,4 @@ Windows의 제한된 실행 샌드박스는 asyncio 내부 localhost 소켓을 �
 - [폴더·호출·저장 구조](docs/ARCHITECTURE.md)
 - [새 검토 API와 연결 계약](docs/REVIEW_WORKSPACE.md)
 
-`agent/dev`와 그 화면 자산은 기존 회귀 테스트용으로만 보존했다. FastAPI는 이를 import하거나 서비스하지 않는다. 이전 백엔드의 숫자만 있는 수기/조건 입력은 자동으로 표준 임금 조건으로 승격하지 않으며, 비교 묶음의 명시적 확인 입력이 계산 실행 기준이다.
+`agent/dev`와 그 화면 자산은 기존 회귀 테스트용으로만 보존했다. FastAPI는 이를 import하거나 서비스하지 않는다. 기존 Case API의 수기·필드·조건 저장은 실제 agent 자동 검사로 연결한다. 확인된 기본급 산술만 지원하며 표준 임금 조건을 임의 생성하지 않는다. 새 비교 묶음의 명시적 확인 흐름도 유지한다. [프론트 계약 복구·연동 정책](docs/FRONTEND_CONTRACT_FIXES.md)을 참고한다.

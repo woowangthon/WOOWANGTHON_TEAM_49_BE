@@ -99,10 +99,12 @@ def wage_formula_text(item):
     return "세부 산식 표시 정보 없음"
 
 
-def result_fact_lines(result):
+def result_fact_lines(result, rule_ids=None):
     """Describe only recorded calculations; a difference is never a legal finding."""
     lines = []
     for item in result.wage_section.items:
+        if rule_ids is not None and item.rule_id not in rule_ids:
+            continue
         label = WAGE_LABELS.get(item.rule_id, item.rule_id)
         if item.status == "calculated":
             lines.append(f"{label}: {format_value(item.amount)} (확인된 조건의 계산값).")
@@ -113,7 +115,7 @@ def result_fact_lines(result):
         else:
             lines.append(f"{label}: {STATUS_LABELS[item.status]}.")
     wage = result.wage_section
-    if wage.items:
+    if wage.items and rule_ids is None:
         if any(item.status == "calculated" for item in wage.items):
             lines.append(f"계산 가능한 항목의 소계: {format_value(wage.subtotal)}.")
         else:
@@ -123,6 +125,8 @@ def result_fact_lines(result):
         else:
             lines.append("보류 또는 제외 범위가 있어 소계를 전체 지급총액으로 확정하지 않았습니다.")
     for item in result.comparisons:
+        if rule_ids is not None and item.rule_id not in rule_ids:
+            continue
         label = RULE_LABELS.get(item.rule_id, item.rule_id)
         text = f"{label}: {STATUS_LABELS[item.status]}."
         lhs_label, rhs_label = COMPARISON_SIDES.get(item.rule_id, ("왼쪽 값", "오른쪽 값"))

@@ -4,6 +4,7 @@ from langgraph.graph import END, START, StateGraph
 
 from agent.config import ENGINE_VERSION
 from agent.rules import comparisons
+from agent.rules.comparisons import comparison
 from agent.rules.registry import WAGE_RULE_IDS
 from agent.rules.wages import compare_wages, wage_section
 from agent.schemas.internal.calculation_context import CalculationContext
@@ -27,6 +28,29 @@ class AnalysisState(TypedDict, total=False):
 
 def build_analysis_graph(runtime, registry):
     payload = runtime.task.payload
+    selected = set(
+        payload.checks
+        or ["WAGE_CALCULATION", "CONTRACT_ATTENDANCE_COMPARISON", "PAYSLIP_VALIDATION", "DEPOSIT_COMPARISON"]
+    )
+
+    def compare(context, kind):
+        rule_ids, check, fn = {
+            "terms": (["R-01", "R-02"], "CONTRACT_ATTENDANCE_COMPARISON", comparisons.terms),
+            "statement": (["R-03", "R-04", "R-05"], "PAYSLIP_VALIDATION", comparisons.statements),
+            "payment": (["R-06"], "DEPOSIT_COMPARISON", comparisons.payments),
+        }[kind]
+        return (
+            fn(context)
+            if check in selected
+            else [comparison(r, reasons=["CHECK_NOT_REQUESTED"]) for r in rule_ids]
+        )
+
+    def wage_compare(context, wage):
+        return (
+            compare_wages(context, wage)
+            if "WAGE_CALCULATION" in selected
+            else comparison("R-07", reasons=["CHECK_NOT_REQUESTED"])
+        )
 
     async def supervisor(state):
         def prepare():
@@ -49,7 +73,11 @@ def build_analysis_graph(runtime, registry):
     async def worker_wage(state):
         def compute():
             ctx = CalculationContext.model_validate(state["context"])
-            items = [registry.evaluate(rid, ctx) for rid in WAGE_RULE_IDS]
+            items = (
+                [registry.evaluate(rid, ctx) for rid in WAGE_RULE_IDS]
+                if "WAGE_CALCULATION" in selected
+                else []
+            )
             return wage_section(items, ctx.snapshot).model_dump(mode="json")
 
         return {"wage": await runtime.step("worker_wage", compute)}
@@ -61,7 +89,7 @@ def build_analysis_graph(runtime, registry):
                     name,
                     lambda: [
                         x.model_dump(mode="json")
-                        for x in fn(CalculationContext.model_validate(state["context"]))
+                        for x in compare(CalculationContext.model_validate(state["context"]), key)
                     ],
                 )
             }
@@ -72,9 +100,7 @@ def build_analysis_graph(runtime, registry):
         def merge():
             ctx = CalculationContext.model_validate(state["context"])
             comps = state["terms"] + state["statement"] + state["payment"]
-            comps.append(
-                compare_wages(ctx, WageSection.model_validate(state["wage"])).model_dump(mode="json")
-            )
+            comps.append(wage_compare(ctx, WageSection.model_validate(state["wage"])).model_dump(mode="json"))
             return AnalysisResultCandidate(
                 owner_id=ctx.snapshot.owner_id,
                 case_id=ctx.snapshot.case_id,
@@ -100,17 +126,21 @@ def build_analysis_graph(runtime, registry):
         def validate():
             ctx = CalculationContext.model_validate(state["context"])
             candidate = AnalysisResultCandidate.model_validate(state["candidate"])
-            expected = comparisons.terms(ctx) + comparisons.statements(ctx) + comparisons.payments(ctx)
+            expected = compare(ctx, "terms") + compare(ctx, "statement") + compare(ctx, "payment")
             if digest(candidate.comparisons[:6]) != digest(expected):
                 raise IntegrityError("Comparison revalidation failed")
-            expected_items = [registry.evaluate(rid, ctx) for rid in WAGE_RULE_IDS]
+            expected_items = (
+                [registry.evaluate(rid, ctx) for rid in WAGE_RULE_IDS]
+                if "WAGE_CALCULATION" in selected
+                else []
+            )
             if digest(candidate.wage_section.items) != digest(expected_items):
                 raise IntegrityError("Wage revalidation failed")
             expected_wage = wage_section(expected_items, ctx.snapshot)
             if digest(candidate.wage_section) != digest(expected_wage):
                 raise IntegrityError("Wage total revalidation failed")
             if len(candidate.comparisons) != 7 or digest(candidate.comparisons[6]) != digest(
-                compare_wages(ctx, expected_wage)
+                wage_compare(ctx, expected_wage)
             ):
                 raise IntegrityError("Wage comparison revalidation failed")
             allowed = {e.evidence_id for e in ctx.snapshot.evidence_catalog}

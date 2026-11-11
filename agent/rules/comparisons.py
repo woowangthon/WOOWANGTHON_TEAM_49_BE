@@ -142,10 +142,13 @@ def statements(context):
 def payments(context):
     s = context.snapshot
     net, refs, reasons, conflict = field(s, "net", "KRW")
+    legacy = any(
+        src.kind == "manual" and src.source_id.startswith("legacy-api:") for src in s.authorized_sources
+    )
     selected = [
         t
         for t in s.transaction_allocations
-        if t.confirmed and t.linked and not t.duplicate and t.kind == "bank"
+        if t.linked and not t.duplicate and (legacy or (t.confirmed and t.kind == "bank"))
     ]
     if len({t.transaction_id for t in selected}) != len(selected):
         reasons.append("DUPLICATE_TRANSACTION")
