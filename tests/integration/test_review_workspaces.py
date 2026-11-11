@@ -589,3 +589,29 @@ def test_subject_check_ignores_only_company_form_spelling(names, blocked):
     result = comparison_compatibility({'sources': sources}, {'subjects_confirmed': True})
     assert result['blocked'] is blocked
     assert any(issue['code'] == 'SUBJECT_MISMATCH' for issue in result['issues']) is blocked
+
+
+def test_unreadable_ocr_page_is_read_again_when_processing_is_retried(review_api, monkeypatch):
+    """A failed page says '재시도가 필요합니다', so retrying must not reuse that failed reading."""
+    from agent.review import reading
+
+    client, app, model, _ = review_api
+    ocr_calls = []
+
+    def flaky_ocr(image, settings, psm=6):
+        ocr_calls.append(psm)
+        if len(ocr_calls) == 1:
+            raise RuntimeError('simulated OCR page timeout')
+        return [{'text': 'gross: 2300000', 'bbox': [0.1, 0.1, 0.6, 0.15], 'confidence': 95.0}]
+
+    monkeypatch.setattr(reading, '_ocr_blocks', flaky_ocr)
+    image = io.BytesIO()
+    Image.new('RGB', (200, 100), 'white').save(image, format='PNG')
+    review = run(client, app, upload(client, create(client), image.getvalue(), 'scan.png'))
+    assert len(ocr_calls) == 1 and review['jobs'][-1]['status'] == 'COMPLETED'
+    did = review['documents'][0]['id']
+    review = run(client, app, checked(client.post(f"/api/v1/reviews/{review['id']}/documents/{did}", json={
+        'revision': review['revision'], 'action': 'process'})))
+    assert len(ocr_calls) == 2
+    assert model.calls == ['classify', 'extract']
+    assert review['documents'][0]['parts'][0]['document_type'] == 'payslip'

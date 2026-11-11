@@ -284,9 +284,13 @@ class ReviewService:
             with self.db.connect() as con:
                 document = self.store.check(con, job)
             original = await asyncio.to_thread((self.store.directory / document['storage_name']).read_bytes)
+            stored = document.get('reading') or data.get('reading')
+            # Reuse a complete reading, or the exact reading a verification targets.
+            # Partial/unreadable pages say to retry, so processing again reads them again.
+            prior = stored if stored and (job['kind'] == 'verify' or stored.get('status') == 'complete') else None
             output = await run_pipeline(original, document['media_type'], self.settings, self.model, data, progress,
                 read_only=job['kind'] == 'read', auto_verify=payload.get('auto_verify', False),
-                prior_reading=document.get('reading') or data.get('reading'),
+                prior_reading=prior,
                 preset_parts=payload.get('preset_parts'), verification_parts=payload.get('verification_parts'),
                 verify_field_ids=payload.get('verify_field_ids'), persist=persist, control=control)
             await control()
