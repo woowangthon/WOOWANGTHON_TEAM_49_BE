@@ -1,0 +1,14 @@
+{
+  "job_id": "demo-analyze_case",
+  "run_id": "run-1",
+  "schema_version": "1.0",
+  "provider_mode": "fixture",
+  "status": "failed",
+  "payload": null,
+  "error": {
+    "code": "INPUT_INTEGRITY_INVALID",
+    "message": "처리에 실패했습니다. 코드와 작업 ID로 확인해 주세요.",
+    "retryable": false
+  },
+  "usage": {}
+}

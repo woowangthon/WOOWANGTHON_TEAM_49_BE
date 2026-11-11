@@ -1,0 +1,171 @@
+{
+  "job_id": "demo-extract_document",
+  "run_id": "run-1",
+  "schema_version": "1.0",
+  "provider_mode": "openai",
+  "status": "completed",
+  "payload": {
+    "document_id": "doc-source-demo",
+    "document_version": 1,
+    "document_type": "payslip",
+    "extraction_version": "1.1",
+    "model_config_version": "luna-v1",
+    "fields": [
+      {
+        "field_id": "contract_rate",
+        "raw_value": "10000",
+        "normalized_value": null,
+        "suggested_value": "10000",
+        "validation_status": "needs_review",
+        "validation_reasons": [
+          "UNKNOWN_FIELD"
+        ],
+        "source_quote": "contract_rate: 10000 KRW/hour",
+        "source_page": 1,
+        "unit": "KRW/hour",
+        "evidence_refs": [
+          "ab77cd2b0a85b37979f39809b1651968e544d05e6776aac8402b313836afbd7c"
+        ],
+        "issues": []
+      },
+      {
+        "field_id": "slip_rate",
+        "raw_value": "10000",
+        "normalized_value": "10000",
+        "suggested_value": "10000",
+        "validation_status": "valid",
+        "validation_reasons": [],
+        "source_quote": "slip_rate: 10000 KRW/hour",
+        "source_page": 1,
+        "unit": "KRW/hour",
+        "evidence_refs": [
+          "51e2aa76475b30fd35080c095592bcd9b9ebf44e0701e1869c75407dabda1ad9"
+        ],
+        "issues": []
+      },
+      {
+        "field_id": "worked_minutes",
+        "raw_value": "12000",
+        "normalized_value": null,
+        "suggested_value": "12000",
+        "validation_status": "needs_review",
+        "validation_reasons": [
+          "UNKNOWN_FIELD"
+        ],
+        "source_quote": "worked_minutes: 12000 minute",
+        "source_page": 1,
+        "unit": "minute",
+        "evidence_refs": [
+          "7dca36b4e41d652d80164645dc6c9e00d5248e961c89192a943a3dd2a13dd16d"
+        ],
+        "issues": []
+      },
+      {
+        "field_id": "gross",
+        "raw_value": "2000000",
+        "normalized_value": "2000000",
+        "suggested_value": "2000000",
+        "validation_status": "valid",
+        "validation_reasons": [],
+        "source_quote": "gross: 2000000 KRW",
+        "source_page": 1,
+        "unit": "KRW",
+        "evidence_refs": [
+          "772e77d3d6f390d908932322ac5bfb865879ff74ece8a408dd3096fe193150ed"
+        ],
+        "issues": []
+      },
+      {
+        "field_id": "deduction",
+        "raw_value": "200000",
+        "normalized_value": "200000",
+        "suggested_value": "200000",
+        "validation_status": "valid",
+        "validation_reasons": [],
+        "source_quote": "deduction: 200000 KRW",
+        "source_page": 1,
+        "unit": "KRW",
+        "evidence_refs": [
+          "8b0ac3609fc5e0e9c51cd5b10472aab930d90609f7e1a46f9bb761e0d4829df5"
+        ],
+        "issues": []
+      },
+      {
+        "field_id": "net",
+        "raw_value": "1800000",
+        "normalized_value": "1800000",
+        "suggested_value": "1800000",
+        "validation_status": "valid",
+        "validation_reasons": [],
+        "source_quote": "net: 1800000 KRW",
+        "source_page": 1,
+        "unit": "KRW",
+        "evidence_refs": [
+          "eb641c06df87c21abcebfe28962dea0bb8cad5e778130eadf2e8d3ef01634a9d"
+        ],
+        "issues": []
+      }
+    ],
+    "evidence_catalog": [
+      {
+        "evidence_id": "ab77cd2b0a85b37979f39809b1651968e544d05e6776aac8402b313836afbd7c",
+        "source_id": "source-demo",
+        "page": 1,
+        "quote": "contract_rate: 10000 KRW/hour",
+        "locator": "",
+        "verification_method": "ocr_unverified"
+      },
+      {
+        "evidence_id": "51e2aa76475b30fd35080c095592bcd9b9ebf44e0701e1869c75407dabda1ad9",
+        "source_id": "source-demo",
+        "page": 1,
+        "quote": "slip_rate: 10000 KRW/hour",
+        "locator": "",
+        "verification_method": "ocr_unverified"
+      },
+      {
+        "evidence_id": "7dca36b4e41d652d80164645dc6c9e00d5248e961c89192a943a3dd2a13dd16d",
+        "source_id": "source-demo",
+        "page": 1,
+        "quote": "worked_minutes: 12000 minute",
+        "locator": "",
+        "verification_method": "ocr_unverified"
+      },
+      {
+        "evidence_id": "772e77d3d6f390d908932322ac5bfb865879ff74ece8a408dd3096fe193150ed",
+        "source_id": "source-demo",
+        "page": 1,
+        "quote": "gross: 2000000 KRW",
+        "locator": "",
+        "verification_method": "ocr_unverified"
+      },
+      {
+        "evidence_id": "8b0ac3609fc5e0e9c51cd5b10472aab930d90609f7e1a46f9bb761e0d4829df5",
+        "source_id": "source-demo",
+        "page": 1,
+        "quote": "deduction: 200000 KRW",
+        "locator": "",
+        "verification_method": "ocr_unverified"
+      },
+      {
+        "evidence_id": "eb641c06df87c21abcebfe28962dea0bb8cad5e778130eadf2e8d3ef01634a9d",
+        "source_id": "source-demo",
+        "page": 1,
+        "quote": "net: 1800000 KRW",
+        "locator": "",
+        "verification_method": "ocr_unverified"
+      }
+    ],
+    "issues": [
+      "PYTHON_OCR_AI_CLASSIFICATION",
+      "OCR_REQUIRES_USER_CONFIRMATION"
+    ],
+    "page_count": 1,
+    "verification_method": "ocr_unverified",
+    "recognized_pages": [
+      "SYNTHETIC PAYROLL - NOT A REAL PERSON\ncontract_rate: 10000 KRW/hour\nslip_rate: 10000 KRW/hour\nworked_minutes: 12000 minute\ngross: 2000000 KRW\ndeduction: 200000 KRW\nnet: 1800000 KRW"
+    ]
+  },
+  "error": null,
+  "usage": {}
+}

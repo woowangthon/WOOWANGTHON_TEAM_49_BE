@@ -1,0 +1,336 @@
+{
+  "schema": "comparison-author-gold-v1",
+  "synthetic": true,
+  "scope": "Authored expected values seeded as saved candidates. Tests validate comparison behavior, not OCR or AI extraction accuracy. No model calls.",
+  "provenance": [
+    "output/pdf/payroll-test-records/검증정답.json",
+    "output/pdf/filled-contracts/gold/image-monthly.json",
+    "output/pdf/filled-contracts/source-mapping/image-monthly.json",
+    "tmp/pdfs/build_payroll_documents.py"
+  ],
+  "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31"
+  },
+  "documents": {
+    "attendance": {
+      "document_type": "attendance",
+      "path": "output/pdf/payroll-test-records/01_시급제_근무기록.pdf",
+      "sha256": "e5ff2645178c6e9e889a8e6efccdf2bd707e1c7fb6630403382d5a464fa71227",
+      "fields": {
+        "employee_name": {
+          "value": "가상근로자 가온",
+          "unit": "text"
+        },
+        "employee_id": {
+          "value": "TEST-GAON-001",
+          "unit": "text"
+        },
+        "employer_name": {
+          "value": "가상사업장 월급테스트",
+          "unit": "text"
+        },
+        "period_start": {
+          "value": "2026-10-01",
+          "unit": "date"
+        },
+        "period_end": {
+          "value": "2026-10-31",
+          "unit": "date"
+        },
+        "worked_minutes": {
+          "value": "9600",
+          "unit": "minute"
+        }
+      }
+    },
+    "payslip": {
+      "document_type": "payslip",
+      "path": "output/pdf/payroll-test-records/02_시급제_급여명세서.pdf",
+      "sha256": "332515641c89e5f8dadd341504b2467a1dc795fdacbddf7033a8247495775686",
+      "fields": {
+        "employee_name": {
+          "value": "가상근로자 가온",
+          "unit": "text"
+        },
+        "employee_id": {
+          "value": "TEST-GAON-001",
+          "unit": "text"
+        },
+        "employer_name": {
+          "value": "가상사업장 월급테스트",
+          "unit": "text"
+        },
+        "period_start": {
+          "value": "2026-10-01",
+          "unit": "date"
+        },
+        "period_end": {
+          "value": "2026-10-31",
+          "unit": "date"
+        },
+        "slip_rate": {
+          "value": "15000",
+          "unit": "KRW/hour"
+        },
+        "gross": {
+          "value": "3120000",
+          "unit": "KRW"
+        },
+        "deduction": {
+          "value": "232000",
+          "unit": "KRW"
+        },
+        "net": {
+          "value": "2888000",
+          "unit": "KRW"
+        },
+        "slip_minutes": {
+          "value": "9600",
+          "unit": "minute"
+        },
+        "slip_actual_minutes": {
+          "value": "9600",
+          "unit": "minute"
+        },
+        "slip_paid_minutes": {
+          "value": "12480",
+          "unit": "minute"
+        },
+        "earning_1_label": {
+          "value": "기본급",
+          "unit": "text"
+        },
+        "earning_1_amount": {
+          "value": "2400000",
+          "unit": "KRW"
+        },
+        "earning_2_label": {
+          "value": "주휴수당",
+          "unit": "text"
+        },
+        "earning_2_amount": {
+          "value": "480000",
+          "unit": "KRW"
+        },
+        "earning_3_label": {
+          "value": "유급휴무수당",
+          "unit": "text"
+        },
+        "earning_3_amount": {
+          "value": "240000",
+          "unit": "KRW"
+        },
+        "earning_4_label": {
+          "value": "연장근로수당",
+          "unit": "text"
+        },
+        "earning_4_amount": {
+          "value": "0",
+          "unit": "KRW"
+        },
+        "earning_5_label": {
+          "value": "야간근로수당",
+          "unit": "text"
+        },
+        "earning_5_amount": {
+          "value": "0",
+          "unit": "KRW"
+        },
+        "earning_6_label": {
+          "value": "휴일근로수당",
+          "unit": "text"
+        },
+        "earning_6_amount": {
+          "value": "0",
+          "unit": "KRW"
+        },
+        "earning_7_label": {
+          "value": "상여금 / 기타수당",
+          "unit": "text"
+        },
+        "earning_7_amount": {
+          "value": "0",
+          "unit": "KRW"
+        },
+        "deduction_1_label": {
+          "value": "소득세",
+          "unit": "text"
+        },
+        "deduction_1_amount": {
+          "value": "20000",
+          "unit": "KRW"
+        },
+        "deduction_2_label": {
+          "value": "지방소득세",
+          "unit": "text"
+        },
+        "deduction_2_amount": {
+          "value": "2000",
+          "unit": "KRW"
+        },
+        "deduction_3_label": {
+          "value": "국민연금",
+          "unit": "text"
+        },
+        "deduction_3_amount": {
+          "value": "100000",
+          "unit": "KRW"
+        },
+        "deduction_4_label": {
+          "value": "건강보험",
+          "unit": "text"
+        },
+        "deduction_4_amount": {
+          "value": "80000",
+          "unit": "KRW"
+        },
+        "deduction_5_label": {
+          "value": "장기요양보험료",
+          "unit": "text"
+        },
+        "deduction_5_amount": {
+          "value": "10000",
+          "unit": "KRW"
+        },
+        "deduction_6_label": {
+          "value": "고용보험",
+          "unit": "text"
+        },
+        "deduction_6_amount": {
+          "value": "20000",
+          "unit": "KRW"
+        }
+      }
+    },
+    "deposit": {
+      "document_type": "deposit",
+      "path": "output/pdf/payroll-test-records/03_시급제_입금기록.pdf",
+      "sha256": "a522ffa18cebc22a2b9d5b8e1bfbd8ca895c9cf416d880fd9f3f4c8e92ea7fd6",
+      "fields": {
+        "employee_name": {
+          "value": "가상근로자 가온",
+          "unit": "text"
+        },
+        "employee_id": {
+          "value": "TEST-GAON-001",
+          "unit": "text"
+        },
+        "employer_name": {
+          "value": "가상사업장 월급테스트",
+          "unit": "text"
+        },
+        "account_number": {
+          "value": "TEST-GAON-001",
+          "unit": "text"
+        },
+        "deposit_total": {
+          "value": "2888000",
+          "unit": "KRW"
+        },
+        "transaction_1_date": {
+          "value": "2026-10-23",
+          "unit": "date"
+        },
+        "transaction_1_sender": {
+          "value": "가상사업장 월급테스트",
+          "unit": "text"
+        },
+        "transaction_1_deposit_amount": {
+          "value": "2000000",
+          "unit": "KRW"
+        },
+        "transaction_1_withdrawal_amount": {
+          "value": "0",
+          "unit": "KRW"
+        },
+        "transaction_1_balance": {
+          "value": "2120000",
+          "unit": "KRW"
+        },
+        "transaction_1_reference": {
+          "value": "TST-GAON-20261023-01",
+          "unit": "text"
+        },
+        "transaction_2_date": {
+          "value": "2026-10-23",
+          "unit": "date"
+        },
+        "transaction_2_sender": {
+          "value": "가상사업장 월급테스트",
+          "unit": "text"
+        },
+        "transaction_2_deposit_amount": {
+          "value": "888000",
+          "unit": "KRW"
+        },
+        "transaction_2_withdrawal_amount": {
+          "value": "0",
+          "unit": "KRW"
+        },
+        "transaction_2_balance": {
+          "value": "3008000",
+          "unit": "KRW"
+        },
+        "transaction_2_reference": {
+          "value": "TST-GAON-20261023-02",
+          "unit": "text"
+        }
+      }
+    },
+    "contract": {
+      "document_type": "contract",
+      "path": "output/pdf/filled-contracts/04_표준양식_월급300만원_스캔.pdf",
+      "sha256": "f4691ca4dc875c3764915a84142ba4bf0006fefa60dc2b6e2644b14d0692465c",
+      "fields": {
+        "employee_name": {
+          "value": "가상근로자 나래",
+          "unit": "text"
+        },
+        "employer_name": {
+          "value": "가상사업장 월급테스트",
+          "unit": "text"
+        },
+        "contract_rate": {
+          "value": "3000000",
+          "unit": "KRW/month"
+        },
+        "contract_start": {
+          "value": "2026-10-01",
+          "unit": "date"
+        },
+        "contract_end": {
+          "value": "2027-09-30",
+          "unit": "date"
+        },
+        "pay_type": {
+          "value": "monthly",
+          "unit": "category"
+        }
+      }
+    }
+  },
+  "expected": {
+    "without_contract": {
+      "R-01": "insufficient",
+      "R-02": "match",
+      "R-03": "match",
+      "R-04": "match",
+      "R-05": "match",
+      "R-06": "match"
+    },
+    "first_deposit_only": {
+      "lhs": "2888000",
+      "rhs": "2000000",
+      "delta": "888000",
+      "scope_complete": true
+    },
+    "actual_minutes": "9600",
+    "paid_minutes": "12480",
+    "four_documents_issue_codes": [
+      "SUBJECT_MISMATCH",
+      "UNIT_MISMATCH"
+    ],
+    "legal_wage_total": null
+  }
+}

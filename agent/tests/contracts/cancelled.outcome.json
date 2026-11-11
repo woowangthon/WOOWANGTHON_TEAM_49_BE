@@ -1,0 +1,14 @@
+{
+  "job_id": "demo-analyze_case",
+  "run_id": "run-1",
+  "schema_version": "1.0",
+  "provider_mode": "fixture",
+  "status": "cancelled",
+  "payload": null,
+  "error": {
+    "code": "JOB_CANCELLED",
+    "message": "작업이 취소되었거나 접근·실행 권한이 철회되었습니다.",
+    "retryable": false
+  },
+  "usage": {}
+}

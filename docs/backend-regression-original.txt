@@ -1,0 +1,146 @@
+FFFFF.FFFFF
+================================== FAILURES ===================================
+________________ test_http_adapter_multipart_and_chat_context _________________
+tests\backend\test_ai.py:40: in test_http_adapter_multipart_and_chat_context
+    asyncio.run(run())
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\backend\test_ai.py:35: in run
+    result = await adapter.analyze({'id': 9, 'document_type': 'PAYSLIP', 'file_name': 'sample.pdf', 'media_type': 'application/pdf'}, path)
+                   ^^^^^^^^^^^^^^^
+E   AttributeError: 'AIAdapter' object has no attribute 'analyze'
+_______________ test_upstream_errors[timeout-UPSTREAM_TIMEOUT] ________________
+tests\backend\test_ai.py:62: in test_upstream_errors
+    asyncio.run(run())
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\backend\test_ai.py:59: in run
+    await adapter.chat({'thread_id': 'chat'})
+app\ai.py:107: in chat
+    answer = await self.client.chat(payload)
+                   ^^^^^^^^^^^^^^^^
+E   AttributeError: 'AsyncClient' object has no attribute 'chat'
+_______________ test_upstream_errors[http-UPSTREAM_UNAVAILABLE] _______________
+tests\backend\test_ai.py:62: in test_upstream_errors
+    asyncio.run(run())
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\backend\test_ai.py:59: in run
+    await adapter.chat({'thread_id': 'chat'})
+app\ai.py:107: in chat
+    answer = await self.client.chat(payload)
+                   ^^^^^^^^^^^^^^^^
+E   AttributeError: 'AsyncClient' object has no attribute 'chat'
+____________ test_upstream_errors[json-UPSTREAM_INVALID_RESPONSE] _____________
+tests\backend\test_ai.py:62: in test_upstream_errors
+    asyncio.run(run())
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\backend\test_ai.py:59: in run
+    await adapter.chat({'thread_id': 'chat'})
+app\ai.py:107: in chat
+    answer = await self.client.chat(payload)
+                   ^^^^^^^^^^^^^^^^
+E   AttributeError: 'AsyncClient' object has no attribute 'chat'
+___________ test_upstream_errors[schema-UPSTREAM_INVALID_RESPONSE] ____________
+tests\backend\test_ai.py:62: in test_upstream_errors
+    asyncio.run(run())
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\backend\test_ai.py:59: in run
+    await adapter.chat({'thread_id': 'chat'})
+app\ai.py:107: in chat
+    answer = await self.client.chat(payload)
+                   ^^^^^^^^^^^^^^^^
+E   AttributeError: 'AsyncClient' object has no attribute 'chat'
+__________ test_failed_document_does_not_block_other_checks_or_retry __________
+tests\backend\test_ai.py:97: in test_failed_document_does_not_block_other_checks_or_retry
+    assert wait_results(client, cid, auth)['payslipValidation']['paymentTotal']['status'] == 'MATCH'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\backend\conftest.py:69: in wait_results
+    return wait_for(client, f'/cases/{cid}/results', auth, lambda d: d['freshness']['overall'] == 'CURRENT')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\backend\conftest.py:65: in wait_for
+    raise AssertionError(f'poll timeout: {last}')
+E   AssertionError: poll timeout: {'caseId': 1, 'comparisonGroupId': 'default-1', 'currentInputVersion': 3, 'resultVersion': 0, 'result': None, 'summary': {'calculationStatus': 'PARTIAL', 'comparisonStatus': 'INSUFFICIENT_INFORMATION'}, 'freshness': {'overall': 'STALE', 'hasOutdatedResults': True}, 'versions': {'calculation': {'snapshotId': None, 'version': None, 'inputVersion': 3, 'createdAt': None, 'freshness': 'STALE'}, 'comparison': {'snapshotId': None, 'version': None, 'inputVersion': 3, 'createdAt': None, 'freshness': 'STALE'}, 'payslipValidation': {'snapshotId': None, 'version': None, 'inputVersion': 3, 'createdAt': None, 'freshness': 'STALE'}, 'depositComparison': {'snapshotId': None, 'version': None, 'inputVersion': 3, 'createdAt': None, 'freshness': 'STALE'}}, 'items': [], 'calculation': None, 'comparison': None, 'payslipValidation': None, 'depositComparison': None}
+__________ test_chat_scope_filtering_and_upstream_source_validation ___________
+tests\backend\test_ai.py:120: in test_chat_scope_filtering_and_upstream_source_validation
+    assert 'message_done' in client.post(endpoint, headers=auth, json={'content': 'ù ����'}).text
+E   assert 'message_done' in 'event: message_start\ndata: {"runId":"run-f14192444a4f49adbaf6752f3ed8af33","messageId":2,"role":"ASSISTANT","scope":...runId":"run-f14192444a4f49adbaf6752f3ed8af33","messageId":2,"errorCode":"CHAT_GENERATION_FAILED","retryable":true}\n\n'
+E    +  where 'event: message_start\ndata: {"runId":"run-f14192444a4f49adbaf6752f3ed8af33","messageId":2,"role":"ASSISTANT","scope":...runId":"run-f14192444a4f49adbaf6752f3ed8af33","messageId":2,"errorCode":"CHAT_GENERATION_FAILED","retryable":true}\n\n' = <Response [200 OK]>.text
+E    +    where <Response [200 OK]> = post('/api/v1/workplaces/1/chats/1/messages', headers={'Authorization': 'Bearer 7NgFzzFHLCNtVv5Qd9aifHQ2iupYJuHP70lY8qgtPu4'}, json={'content': 'ù ����'})
+E    +      where post = <starlette.testclient.TestClient object at 0x0000028B1BF01590>.post
+_________________ test_upload_confirm_calculate_chat_restart __________________
+tests\backend\test_e2e.py:15: in test_upload_confirm_calculate_chat_restart
+    assert doc['aiMetadata']['aiMode'] == 'mock'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'aiMode'
+_________________ test_shared_defaults_preserve_case_override _________________
+tests\backend\test_e2e.py:55: in test_shared_defaults_preserve_case_override
+    field = client.get(f'/api/v1/cases/{cid}/documents/{did}/fields', headers=auth).json()['data']['fields'][0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   IndexError: list index out of range
+_____________ test_payment_only_changes_deposit_version_and_caps ______________
+tests\backend\test_e2e.py:74: in test_payment_only_changes_deposit_version_and_caps
+    before = wait_results(client, cid, auth)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\backend\conftest.py:69: in wait_results
+    return wait_for(client, f'/cases/{cid}/results', auth, lambda d: d['freshness']['overall'] == 'CURRENT')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\backend\conftest.py:65: in wait_for
+    raise AssertionError(f'poll timeout: {last}')
+E   AssertionError: poll timeout: {'caseId': 1, 'comparisonGroupId': 'default-1', 'currentInputVersion': 2, 'resultVersion': 0, 'result': None, 'summary': {'calculationStatus': 'PARTIAL', 'comparisonStatus': 'INSUFFICIENT_INFORMATION'}, 'freshness': {'overall': 'STALE', 'hasOutdatedResults': True}, 'versions': {'calculation': {'snapshotId': None, 'version': None, 'inputVersion': 2, 'createdAt': None, 'freshness': 'STALE'}, 'comparison': {'snapshotId': None, 'version': None, 'inputVersion': 2, 'createdAt': None, 'freshness': 'STALE'}, 'payslipValidation': {'snapshotId': None, 'version': None, 'inputVersion': 2, 'createdAt': None, 'freshness': 'STALE'}, 'depositComparison': {'snapshotId': None, 'version': None, 'inputVersion': 2, 'createdAt': None, 'freshness': 'STALE'}}, 'items': [], 'calculation': None, 'comparison': None, 'payslipValidation': None, 'depositComparison': None}
+============================== warnings summary ===============================
+.venv\Lib\site-packages\langsmith\_internal\_beta_decorator.py:92: 13 warnings
+  C:\Users\fkaus\Desktop\agent ����\devmerge\.venv\Lib\site-packages\langsmith\_internal\_beta_decorator.py:92: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+    if asyncio.iscoroutinefunction(func):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/backend/test_ai.py::test_http_adapter_multipart_and_chat_context
+FAILED tests/backend/test_ai.py::test_upstream_errors[timeout-UPSTREAM_TIMEOUT]
+FAILED tests/backend/test_ai.py::test_upstream_errors[http-UPSTREAM_UNAVAILABLE]
+FAILED tests/backend/test_ai.py::test_upstream_errors[json-UPSTREAM_INVALID_RESPONSE]
+FAILED tests/backend/test_ai.py::test_upstream_errors[schema-UPSTREAM_INVALID_RESPONSE]
+FAILED tests/backend/test_ai.py::test_failed_document_does_not_block_other_checks_or_retry
+FAILED tests/backend/test_ai.py::test_chat_scope_filtering_and_upstream_source_validation
+FAILED tests/backend/test_e2e.py::test_upload_confirm_calculate_chat_restart
+FAILED tests/backend/test_e2e.py::test_shared_defaults_preserve_case_override
+FAILED tests/backend/test_e2e.py::test_payment_only_changes_deposit_version_and_caps
+!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 10 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+10 failed, 1 passed, 13 warnings in 20.46s

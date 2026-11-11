@@ -1,0 +1,100 @@
+{
+  "document_type": "contract",
+  "fields": [
+    {
+      "field_id": "pay_type",
+      "raw_value": "월",
+      "normalized_value": "monthly",
+      "unit": null,
+      "page": 2,
+      "quote": "1) 월 통상임금: 월 3,000,000원",
+      "issues": []
+    },
+    {
+      "field_id": "contract_rate",
+      "raw_value": "월 3,000,000원",
+      "normalized_value": "3000000",
+      "unit": "KRW/month",
+      "page": 2,
+      "quote": "1) 월 통상임금: 월 3,000,000원",
+      "issues": []
+    },
+    {
+      "field_id": "contract_start",
+      "raw_value": "2026년 10월 01일",
+      "normalized_value": "2026-10-01",
+      "unit": null,
+      "page": 1,
+      "quote": "신규 근로자: 12개월, 2026년 10월 01일 ~ 2027년 09월 30일",
+      "issues": []
+    },
+    {
+      "field_id": "contract_end",
+      "raw_value": "2027년 09월 30일",
+      "normalized_value": "2027-09-30",
+      "unit": null,
+      "page": 1,
+      "quote": "신규 근로자: 12개월, 2026년 10월 01일 ~ 2027년 09월 30일",
+      "issues": []
+    },
+    {
+      "field_id": "work_start",
+      "raw_value": "09시 00분",
+      "normalized_value": "09:00",
+      "unit": null,
+      "page": 1,
+      "quote": "09시 00분 ~ 18시 00분",
+      "issues": []
+    },
+    {
+      "field_id": "work_end",
+      "raw_value": "18시 00분",
+      "normalized_value": "18:00",
+      "unit": null,
+      "page": 1,
+      "quote": "09시 00분 ~ 18시 00분",
+      "issues": []
+    },
+    {
+      "field_id": "break_minutes",
+      "raw_value": "60분",
+      "normalized_value": "60",
+      "unit": "minute",
+      "page": 1,
+      "quote": "5. 휴게시간 1일 60분",
+      "issues": []
+    },
+    {
+      "field_id": "scheduled_daily_minutes",
+      "raw_value": "1일 8시간",
+      "normalized_value": "480",
+      "unit": "minute",
+      "page": 1,
+      "quote": "월-금 주 5일 / 소정근로시간: 1일 8시간, 1주 40시간",
+      "issues": []
+    },
+    {
+      "field_id": "scheduled_weekly_minutes",
+      "raw_value": "1주 40시간",
+      "normalized_value": "2400",
+      "unit": "minute",
+      "page": 1,
+      "quote": "월-금 주 5일 / 소정근로시간: 1일 8시간, 1주 40시간",
+      "issues": []
+    },
+    {
+      "field_id": "payday",
+      "raw_value": "25일",
+      "normalized_value": "25",
+      "unit": "day_of_month",
+      "page": 2,
+      "quote": "매월 25일 지급. 지급일이 공휴일이면 전날 지급한다.",
+      "issues": [
+        "If the payday falls on a public holiday, payment is made one day earlier."
+      ]
+    }
+  ],
+  "issues": [
+    "Document is clearly labeled “SYNTHETIC TEST ONLY” and “실제 서명 아님” (not an actual signature)."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "node_id": {
+      "title": "Node Id",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "node_id",
+    "status"
+  ],
+  "title": "ProgressEvent",
+  "type": "object"
+}

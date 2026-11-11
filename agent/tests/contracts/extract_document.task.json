@@ -1,0 +1,34 @@
+{
+  "context": {
+    "job_id": "demo-extract_document",
+    "run_id": "run-1",
+    "execution_token": "**********",
+    "owner_id": "owner-demo",
+    "case_id": "case-demo",
+    "task_kind": "extract_document",
+    "schema_version": "1.0",
+    "idempotency_key": "fixture-request-extract_document",
+    "requested_at": "2026-11-04T00:00:00Z"
+  },
+  "payload": {
+    "source": {
+      "source_id": "source-demo",
+      "owner_id": "owner-demo",
+      "workplace_id": "workplace-demo",
+      "link_id": "link-source-demo",
+      "link_version": 1,
+      "document_id": "doc-source-demo",
+      "document_version": 1,
+      "content_hash": "7cfd09708ca97d19bceeab8eac8146dcefc09138cfe9d46ac855cc1ebd7b3902",
+      "usage": "payroll",
+      "status": "active",
+      "applicable_period": null,
+      "kind": "document"
+    },
+    "ocr_result_id": "test-ocr-1",
+    "document_type": "payslip",
+    "extraction_version": "1.1",
+    "prompt_version": "extract-v1",
+    "model_config_version": "luna-v1"
+  }
+}

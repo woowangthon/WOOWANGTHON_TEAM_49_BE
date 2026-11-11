@@ -1,0 +1,219 @@
+{
+  "context": {
+    "job_id": "demo-analyze_case",
+    "run_id": "run-1",
+    "execution_token": "**********",
+    "owner_id": "owner-demo",
+    "case_id": "case-demo",
+    "task_kind": "analyze_case",
+    "schema_version": "1.0",
+    "idempotency_key": "fixture-request-analyze_case",
+    "requested_at": "2026-11-04T00:00:00Z"
+  },
+  "payload": {
+    "snapshot": {
+      "snapshot_id": "snapshot-demo",
+      "input_version": 1,
+      "snapshot_hash": "914100dbf388fd5ec212b9a991566dabade32779ca52c9eb27580e6e37d19a77",
+      "owner_id": "owner-demo",
+      "workplace_id": "workplace-demo",
+      "case_id": "case-demo",
+      "period": {
+        "start": "2026-10-01",
+        "end": "2026-10-31"
+      },
+      "timezone": "Asia/Seoul",
+      "profile": "H-STD",
+      "confirmed_fields": [
+        {
+          "field_id": "contract_rate",
+          "value": "10000",
+          "unit": "KRW/hour",
+          "confirmation_id": "confirmed-contract_rate",
+          "confirmation_version": 1,
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "state": "known",
+          "period": {
+            "start": "2026-10-01",
+            "end": "2026-10-31"
+          },
+          "time_kind": null
+        },
+        {
+          "field_id": "slip_rate",
+          "value": "10000",
+          "unit": "KRW/hour",
+          "confirmation_id": "confirmed-slip_rate",
+          "confirmation_version": 1,
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "state": "known",
+          "period": {
+            "start": "2026-10-01",
+            "end": "2026-10-31"
+          },
+          "time_kind": null
+        },
+        {
+          "field_id": "worked_minutes",
+          "value": "12000",
+          "unit": "minute",
+          "confirmation_id": "confirmed-worked_minutes",
+          "confirmation_version": 1,
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "state": "known",
+          "period": {
+            "start": "2026-10-01",
+            "end": "2026-10-31"
+          },
+          "time_kind": "actual"
+        },
+        {
+          "field_id": "slip_minutes",
+          "value": "12000",
+          "unit": "minute",
+          "confirmation_id": "confirmed-slip_minutes",
+          "confirmation_version": 1,
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "state": "known",
+          "period": {
+            "start": "2026-10-01",
+            "end": "2026-10-31"
+          },
+          "time_kind": "actual"
+        },
+        {
+          "field_id": "gross",
+          "value": "2000000",
+          "unit": "KRW",
+          "confirmation_id": "confirmed-gross",
+          "confirmation_version": 1,
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "state": "known",
+          "period": {
+            "start": "2026-10-01",
+            "end": "2026-10-31"
+          },
+          "time_kind": null
+        },
+        {
+          "field_id": "deduction",
+          "value": "200000",
+          "unit": "KRW",
+          "confirmation_id": "confirmed-deduction",
+          "confirmation_version": 1,
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "state": "known",
+          "period": {
+            "start": "2026-10-01",
+            "end": "2026-10-31"
+          },
+          "time_kind": null
+        },
+        {
+          "field_id": "net",
+          "value": "1800000",
+          "unit": "KRW",
+          "confirmation_id": "confirmed-net",
+          "confirmation_version": 1,
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "state": "known",
+          "period": {
+            "start": "2026-10-01",
+            "end": "2026-10-31"
+          },
+          "time_kind": null
+        }
+      ],
+      "condition_states": [],
+      "authorized_sources": [
+        {
+          "source_id": "source-demo",
+          "owner_id": "owner-demo",
+          "workplace_id": "workplace-demo",
+          "link_id": "link-source-demo",
+          "link_version": 1,
+          "document_id": "doc-source-demo",
+          "document_version": 1,
+          "content_hash": "7cfd09708ca97d19bceeab8eac8146dcefc09138cfe9d46ac855cc1ebd7b3902",
+          "usage": "payroll",
+          "status": "active",
+          "applicable_period": null,
+          "kind": "document"
+        }
+      ],
+      "evidence_catalog": [
+        {
+          "evidence_id": "evidence-demo",
+          "source_id": "source-demo",
+          "page": 1,
+          "quote": "SYNTHETIC PAYROLL - NOT A REAL PERSON",
+          "locator": "",
+          "verification_method": "manual_confirmed"
+        }
+      ],
+      "earnings": [
+        {
+          "item_id": "earning-1",
+          "amount": "2000000",
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "confirmed": true,
+          "is_total": false
+        }
+      ],
+      "deductions": [
+        {
+          "item_id": "deduction-1",
+          "amount": "200000",
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "confirmed": true,
+          "is_total": false
+        }
+      ],
+      "earnings_complete": true,
+      "deductions_complete": true,
+      "transaction_allocations": [
+        {
+          "transaction_id": "transaction-demo",
+          "amount": "1800000",
+          "transaction_amount": "1800000",
+          "evidence_refs": [
+            "evidence-demo"
+          ],
+          "confirmed": true,
+          "linked": true,
+          "duplicate": false,
+          "kind": "bank"
+        }
+      ],
+      "payment_scope_confirmed": true,
+      "work_records": [],
+      "coverage": [],
+      "context_requirements": [],
+      "rule_bundle_version": "pending-v1",
+      "support_manifest_version": "pending-v1"
+    },
+    "snapshot_id": "snapshot-demo",
+    "snapshot_hash": "914100dbf388fd5ec212b9a991566dabade32779ca52c9eb27580e6e37d19a77",
+    "rule_bundle_version": "pending-v1",
+    "support_manifest_version": "pending-v1",
+    "engine_version": "agent-0.2.0"
+  }
+}

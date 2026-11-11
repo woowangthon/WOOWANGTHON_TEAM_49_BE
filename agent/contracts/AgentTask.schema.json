@@ -1,0 +1,2218 @@
+{
+  "$defs": {
+    "AnalysisJobInput": {
+      "additionalProperties": false,
+      "properties": {
+        "snapshot": {
+          "$ref": "#/$defs/InputSnapshot"
+        },
+        "snapshot_id": {
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "snapshot_hash": {
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "rule_bundle_version": {
+          "default": "pending-v1",
+          "title": "Rule Bundle Version",
+          "type": "string"
+        },
+        "support_manifest_version": {
+          "default": "pending-v1",
+          "title": "Support Manifest Version",
+          "type": "string"
+        },
+        "engine_version": {
+          "default": "agent-0.4.0",
+          "title": "Engine Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "snapshot",
+        "snapshot_id",
+        "snapshot_hash"
+      ],
+      "title": "AnalysisJobInput",
+      "type": "object"
+    },
+    "AnalysisResult": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_id": {
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "workplace_id": {
+          "title": "Workplace Id",
+          "type": "string"
+        },
+        "input_version": {
+          "title": "Input Version",
+          "type": "integer"
+        },
+        "snapshot_id": {
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "snapshot_hash": {
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "context_id": {
+          "title": "Context Id",
+          "type": "string"
+        },
+        "context_hash": {
+          "title": "Context Hash",
+          "type": "string"
+        },
+        "rule_bundle_version": {
+          "title": "Rule Bundle Version",
+          "type": "string"
+        },
+        "support_manifest_version": {
+          "title": "Support Manifest Version",
+          "type": "string"
+        },
+        "engine_version": {
+          "title": "Engine Version",
+          "type": "string"
+        },
+        "wage_section": {
+          "$ref": "#/$defs/WageSection"
+        },
+        "comparisons": {
+          "items": {
+            "$ref": "#/$defs/ComparisonResult"
+          },
+          "title": "Comparisons",
+          "type": "array"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "title": "Questions",
+          "type": "array"
+        },
+        "evidence_catalog": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Catalog",
+          "type": "array"
+        },
+        "dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "result_hash": {
+          "default": "",
+          "title": "Result Hash",
+          "type": "string"
+        },
+        "result_id": {
+          "title": "Result Id",
+          "type": "string"
+        },
+        "result_version": {
+          "minimum": 1,
+          "title": "Result Version",
+          "type": "integer"
+        },
+        "freshness": {
+          "enum": [
+            "current",
+            "stale"
+          ],
+          "title": "Freshness",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_id",
+        "case_id",
+        "workplace_id",
+        "input_version",
+        "snapshot_id",
+        "snapshot_hash",
+        "context_id",
+        "context_hash",
+        "rule_bundle_version",
+        "support_manifest_version",
+        "engine_version",
+        "wage_section",
+        "comparisons",
+        "questions",
+        "evidence_catalog",
+        "dependencies",
+        "result_id",
+        "result_version",
+        "freshness",
+        "created_at"
+      ],
+      "title": "AnalysisResult",
+      "type": "object"
+    },
+    "ComparisonResult": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "match",
+            "difference",
+            "insufficient",
+            "needs_review"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "lhs": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lhs"
+        },
+        "rhs": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rhs"
+        },
+        "unit": {
+          "default": "KRW",
+          "title": "Unit",
+          "type": "string"
+        },
+        "delta": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta"
+        },
+        "formula_id": {
+          "title": "Formula Id",
+          "type": "string"
+        },
+        "scope_complete": {
+          "default": false,
+          "title": "Scope Complete",
+          "type": "boolean"
+        },
+        "reason_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "wage_items": {
+          "items": {
+            "$ref": "#/$defs/WageComparisonItem"
+          },
+          "title": "Wage Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rule_id",
+        "status",
+        "formula_id"
+      ],
+      "title": "ComparisonResult",
+      "type": "object"
+    },
+    "ConditionState": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "confirmed_field_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmed Field Ref"
+        },
+        "conflicting_source_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Conflicting Source Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "field_id",
+        "state"
+      ],
+      "title": "ConditionState",
+      "type": "object"
+    },
+    "ConfirmedField": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "confirmation_id": {
+          "title": "Confirmation Id",
+          "type": "string"
+        },
+        "confirmation_version": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Confirmation Version",
+          "type": "integer"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "state": {
+          "default": "known",
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Period"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "time_kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "actual",
+                "paid"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Kind"
+        }
+      },
+      "required": [
+        "field_id",
+        "unit",
+        "confirmation_id"
+      ],
+      "title": "ConfirmedField",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "quote": {
+          "default": "",
+          "title": "Quote",
+          "type": "string"
+        },
+        "locator": {
+          "default": "",
+          "title": "Locator",
+          "type": "string"
+        },
+        "verification_method": {
+          "enum": [
+            "text_match",
+            "vision_unverified",
+            "ocr_unverified",
+            "manual_confirmed"
+          ],
+          "title": "Verification Method",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "source_id",
+        "verification_method"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "ExplanationCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "result_id": {
+          "title": "Result Id",
+          "type": "string"
+        },
+        "result_version": {
+          "title": "Result Version",
+          "type": "integer"
+        },
+        "result_hash": {
+          "title": "Result Hash",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "generated",
+            "template_fallback"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "paragraphs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Paragraphs",
+          "type": "array"
+        },
+        "question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Question Ids",
+          "type": "array"
+        },
+        "model_config_version": {
+          "title": "Model Config Version",
+          "type": "string"
+        },
+        "prompt_version": {
+          "title": "Prompt Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "result_id",
+        "result_version",
+        "result_hash",
+        "status",
+        "paragraphs",
+        "question_ids",
+        "model_config_version",
+        "prompt_version"
+      ],
+      "title": "ExplanationCandidate",
+      "type": "object"
+    },
+    "ExplanationInput": {
+      "additionalProperties": false,
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/AnalysisResult"
+        },
+        "allowed_facts": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Allowed Facts",
+          "type": "object"
+        },
+        "prompt_version": {
+          "default": "explain-v1",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "model_config_version": {
+          "default": "luna-v1",
+          "title": "Model Config Version",
+          "type": "string"
+        },
+        "generation_mode": {
+          "default": "template",
+          "enum": [
+            "template",
+            "model"
+          ],
+          "title": "Generation Mode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "result",
+        "allowed_facts"
+      ],
+      "title": "ExplanationInput",
+      "type": "object"
+    },
+    "ExtractionInput": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceRef"
+        },
+        "ocr_result_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ocr Result Id"
+        },
+        "document_type": {
+          "enum": [
+            "auto",
+            "contract",
+            "attendance",
+            "payslip",
+            "deposit",
+            "payslip_ocr"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "extraction_version": {
+          "default": "1.2",
+          "title": "Extraction Version",
+          "type": "string"
+        },
+        "prompt_version": {
+          "default": "extract-v1",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "model_config_version": {
+          "default": "luna-v1",
+          "title": "Model Config Version",
+          "type": "string"
+        },
+        "extraction_method": {
+          "default": "text",
+          "enum": [
+            "text",
+            "pdf_supplement"
+          ],
+          "title": "Extraction Method",
+          "type": "string"
+        },
+        "target_fields": {
+          "items": {
+            "$ref": "#/$defs/SupplementTarget"
+          },
+          "maxItems": 50,
+          "title": "Target Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source",
+        "document_type"
+      ],
+      "title": "ExtractionInput",
+      "type": "object"
+    },
+    "FixedSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "days": {
+          "items": {
+            "$ref": "#/$defs/ScheduleDay"
+          },
+          "title": "Days",
+          "type": "array"
+        },
+        "week_start": {
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Week Start",
+          "type": "integer"
+        },
+        "weekly_rest_weekday": {
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Weekly Rest Weekday",
+          "type": "integer"
+        },
+        "weekly_rest_minutes": {
+          "maximum": 480,
+          "minimum": 0,
+          "title": "Weekly Rest Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "days",
+        "week_start",
+        "weekly_rest_weekday",
+        "weekly_rest_minutes"
+      ],
+      "title": "FixedSchedule",
+      "type": "object"
+    },
+    "IncludedAllowance": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "enum": [
+            "W-01",
+            "W-02",
+            "W-03",
+            "W-04",
+            "W-05"
+          ],
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "string"
+        },
+        "state": {
+          "default": "missing",
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rule_id",
+        "amount"
+      ],
+      "title": "IncludedAllowance",
+      "type": "object"
+    },
+    "InputSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "snapshot_id": {
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "input_version": {
+          "minimum": 1,
+          "title": "Input Version",
+          "type": "integer"
+        },
+        "snapshot_hash": {
+          "default": "",
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "owner_id": {
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "workplace_id": {
+          "title": "Workplace Id",
+          "type": "string"
+        },
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "period": {
+          "$ref": "#/$defs/Period"
+        },
+        "timezone": {
+          "default": "Asia/Seoul",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "profile": {
+          "default": "H-STD",
+          "enum": [
+            "H-STD",
+            "M-STD"
+          ],
+          "title": "Profile",
+          "type": "string"
+        },
+        "confirmed_fields": {
+          "items": {
+            "$ref": "#/$defs/ConfirmedField"
+          },
+          "title": "Confirmed Fields",
+          "type": "array"
+        },
+        "condition_states": {
+          "items": {
+            "$ref": "#/$defs/ConditionState"
+          },
+          "title": "Condition States",
+          "type": "array"
+        },
+        "authorized_sources": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "title": "Authorized Sources",
+          "type": "array"
+        },
+        "evidence_catalog": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Catalog",
+          "type": "array"
+        },
+        "earnings": {
+          "items": {
+            "$ref": "#/$defs/StatementItem"
+          },
+          "title": "Earnings",
+          "type": "array"
+        },
+        "deductions": {
+          "items": {
+            "$ref": "#/$defs/StatementItem"
+          },
+          "title": "Deductions",
+          "type": "array"
+        },
+        "earnings_complete": {
+          "default": false,
+          "title": "Earnings Complete",
+          "type": "boolean"
+        },
+        "deductions_complete": {
+          "default": false,
+          "title": "Deductions Complete",
+          "type": "boolean"
+        },
+        "transaction_allocations": {
+          "items": {
+            "$ref": "#/$defs/TransactionAllocation"
+          },
+          "title": "Transaction Allocations",
+          "type": "array"
+        },
+        "payment_scope_confirmed": {
+          "default": false,
+          "title": "Payment Scope Confirmed",
+          "type": "boolean"
+        },
+        "work_records": {
+          "items": {
+            "$ref": "#/$defs/WorkRecord"
+          },
+          "title": "Work Records",
+          "type": "array"
+        },
+        "coverage": {
+          "items": {
+            "$ref": "#/$defs/Period"
+          },
+          "title": "Coverage",
+          "type": "array"
+        },
+        "context_requirements": {
+          "items": {
+            "$ref": "#/$defs/Period"
+          },
+          "title": "Context Requirements",
+          "type": "array"
+        },
+        "rule_bundle_version": {
+          "default": "pending-v1",
+          "title": "Rule Bundle Version",
+          "type": "string"
+        },
+        "support_manifest_version": {
+          "default": "pending-v1",
+          "title": "Support Manifest Version",
+          "type": "string"
+        },
+        "wage_conditions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WageConditions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "input_version",
+        "owner_id",
+        "workplace_id",
+        "case_id",
+        "period"
+      ],
+      "title": "InputSnapshot",
+      "type": "object"
+    },
+    "JobContext": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "case_id": {
+                "minLength": 1,
+                "type": "string"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "case_id": {
+                "type": "null"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "schema_version": {
+                "const": "1.1"
+              },
+              "task_kind": {
+                "const": "extract_document"
+              }
+            },
+            "required": [
+              "schema_version"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "execution_token": {
+          "format": "password",
+          "title": "Execution Token",
+          "type": "string",
+          "writeOnly": true
+        },
+        "owner_id": {
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "case_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Case Id"
+        },
+        "task_kind": {
+          "enum": [
+            "extract_document",
+            "analyze_case",
+            "explain_result",
+            "build_report"
+          ],
+          "title": "Task Kind",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "requested_at": {
+          "format": "date-time",
+          "title": "Requested At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "run_id",
+        "execution_token",
+        "owner_id",
+        "case_id",
+        "task_kind",
+        "idempotency_key",
+        "requested_at"
+      ],
+      "title": "JobContext",
+      "type": "object"
+    },
+    "Period": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "Period",
+      "type": "object"
+    },
+    "Question": {
+      "additionalProperties": false,
+      "properties": {
+        "question_id": {
+          "title": "Question Id",
+          "type": "string"
+        },
+        "reason_code": {
+          "title": "Reason Code",
+          "type": "string"
+        },
+        "target_field_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Field Ids",
+          "type": "array"
+        },
+        "blocking_rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blocking Rule Ids",
+          "type": "array"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "required_materials": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Materials",
+          "type": "array"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        },
+        "required_periods": {
+          "items": {
+            "$ref": "#/$defs/Period"
+          },
+          "title": "Required Periods",
+          "type": "array"
+        },
+        "glossary_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Glossary Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "question_id",
+        "reason_code",
+        "target_field_ids",
+        "blocking_rule_ids",
+        "text"
+      ],
+      "title": "Question",
+      "type": "object"
+    },
+    "ReportCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        },
+        "state": {
+          "default": "known",
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ],
+      "title": "ReportCondition",
+      "type": "object"
+    },
+    "ReportDisplayContext": {
+      "additionalProperties": false,
+      "properties": {
+        "snapshot_id": {
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "snapshot_hash": {
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "workplace_name": {
+          "title": "Workplace Name",
+          "type": "string"
+        },
+        "period": {
+          "$ref": "#/$defs/ReportPeriod"
+        },
+        "conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ReportCondition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "sources": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ReportSource"
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "snapshot_hash",
+        "workplace_name",
+        "period"
+      ],
+      "title": "ReportDisplayContext",
+      "type": "object"
+    },
+    "ReportInput": {
+      "additionalProperties": false,
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/AnalysisResult"
+        },
+        "explanation": {
+          "$ref": "#/$defs/ExplanationCandidate"
+        },
+        "explanation_version": {
+          "title": "Explanation Version",
+          "type": "string"
+        },
+        "selected_sources": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "title": "Selected Sources",
+          "type": "array"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "template_version": {
+          "default": "report-v1",
+          "title": "Template Version",
+          "type": "string"
+        },
+        "display_context": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReportDisplayContext"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "result",
+        "explanation",
+        "explanation_version",
+        "generated_at"
+      ],
+      "title": "ReportInput",
+      "type": "object"
+    },
+    "ReportPeriod": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "ReportPeriod",
+      "type": "object"
+    },
+    "ReportSource": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "filename": {
+          "title": "Filename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "filename"
+      ],
+      "title": "ReportSource",
+      "type": "object"
+    },
+    "ScheduleDay": {
+      "additionalProperties": false,
+      "properties": {
+        "weekday": {
+          "description": "Monday=0",
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Weekday",
+          "type": "integer"
+        },
+        "minutes": {
+          "maximum": 480,
+          "minimum": 1,
+          "title": "Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "weekday",
+        "minutes"
+      ],
+      "title": "ScheduleDay",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "owner_id": {
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "workplace_id": {
+          "title": "Workplace Id",
+          "type": "string"
+        },
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        },
+        "link_version": {
+          "minimum": 1,
+          "title": "Link Version",
+          "type": "integer"
+        },
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "document_version": {
+          "minimum": 1,
+          "title": "Document Version",
+          "type": "integer"
+        },
+        "content_hash": {
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "usage": {
+          "default": "payroll",
+          "enum": [
+            "payroll",
+            "context",
+            "both"
+          ],
+          "title": "Usage",
+          "type": "string"
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "pending"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "applicable_period": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Period"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "default": "document",
+          "enum": [
+            "document",
+            "manual"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "owner_id",
+        "workplace_id",
+        "link_id",
+        "link_version",
+        "document_id",
+        "document_version",
+        "content_hash"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "StatementItem": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Amount"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "confirmed": {
+          "default": true,
+          "title": "Confirmed",
+          "type": "boolean"
+        },
+        "is_total": {
+          "default": false,
+          "title": "Is Total",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_id",
+        "amount",
+        "evidence_refs"
+      ],
+      "title": "StatementItem",
+      "type": "object"
+    },
+    "SupplementTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Field Id",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "source_quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Quote"
+        },
+        "row_context": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Row Context",
+          "type": "object"
+        }
+      },
+      "required": [
+        "field_id"
+      ],
+      "title": "SupplementTarget",
+      "type": "object"
+    },
+    "TransactionAllocation": {
+      "additionalProperties": false,
+      "properties": {
+        "transaction_id": {
+          "title": "Transaction Id",
+          "type": "string"
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "string"
+        },
+        "transaction_amount": {
+          "title": "Transaction Amount",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "confirmed": {
+          "default": true,
+          "title": "Confirmed",
+          "type": "boolean"
+        },
+        "linked": {
+          "default": true,
+          "title": "Linked",
+          "type": "boolean"
+        },
+        "duplicate": {
+          "default": false,
+          "title": "Duplicate",
+          "type": "boolean"
+        },
+        "kind": {
+          "default": "bank",
+          "enum": [
+            "bank",
+            "cash_memo"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transaction_id",
+        "amount",
+        "transaction_amount",
+        "evidence_refs"
+      ],
+      "title": "TransactionAllocation",
+      "type": "object"
+    },
+    "WageComparisonItem": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rule Ids",
+          "type": "array"
+        },
+        "statement_item_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Statement Item Ids",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "match",
+            "difference",
+            "insufficient",
+            "needs_review"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "lhs": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lhs"
+        },
+        "rhs": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rhs"
+        },
+        "delta": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta"
+        },
+        "reason_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "independent": {
+          "default": true,
+          "title": "Independent",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "rule_ids",
+        "statement_item_ids",
+        "status"
+      ],
+      "title": "WageComparisonItem",
+      "type": "object"
+    },
+    "WageCondition_Annotated_Decimal__BeforeValidator__": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "default": "missing",
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "confirmation_id": {
+          "default": "",
+          "title": "Confirmation Id",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "title": "WageCondition[Annotated[Decimal, BeforeValidator]]",
+      "type": "object"
+    },
+    "WageCondition_FixedSchedule_": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "default": "missing",
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FixedSchedule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "confirmation_id": {
+          "default": "",
+          "title": "Confirmation Id",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "title": "WageCondition[FixedSchedule]",
+      "type": "object"
+    },
+    "WageCondition_bool_": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "default": "missing",
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "confirmation_id": {
+          "default": "",
+          "title": "Confirmation Id",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "title": "WageCondition[bool]",
+      "type": "object"
+    },
+    "WageCondition_int_": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "default": "missing",
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "confirmation_id": {
+          "default": "",
+          "title": "Confirmation Id",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "title": "WageCondition[int]",
+      "type": "object"
+    },
+    "WageConditions": {
+      "additionalProperties": false,
+      "description": "Missing facts block only the rules that need them; no inferred 209-hour divisor.",
+      "properties": {
+        "standard_employment": {
+          "$ref": "#/$defs/WageCondition_bool_"
+        },
+        "contract_unchanged": {
+          "$ref": "#/$defs/WageCondition_bool_"
+        },
+        "five_or_more_workers": {
+          "$ref": "#/$defs/WageCondition_bool_"
+        },
+        "full_period_employment": {
+          "$ref": "#/$defs/WageCondition_bool_"
+        },
+        "records_complete": {
+          "$ref": "#/$defs/WageCondition_bool_"
+        },
+        "composition_complete": {
+          "$ref": "#/$defs/WageCondition_bool_"
+        },
+        "monthly_weekly_rest_included": {
+          "$ref": "#/$defs/WageCondition_bool_"
+        },
+        "ordinary_hourly_rate": {
+          "$ref": "#/$defs/WageCondition_Annotated_Decimal__BeforeValidator__"
+        },
+        "ordinary_monthly_amount": {
+          "$ref": "#/$defs/WageCondition_Annotated_Decimal__BeforeValidator__"
+        },
+        "monthly_standard_minutes": {
+          "$ref": "#/$defs/WageCondition_int_"
+        },
+        "schedule": {
+          "$ref": "#/$defs/WageCondition_FixedSchedule_"
+        },
+        "days": {
+          "items": {
+            "$ref": "#/$defs/WageDay"
+          },
+          "title": "Days",
+          "type": "array"
+        },
+        "included_allowances": {
+          "items": {
+            "$ref": "#/$defs/IncludedAllowance"
+          },
+          "title": "Included Allowances",
+          "type": "array"
+        },
+        "statement_mappings": {
+          "items": {
+            "$ref": "#/$defs/WageStatementMapping"
+          },
+          "title": "Statement Mappings",
+          "type": "array"
+        },
+        "calculation_period": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Period"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "WageConditions",
+      "type": "object"
+    },
+    "WageDay": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "workday",
+            "unpaid_rest",
+            "paid_holiday",
+            "weekly_rest"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "attendance": {
+          "enum": [
+            "present",
+            "absent",
+            "paid_leave",
+            "not_scheduled",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "Attendance",
+          "type": "string"
+        },
+        "confirmed": {
+          "default": false,
+          "title": "Confirmed",
+          "type": "boolean"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "date",
+        "kind",
+        "attendance"
+      ],
+      "title": "WageDay",
+      "type": "object"
+    },
+    "WageItemResult": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rule Version"
+        },
+        "status": {
+          "enum": [
+            "calculated",
+            "not_applicable",
+            "insufficient",
+            "needs_review"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount"
+        },
+        "formula_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Formula Id"
+        },
+        "reason_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "operands": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Operands",
+          "type": "object"
+        },
+        "included_amount": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Included Amount"
+        },
+        "additional_amount": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional Amount"
+        },
+        "payable_amount": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payable Amount"
+        },
+        "required_field_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Field Ids",
+          "type": "array"
+        },
+        "required_periods": {
+          "items": {
+            "$ref": "#/$defs/Period"
+          },
+          "title": "Required Periods",
+          "type": "array"
+        },
+        "official_sources": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Official Sources",
+          "type": "array"
+        },
+        "dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rule_id",
+        "status"
+      ],
+      "title": "WageItemResult",
+      "type": "object"
+    },
+    "WageSection": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/WageItemResult"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "subtotal": {
+          "title": "Subtotal",
+          "type": "string"
+        },
+        "gross_total": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gross Total"
+        },
+        "scope_complete": {
+          "default": false,
+          "title": "Scope Complete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "items",
+        "subtotal"
+      ],
+      "title": "WageSection",
+      "type": "object"
+    },
+    "WageStatementMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_ids": {
+          "items": {
+            "enum": [
+              "W-01",
+              "W-02",
+              "W-03",
+              "W-04",
+              "W-05"
+            ],
+            "type": "string"
+          },
+          "title": "Rule Ids",
+          "type": "array"
+        },
+        "statement_item_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Statement Item Ids",
+          "type": "array"
+        },
+        "period": {
+          "$ref": "#/$defs/Period"
+        },
+        "state": {
+          "default": "missing",
+          "enum": [
+            "known",
+            "missing",
+            "unknown",
+            "pending",
+            "conflict"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rule_ids",
+        "statement_item_ids",
+        "period"
+      ],
+      "title": "WageStatementMapping",
+      "type": "object"
+    },
+    "WorkRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string"
+        },
+        "start_at": {
+          "format": "date-time",
+          "title": "Start At",
+          "type": "string"
+        },
+        "end_at": {
+          "format": "date-time",
+          "title": "End At",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "breaks": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "format": "date-time",
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Breaks",
+          "type": "array"
+        },
+        "break_location_known": {
+          "default": true,
+          "title": "Break Location Known",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "record_id",
+        "start_at",
+        "end_at",
+        "evidence_refs"
+      ],
+      "title": "WorkRecord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "context": {
+      "$ref": "#/$defs/JobContext"
+    },
+    "payload": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExtractionInput"
+        },
+        {
+          "$ref": "#/$defs/AnalysisJobInput"
+        },
+        {
+          "$ref": "#/$defs/ExplanationInput"
+        },
+        {
+          "$ref": "#/$defs/ReportInput"
+        }
+      ],
+      "title": "Payload"
+    }
+  },
+  "required": [
+    "context",
+    "payload"
+  ],
+  "title": "AgentTask",
+  "type": "object"
+}

@@ -1,0 +1,25 @@
+# Local secrets; keep shareable configuration templates.
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Reproducible environments and tool caches.
+.venv/
+.uv-cache/
+__pycache__/
+*.py[cod]
+/.pytest*/
+/.review-pytest-*/
+.ruff_cache/
+
+# Local application data and generated verification artifacts.
+/data/
+/output/
+/tmp/
+/independent-data-*/
+/server-smoke.log
+/independent-smoke.json
+*.sqlite3*
+.coverage*
+/htmlcov/

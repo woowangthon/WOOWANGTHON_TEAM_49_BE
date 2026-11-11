@@ -1,0 +1,336 @@
+{
+  "manifest_version": "standard-wages-manifest-v1",
+  "cells": [
+    {
+      "cell_id": "H-STD/W-01",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1034322425"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "H-STD/W-02",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://1350.moel.go.kr/rtmview.do?id=1000058972",
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://moel.go.kr/mainpop2.do"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "H-STD/W-03",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1034323091"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "H-STD/W-04",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1034323091"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "H-STD/W-05",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1034323091"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "H-STD/R-07",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://1350.moel.go.kr/rtmview.do?id=1000058972",
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://moel.go.kr/mainpop2.do",
+        "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1034323091",
+        "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1034322425"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        },
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        },
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        },
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        },
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "M-STD/W-01",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1034322425"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "M-STD/W-02",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://1350.moel.go.kr/rtmview.do?id=1000058972",
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://moel.go.kr/mainpop2.do"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "M-STD/W-03",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1034323091"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "M-STD/W-04",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1034323091"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "M-STD/W-05",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1034323091"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    },
+    {
+      "cell_id": "M-STD/R-07",
+      "required_for_release": true,
+      "verification_status": "passed",
+      "rule_versions": [
+        "standard-2026-v1"
+      ],
+      "official_sources": [
+        "https://1350.moel.go.kr/rtmview.do?id=1000058972",
+        "https://law.go.kr/LSW/lsInfoP.do?lsId=003058",
+        "https://moel.go.kr/mainpop2.do",
+        "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1034323091",
+        "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1034322425"
+      ],
+      "verification_cases": [
+        "H-STD-independent",
+        "MONTHLY-202604-M026",
+        "standard-boundaries"
+      ],
+      "effective_periods": [
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        },
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        },
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        },
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        },
+        {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      ],
+      "rounding": "ROUND_HALF_UP at each final won amount; no intermediate rounding"
+    }
+  ],
+  "release_ready": true,
+  "scope": "Rule matrix only; not a claim of production/AI accuracy readiness",
+  "reason": "Confirmed unchanged standard schedules only; unsupported conditions remain explicit"
+}

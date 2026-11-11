@@ -1,0 +1,24 @@
+{
+  "job_id": "demo-explain_result",
+  "run_id": "run-1",
+  "schema_version": "1.0",
+  "provider_mode": "fixture",
+  "status": "completed",
+  "payload": {
+    "result_id": "result-demo",
+    "result_version": 1,
+    "result_hash": "2ce8b422d23fef62c4e8945b5df1de1c42eff084fa1a9a9e131d9b573132bf08",
+    "status": "generated",
+    "paragraphs": [
+      "확인 결과: 자료상 일치·차이·정보 부족·검토 필요를 항목별로 확인했습니다."
+    ],
+    "question_ids": [
+      "f31a075766bb9fa21d0954ab42d53d8506ebce7c17b27c75dc4231187f165576",
+      "35d7cdd6386c7383385bce8a316c4b0bb1dd9f21e45e4db6f894c401fd3ccfb4"
+    ],
+    "model_config_version": "luna-v1",
+    "prompt_version": "explain-v1"
+  },
+  "error": null,
+  "usage": {}
+}

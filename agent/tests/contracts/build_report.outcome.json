@@ -1,0 +1,31 @@
+{
+  "job_id": "demo-build_report",
+  "run_id": "run-1",
+  "schema_version": "1.0",
+  "provider_mode": "fixture",
+  "status": "completed",
+  "payload": {
+    "result_id": "result-demo",
+    "result_version": 1,
+    "explanation_version": "example-v1",
+    "artifacts": [
+      {
+        "artifact_id": "5b7745b56288a08a0e18b6ca6497efddc075940168f56874a740fafb6e2ebe27",
+        "content_hash": "bb9c4b1682c714f0b92ee8ae37de5f82d86e566eba6b81594ec9d1ed43c36644",
+        "mime_type": "application/pdf",
+        "size_bytes": 41818
+      },
+      {
+        "artifact_id": "76c1a5dabc1f87f9e61a6e724e117921069f108331d1d76d72c917b96113b7e4",
+        "content_hash": "c52259fd5137510dbcc74b98fd3620f117c91121815790ef2dd0dc5ef83706c2",
+        "mime_type": "application/zip",
+        "size_bytes": 43313
+      }
+    ],
+    "included_source_ids": [
+      "source-demo"
+    ]
+  },
+  "error": null,
+  "usage": {}
+}

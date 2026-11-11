@@ -1,0 +1,17 @@
+{
+  "root": "C:\\Users\\fkaus\\Desktop\\agent 설계\\tmp\\devmerge-independent-20261109",
+  "python": "3.14.4 (tags/v3.14.4:23116f9, Apr  7 2026, 14:10:54) [MSC v.1944 64 bit (AMD64)]",
+  "app": "C:\\Users\\fkaus\\Desktop\\agent 설계\\tmp\\devmerge-independent-20261109\\app\\main.py",
+  "agent": "C:\\Users\\fkaus\\Desktop\\agent 설계\\tmp\\devmerge-independent-20261109\\agent\\__init__.py",
+  "health": {
+    "code": 200,
+    "message": "요청이 처리되었습니다.",
+    "data": {
+      "status": "ok",
+      "aiMode": "direct",
+      "version": "1.0.0"
+    }
+  },
+  "api_paths": 87,
+  "single_app_http_started": true
+}

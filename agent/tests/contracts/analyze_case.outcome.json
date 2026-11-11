@@ -1,0 +1,229 @@
+{
+  "job_id": "demo-analyze_case",
+  "run_id": "run-1",
+  "schema_version": "1.0",
+  "provider_mode": "fixture",
+  "status": "completed",
+  "payload": {
+    "owner_id": "owner-demo",
+    "case_id": "case-demo",
+    "workplace_id": "workplace-demo",
+    "input_version": 1,
+    "snapshot_id": "snapshot-demo",
+    "snapshot_hash": "914100dbf388fd5ec212b9a991566dabade32779ca52c9eb27580e6e37d19a77",
+    "context_id": "0d435493d8b400fe9abe540f7b551a5acb68e5d580688715ca05b7a25edaffd4",
+    "context_hash": "0d435493d8b400fe9abe540f7b551a5acb68e5d580688715ca05b7a25edaffd4",
+    "rule_bundle_version": "pending-v1",
+    "support_manifest_version": "pending-v1",
+    "engine_version": "agent-0.2.0",
+    "wage_section": {
+      "items": [
+        {
+          "rule_id": "W-01",
+          "rule_version": null,
+          "status": "needs_review",
+          "amount": null,
+          "formula_id": null,
+          "reason_codes": [
+            "RULE_UNVERIFIED"
+          ],
+          "evidence_refs": [],
+          "operands": {}
+        },
+        {
+          "rule_id": "W-02",
+          "rule_version": null,
+          "status": "needs_review",
+          "amount": null,
+          "formula_id": null,
+          "reason_codes": [
+            "RULE_UNVERIFIED"
+          ],
+          "evidence_refs": [],
+          "operands": {}
+        },
+        {
+          "rule_id": "W-03",
+          "rule_version": null,
+          "status": "needs_review",
+          "amount": null,
+          "formula_id": null,
+          "reason_codes": [
+            "RULE_UNVERIFIED"
+          ],
+          "evidence_refs": [],
+          "operands": {}
+        },
+        {
+          "rule_id": "W-04",
+          "rule_version": null,
+          "status": "needs_review",
+          "amount": null,
+          "formula_id": null,
+          "reason_codes": [
+            "RULE_UNVERIFIED"
+          ],
+          "evidence_refs": [],
+          "operands": {}
+        },
+        {
+          "rule_id": "W-05",
+          "rule_version": null,
+          "status": "needs_review",
+          "amount": null,
+          "formula_id": null,
+          "reason_codes": [
+            "RULE_UNVERIFIED"
+          ],
+          "evidence_refs": [],
+          "operands": {}
+        }
+      ],
+      "subtotal": "0",
+      "gross_total": null,
+      "scope_complete": false
+    },
+    "comparisons": [
+      {
+        "rule_id": "R-01",
+        "status": "match",
+        "lhs": "10000",
+        "rhs": "10000",
+        "unit": "KRW/hour",
+        "delta": "0",
+        "formula_id": "R-01:lhs-rhs",
+        "scope_complete": true,
+        "reason_codes": [],
+        "evidence_refs": [
+          "evidence-demo"
+        ]
+      },
+      {
+        "rule_id": "R-02",
+        "status": "match",
+        "lhs": "12000",
+        "rhs": "12000",
+        "unit": "minute",
+        "delta": "0",
+        "formula_id": "R-02:lhs-rhs",
+        "scope_complete": true,
+        "reason_codes": [],
+        "evidence_refs": [
+          "evidence-demo"
+        ]
+      },
+      {
+        "rule_id": "R-03",
+        "status": "match",
+        "lhs": "2000000",
+        "rhs": "2000000",
+        "unit": "KRW",
+        "delta": "0",
+        "formula_id": "R-03:lhs-rhs",
+        "scope_complete": true,
+        "reason_codes": [],
+        "evidence_refs": [
+          "evidence-demo"
+        ]
+      },
+      {
+        "rule_id": "R-04",
+        "status": "match",
+        "lhs": "200000",
+        "rhs": "200000",
+        "unit": "KRW",
+        "delta": "0",
+        "formula_id": "R-04:lhs-rhs",
+        "scope_complete": true,
+        "reason_codes": [],
+        "evidence_refs": [
+          "evidence-demo"
+        ]
+      },
+      {
+        "rule_id": "R-05",
+        "status": "match",
+        "lhs": "1800000",
+        "rhs": "1800000",
+        "unit": "KRW",
+        "delta": "0",
+        "formula_id": "R-05:lhs-rhs",
+        "scope_complete": true,
+        "reason_codes": [],
+        "evidence_refs": [
+          "evidence-demo"
+        ]
+      },
+      {
+        "rule_id": "R-06",
+        "status": "match",
+        "lhs": "1800000",
+        "rhs": "1800000",
+        "unit": "KRW",
+        "delta": "0",
+        "formula_id": "R-06:lhs-rhs",
+        "scope_complete": true,
+        "reason_codes": [],
+        "evidence_refs": [
+          "evidence-demo"
+        ]
+      },
+      {
+        "rule_id": "R-07",
+        "status": "needs_review",
+        "lhs": null,
+        "rhs": null,
+        "unit": "KRW",
+        "delta": null,
+        "formula_id": "R-07:lhs-rhs",
+        "scope_complete": false,
+        "reason_codes": [
+          "WAGE_MAPPING_OR_RULE_UNVERIFIED"
+        ],
+        "evidence_refs": []
+      }
+    ],
+    "questions": [
+      {
+        "question_id": "f31a075766bb9fa21d0954ab42d53d8506ebce7c17b27c75dc4231187f165576",
+        "reason_code": "RULE_UNVERIFIED",
+        "target_field_ids": [],
+        "blocking_rule_ids": [
+          "W-01",
+          "W-02",
+          "W-03",
+          "W-04",
+          "W-05"
+        ],
+        "text": "이 항목은 자동 임금 계산을 아직 제공하지 않습니다.",
+        "required_materials": []
+      },
+      {
+        "question_id": "35d7cdd6386c7383385bce8a316c4b0bb1dd9f21e45e4db6f894c401fd3ccfb4",
+        "reason_code": "WAGE_MAPPING_OR_RULE_UNVERIFIED",
+        "target_field_ids": [],
+        "blocking_rule_ids": [
+          "R-07"
+        ],
+        "text": "계산 임금과 명세서 항목의 대응을 검토해야 합니다.",
+        "required_materials": []
+      }
+    ],
+    "evidence_catalog": [
+      {
+        "evidence_id": "evidence-demo",
+        "source_id": "source-demo",
+        "page": 1,
+        "quote": "SYNTHETIC PAYROLL - NOT A REAL PERSON",
+        "locator": "",
+        "verification_method": "manual_confirmed"
+      }
+    ],
+    "dependencies": [
+      "source:source-demo:1:1"
+    ],
+    "result_hash": "2ce8b422d23fef62c4e8945b5df1de1c42eff084fa1a9a9e131d9b573132bf08"
+  },
+  "error": null,
+  "usage": {}
+}

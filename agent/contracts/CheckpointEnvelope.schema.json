@@ -1,0 +1,53 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "input_fingerprint": {
+      "title": "Input Fingerprint",
+      "type": "string"
+    },
+    "engine_version": {
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "checkpoint_schema_version": {
+      "default": "1.0",
+      "title": "Checkpoint Schema Version",
+      "type": "string"
+    },
+    "completed_nodes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Completed Nodes",
+      "type": "array"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "payload_hash": {
+      "default": "",
+      "title": "Payload Hash",
+      "type": "string"
+    },
+    "call_budget": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Call Budget",
+      "type": "object"
+    }
+  },
+  "required": [
+    "job_id",
+    "input_fingerprint",
+    "engine_version"
+  ],
+  "title": "CheckpointEnvelope",
+  "type": "object"
+}

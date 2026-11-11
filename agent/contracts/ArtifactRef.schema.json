@@ -1,0 +1,30 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "mime_type": {
+      "title": "Mime Type",
+      "type": "string"
+    },
+    "size_bytes": {
+      "minimum": 0,
+      "title": "Size Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "content_hash",
+    "mime_type",
+    "size_bytes"
+  ],
+  "title": "ArtifactRef",
+  "type": "object"
+}
