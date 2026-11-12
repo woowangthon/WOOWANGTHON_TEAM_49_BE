@@ -225,7 +225,7 @@ def confirm_candidate(
         document_version=doc["document_version"],
         document_id=document_id,
     )
-    from app.source_location import bounding_box
+    from app.source_location import bounding_box, evidence_page
 
     reading = con.execute("SELECT data_json FROM document_ocr WHERE id=?", (base["ocr_result_id"],)).fetchone()
     box = bounding_box(
@@ -262,7 +262,7 @@ def confirm_candidate(
         "ocrResultId": base["ocr_result_id"],
         "evidenceRefs": chosen["evidence_refs"],
         "unit": chosen["unit"],
-        "page": chosen.get("source_page"),
+        "page": evidence_page(chosen.get("source_page"), chosen.get("source_quote")),
         "text": chosen.get("source_quote"),
         "boundingBox": box,
         "coordinateSystem": "RELATIVE_0_1",

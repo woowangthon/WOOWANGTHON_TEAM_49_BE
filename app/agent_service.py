@@ -742,7 +742,7 @@ class AgentService:
                     ),
                 )
                 if payload["extraction_method"] == "text":
-                    from app.source_location import bounding_box
+                    from app.source_location import bounding_box, evidence_page
 
                     reading = con.execute(
                         "SELECT data_json FROM document_ocr WHERE id=?", (payload["ocr_result_id"],)
@@ -751,7 +751,7 @@ class AgentService:
                     for field in output["fields"]:
                         source = {
                             "documentId": row["document_id"],
-                            "page": field["source_page"],
+                            "page": evidence_page(field["source_page"], field["source_quote"]),
                             "text": field["source_quote"],
                             "boundingBox": bounding_box(
                                 recognized, field["source_page"], field["source_quote"], field.get("raw_value")

@@ -10,7 +10,9 @@ from agent.services import local_ocr
 from agent.services.document_ocr import recognize_document
 from app.agent_review import confirm_candidate, initialize_review
 from app.db import load
-from app.source_location import bounding_box, union_box
+from app.db import dump
+from app.engine import effective_fields
+from app.source_location import bounding_box, evidence_page, public_source, union_box
 from test_runtime_db import Harness
 
 
@@ -118,3 +120,38 @@ async def test_extracted_and_confirmed_fields_expose_viewer_boxes(tmp_path):
         confirm_candidate(con, 1, doc_id, candidate_id, "gross")
     confirmed = source()
     assert confirmed["boundingBox"] == extracted["boundingBox"]
+
+
+def test_page_without_quote_is_not_evidence():
+    # The model must return an integer page even for a value it did not find.
+    assert evidence_page(2, "") is None
+    assert evidence_page(2, "   ") is None
+    assert evidence_page(2, None) is None
+    assert evidence_page(2, "월 통상임금 3,000,000원") == 2
+    stored = {"documentId": 3, "page": 2, "text": None, "boundingBox": [0.1, 0.1, 0.1, 0.1]}
+    assert public_source(stored) == {**stored, "page": None, "boundingBox": None}
+    quoted = {"documentId": 3, "page": 2, "text": "기본급 100", "boundingBox": None}
+    assert public_source(quoted) is quoted
+    assert public_source(None) is None
+
+
+async def test_stored_quote_less_page_is_hidden_from_field_api(tmp_path):
+    harness = Harness(tmp_path / "pages")
+    initialize_review(harness.db)
+    doc_id = harness.document()
+    read = await harness.execute(harness.service.enqueue_read(1, doc_id))
+    assert read["status"] == "COMPLETED", read
+    extraction = await harness.execute(harness.service.enqueue_extraction(1, doc_id, document_type="payslip"))
+    assert extraction["status"] == "COMPLETED", extraction
+    with harness.db.connect(write=True) as con:
+        # A row written before this rule: filler page 2 with no quote.
+        con.execute(
+            "UPDATE fields SET source_json=? WHERE document_id=? AND key='gross'",
+            (dump({"documentId": doc_id, "page": 2, "text": None}), doc_id),
+        )
+        case_id = con.execute("SELECT case_id FROM document_links WHERE document_id=?", (doc_id,)).fetchone()
+        fields = effective_fields(con, case_id[0] if case_id else 0, doc_id)
+    gross = next(field for field in fields if field["key"] == "gross")
+    assert gross["source"]["page"] is None
+    others = [field for field in fields if field["key"] != "gross" and field["source"]["text"]]
+    assert others and all(field["source"]["page"] == 1 for field in others)

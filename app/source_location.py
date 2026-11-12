@@ -12,6 +12,25 @@ from agent.review.reading import locate
 PADDING = 0.002
 
 
+def evidence_page(page, quote):
+    """A page is evidence only together with a quote.
+
+    The model schema requires an integer page even for a value it did not find
+    (empty quote), so that page number is filler and must not steer the viewer.
+    """
+    return page if isinstance(quote, str) and quote.strip() else None
+
+
+def public_source(source):
+    """Drop a quote-less page from a stored field source (also fixes older rows)."""
+    if not isinstance(source, dict) or source.get("page") is None:
+        return source
+    page = evidence_page(source["page"], source.get("text"))
+    if page is not None:
+        return source
+    return {**source, "page": None, "boundingBox": None}
+
+
 def union_box(boxes):
     """Union of ``[x1, y1, x2, y2]`` boxes as a clamped ``[x, y, width, height]``."""
     valid = [

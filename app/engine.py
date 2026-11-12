@@ -3,6 +3,7 @@
 from collections import Counter
 
 from app.db import load
+from app.source_location import public_source
 from app.compatibility import KINDS, IDS, collect, fingerprint
 from app.compatibility import job_dto as job_dto, schedule as schedule
 
@@ -223,9 +224,11 @@ def effective_fields(con, case_id, document_id):
                 "confirmedAt": active["confirmed_at"],
                 "effectiveValueOrigin": "CASE_OVERRIDE" if override else "SHARED_DEFAULT",
                 "hasCaseOverride": override is not None,
-                "source": load(override["source_json"])
-                if override and override["source_json"]
-                else load(field["source_json"]),
+                "source": public_source(
+                    load(override["source_json"])
+                    if override and override["source_json"]
+                    else load(field["source_json"])
+                ),
             }
         )
     return result
