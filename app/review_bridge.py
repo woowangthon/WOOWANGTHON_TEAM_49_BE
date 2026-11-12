@@ -11,6 +11,7 @@ from agent.services.hashing import content_hash, digest
 from app.agent_mapping import analysis_payload, snapshot_from_group
 from app.db import dump, load, now
 from app.errors import ApiError
+from app.source_location import union_box
 from app.integration_store import ensure_default_group, identifier, source_ref, owned_group
 from app.security import case as owned_case, workplace as owned_workplace
 
@@ -219,7 +220,9 @@ async def complete_review(service, owner_id, rid, expected, payload):
                         'documentHash': ref.content_hash, 'ocrResultId': reading_id,
                         'evidenceRefs': item['evidence_refs'], 'unit': field['unit'], 'reviewId': rid,
                         'reviewFieldId': field['id'], 'page': item['source_page'], 'text': item['source_quote'],
-                        'boundingBoxes': (field.get('evidence') or {}).get('boxes', [])}
+                        'boundingBoxes': (field.get('evidence') or {}).get('boxes', []),
+                        'boundingBox': union_box((field.get('evidence') or {}).get('boxes', [])),
+                        'coordinateSystem': 'RELATIVE_0_1'}
                     con.execute('''INSERT INTO fields(document_id,key,label,value_json,value_type,status,edited,confirmed_at,source_json)
                         VALUES(?,?,?,?,'TEXT',?,?,?,?)''', (did, field['field_id'], field['label'], dump(item['normalized_value']),
                         'CONFIRMED' if confirmed else 'UNCONFIRMED', int(confirmed), now() if confirmed else None, dump(projection)))

@@ -225,6 +225,15 @@ def confirm_candidate(
         document_version=doc["document_version"],
         document_id=document_id,
     )
+    from app.source_location import bounding_box
+
+    reading = con.execute("SELECT data_json FROM document_ocr WHERE id=?", (base["ocr_result_id"],)).fetchone()
+    box = bounding_box(
+        load(reading["data_json"]) if reading else None,
+        chosen.get("source_page"),
+        chosen.get("source_quote"),
+        chosen.get("raw_value"),
+    )
     audit_id, created_at = identifier(), now()
     con.execute(
         """INSERT INTO document_confirmations(id,document_id,owner_id,field_id,candidate_id,
@@ -255,7 +264,7 @@ def confirm_candidate(
         "unit": chosen["unit"],
         "page": chosen.get("source_page"),
         "text": chosen.get("source_quote"),
-        "boundingBox": None,
+        "boundingBox": box,
         "coordinateSystem": "RELATIVE_0_1",
     }
     if case_id is not None:

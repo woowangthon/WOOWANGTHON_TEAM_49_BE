@@ -89,6 +89,36 @@ def tsv_lines(tsv):
     ]
 
 
+def tsv_words(tsv, width, height):
+    """Word boxes relative to the rendered page: [x1, y1, x2, y2] in 0..1, top-left origin.
+
+    Coordinates are optional evidence for the viewer. A malformed row drops only
+    the coordinates, never the recognized text.
+    """
+    if width <= 0 or height <= 0:
+        return []
+    words = []
+    try:
+        for item in csv.DictReader(io.StringIO(tsv), delimiter="\t", quoting=csv.QUOTE_NONE):
+            if item.get("level") != "5" or not (item.get("text") or "").strip():
+                continue
+            x, y, w, h = (int(item[key]) for key in ("left", "top", "width", "height"))
+            words.append(
+                {
+                    "text": item["text"].strip(),
+                    "bbox": [
+                        max(0.0, min(1.0, x / width)),
+                        max(0.0, min(1.0, y / height)),
+                        max(0.0, min(1.0, (x + w) / width)),
+                        max(0.0, min(1.0, (y + h) / height)),
+                    ],
+                }
+            )
+    except (ValueError, TypeError, KeyError):
+        return []
+    return words
+
+
 def recognize_pdf(data, settings, page_numbers=None):
     with OCR_LOCK:
         try:
@@ -142,7 +172,13 @@ def _recognize_pdf(data, settings, page_numbers):
                     data=image_buffer.getvalue(),
                 )
                 lines = tsv_lines(output)
-                pages.append({"text": "\n".join(line["text"] for line in lines), "lines": lines})
+                pages.append(
+                    {
+                        "text": "\n".join(line["text"] for line in lines),
+                        "lines": lines,
+                        "words": tsv_words(output, bitmap.width, bitmap.height),
+                    }
+                )
             finally:
                 if bitmap is not None:
                     bitmap.close()

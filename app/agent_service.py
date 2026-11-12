@@ -742,11 +742,21 @@ class AgentService:
                     ),
                 )
                 if payload["extraction_method"] == "text":
+                    from app.source_location import bounding_box
+
+                    reading = con.execute(
+                        "SELECT data_json FROM document_ocr WHERE id=?", (payload["ocr_result_id"],)
+                    ).fetchone()
+                    recognized = load(reading["data_json"]) if reading else None
                     for field in output["fields"]:
                         source = {
                             "documentId": row["document_id"],
                             "page": field["source_page"],
                             "text": field["source_quote"],
+                            "boundingBox": bounding_box(
+                                recognized, field["source_page"], field["source_quote"], field.get("raw_value")
+                            ),
+                            "coordinateSystem": "RELATIVE_0_1",
                             "evidenceRefs": field["evidence_refs"],
                             "candidateId": candidate_id,
                             "documentVersion": output["document_version"],
