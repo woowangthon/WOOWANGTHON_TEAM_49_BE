@@ -26,6 +26,18 @@ router = APIRouter(tags=["Documents & Review"])
 MEDIA = {".pdf": "application/pdf", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
 
 
+def public_processing_status(row):
+    """READ_READY is internal: a legacy upload is extracted right after reading.
+
+    Report that hand-off as PROCESSING so clients keep polling instead of showing
+    an empty review; without legacy auto-extraction it awaits the user's review.
+    """
+    if row["processing_status"] != "READ_READY":
+        return row["processing_status"]
+    auto = (load(row["ai_metadata"]) or {}).get("legacyAutoExtract")
+    return "PROCESSING" if auto and row["error_code"] is None else "REVIEW_REQUIRED"
+
+
 def doc_dto(con, row, case_id=None):
     links = con.execute("SELECT * FROM document_links WHERE document_id=?", (row["id"],)).fetchall()
     link = next((item for item in links if item["case_id"] == case_id), None)
@@ -34,9 +46,7 @@ def doc_dto(con, row, case_id=None):
         "workplaceId": row["workplace_id"],
         "documentType": row["document_type"],
         "fileName": row["file_name"],
-        "processingStatus": "REVIEW_REQUIRED"
-        if row["processing_status"] == "READ_READY"
-        else row["processing_status"],
+        "processingStatus": public_processing_status(row),
         "progress": row["progress"],
         "reviewStatus": link["review_status"] if link else "NOT_STARTED",
         "linkId": link["id"] if link else None,
@@ -555,7 +565,7 @@ def change_document_type(
         for link in con.execute("SELECT case_id FROM document_links WHERE document_id=?", (document_id,)).fetchall():
             schedule(con, link["case_id"], delay=request.app.state.settings.recompute_debounce_seconds)
         updated = con.execute("SELECT * FROM documents WHERE id=?", (document_id,)).fetchone()
-        return ok({**doc_dto(con, updated), "processingStatus": "PROCESSING" if read else "UPLOADED"}, 202)
+        return ok(doc_dto(con, updated), 202)
 
 
 @router.get("/cases/{case_id}/documents/{document_id}", response_model=API[DocumentDTO])
@@ -772,9 +782,7 @@ def fields(case_id: int, document_id: int, request: Request, user=Depends(curren
             {
                 "documentId": document_id,
                 "caseId": case_id,
-                "processingStatus": "REVIEW_REQUIRED"
-                if doc["processing_status"] == "READ_READY"
-                else doc["processing_status"],
+                "processingStatus": public_processing_status(doc),
                 "reviewStatus": link["review_status"],
                 "fields": [public_field(f) for f in effective_fields(con, case_id, document_id)],
             }
@@ -1048,9 +1056,7 @@ def review(case_id: int, document_id: int, request: Request, user=Depends(curren
                 "documentId": document_id,
                 "reviewStatus": link["review_status"],
                 "unconfirmedFieldIds": pending,
-                "processingStatus": "REVIEW_REQUIRED"
-                if doc["processing_status"] == "READ_READY"
-                else doc["processing_status"],
+                "processingStatus": public_processing_status(doc),
             }
         )
 

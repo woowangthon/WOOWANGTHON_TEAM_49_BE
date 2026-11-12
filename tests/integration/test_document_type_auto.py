@@ -135,3 +135,19 @@ def test_patch_document_type_guards(api):
         assert con.execute("SELECT COUNT(*) FROM fields WHERE document_id=?", (did,)).fetchone()[0] == 0
         metadata = load(con.execute("SELECT ai_metadata FROM documents WHERE id=?", (did,)).fetchone()[0])
     assert metadata["legacyAutoExtract"] is True
+
+
+def test_read_to_extraction_handoff_is_reported_as_processing(api):
+    client, app, wid, cid = api
+    app.state.service.provider = FixtureProvider()
+    did = upload(client, cid, PAYSLIP, "AUTO")
+    asyncio.run(app.state.service.read_document(1, did))
+    with app.state.db.connect() as con:
+        assert con.execute("SELECT processing_status FROM documents WHERE id=?", (did,)).fetchone()[0] == "READ_READY"
+    # Clients must keep polling: extraction starts right after reading.
+    assert doc(client, wid, did)["processingStatus"] == "PROCESSING"
+    fields = client.get(f"/api/v1/cases/{cid}/documents/{did}/fields").json()["data"]
+    assert fields["processingStatus"] == "PROCESSING"
+    with app.state.db.connect(write=True) as con:
+        con.execute("UPDATE documents SET error_code='MODEL_NOT_CONFIGURED' WHERE id=?", (did,))
+    assert doc(client, wid, did)["processingStatus"] == "REVIEW_REQUIRED"
