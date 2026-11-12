@@ -20,6 +20,7 @@ env:
   IMAGE_NAME: ghcr.io/woowangthon/woowangthon_team_49_be
 
 jobs:
+  # 1. 코드 검증
   test:
     name: Lint & Test
     runs-on: ubuntu-24.04
@@ -46,6 +47,7 @@ jobs:
           uv run pytest tests/backend -q
           uv run pytest agent/tests -q
 
+  # 2. Docker 이미지 빌드 및 GHCR 업로드
   build:
     name: Build & Push Docker Image
     needs: test
@@ -83,6 +85,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  # 3. EC2에 특정 SHA 이미지 배포
   deploy:
     name: Deploy to EC2
     needs: build
@@ -102,7 +105,7 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Deploy image to EC2
+      - name: Deploy SHA image to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           IMAGE_TAG: sha-${{ github.sha }}
@@ -116,25 +119,49 @@ jobs:
 
           cd /home/ubuntu/WOOWANGTHON_TEAM_49_BE
 
-          export API_IMAGE="ghcr.io/woowangthon/woowangthon_team_49_be:${IMAGE_TAG}"
+          IMAGE_NAME="ghcr.io/woowangthon/woowangthon_team_49_be"
+          API_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
 
-          sudo -n docker compose \
+          echo "Deploying: $API_IMAGE"
+
+          # Verify the exact image Compose will use.
+          sudo -n env API_IMAGE="$API_IMAGE" \
+            docker compose \
             --env-file .env.production \
             config --quiet
 
-          sudo -n docker compose \
+          # Download the image built from this commit.
+          sudo -n env API_IMAGE="$API_IMAGE" \
+            docker compose \
             --env-file .env.production \
             pull api
 
-          sudo -n docker compose \
+          # Recreate the container without building on EC2.
+          sudo -n env API_IMAGE="$API_IMAGE" \
+            docker compose \
             --env-file .env.production \
-            up -d --no-build --wait api
+            up -d --no-build --wait --wait-timeout 180 api
 
-          curl -fsS http://127.0.0.1:8000/health
+          # Confirm the API is responding.
+          curl --fail --silent --show-error \
+            http://127.0.0.1:8000/health
 
-          sudo -n docker compose \
+          # Verify the deployed container image.
+          CONTAINER_ID=$(sudo -n docker compose \
             --env-file .env.production \
-            ps
+            ps -q api)
 
-          echo "Deployed $API_IMAGE"
+          ACTUAL_IMAGE=$(sudo -n docker inspect \
+            "$CONTAINER_ID" \
+            --format '{{.Config.Image}}')
+
+          echo "Expected: $API_IMAGE"
+          echo "Actual:   $ACTUAL_IMAGE"
+
+          if [ "$ACTUAL_IMAGE" != "$API_IMAGE" ]; then
+            echo "Image mismatch!"
+            exit 1
+          fi
+
+          echo "Deployment successful: $API_IMAGE"
           REMOTE
