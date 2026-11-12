@@ -42,9 +42,22 @@ class ModelTransientError(ModelUnavailable):
 class ModelFormatError(AgentError):
     code = "MODEL_OUTPUT_INVALID"
 
-    def __init__(self, message="Invalid model output", *, reason="MODEL_FORMAT_INVALID", field_id=None):
+    def __init__(
+        self,
+        message="Invalid model output",
+        *,
+        reason="MODEL_FORMAT_INVALID",
+        field_id=None,
+        detected_document_type=None,
+    ):
         super().__init__(message)
         self.reason = reason
+        from agent.services.extraction_profiles import DOCUMENT_TYPES
+
+        # Only a known document type may leave the agent; model text is untrusted.
+        self.detected_document_type = (
+            detected_document_type if detected_document_type in DOCUMENT_TYPES else None
+        )
         # Model-generated identifiers are untrusted and must not enter diagnostic logs verbatim.
         from agent.services.extraction_profiles import PROFILES, field_definition
         from agent.services.normalization import CANONICAL_UNITS

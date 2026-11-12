@@ -75,7 +75,7 @@ class CaseDTO(BaseModel):
 class DocumentDTO(BaseModel):
     documentId: int
     workplaceId: int
-    documentType: Literal['CONTRACT', 'ATTENDANCE', 'PAYSLIP', 'DEPOSIT']
+    documentType: Literal['CONTRACT', 'ATTENDANCE', 'PAYSLIP', 'DEPOSIT', 'AUTO']
     fileName: str
     processingStatus: Literal['UPLOADED', 'PROCESSING', 'READ_READY', 'READY', 'REVIEW_REQUIRED', 'FAILED']
     reviewStatus: Literal['NOT_STARTED', 'IN_PROGRESS', 'CONFIRMED']

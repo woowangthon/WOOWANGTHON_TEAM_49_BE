@@ -183,6 +183,10 @@ class AgentFailure(ContractModel):
     code: str
     message: str
     retryable: bool = False
+    # Code-owned detail of MODEL_OUTPUT_INVALID, e.g. DOCUMENT_TYPE_MISMATCH.
+    reason: str | None = None
+    # Validated document type the model reported on a type conflict.
+    detected_document_type: Literal["contract", "attendance", "payslip", "deposit"] | None = None
 
 
 class AgentOutcome(ContractModel):

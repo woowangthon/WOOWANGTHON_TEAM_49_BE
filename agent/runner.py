@@ -188,6 +188,10 @@ async def run_task(task, *, ports, settings, provider=None, registry=None):
                 code=code,
                 message=failure_message(exc),
                 retryable=retryable,
+                reason=exc.reason if isinstance(exc, ModelFormatError) else None,
+                detected_document_type=getattr(exc, "detected_document_type", None)
+                if isinstance(exc, ModelFormatError)
+                else None,
             ),
             usage=runtime.usage if runtime else {},
         )

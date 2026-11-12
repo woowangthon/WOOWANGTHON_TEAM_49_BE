@@ -16,9 +16,10 @@ from app.db import dump, load, now
 from app.engine import effective_fields, schedule
 from app.compatibility import public_field
 from app.errors import ApiError, ok
+from app.integration_store import source_ref
 from app.outputs import API, DocumentDTO, FieldsDTO, Page
 from app.routers.workspaces import page_data
-from app.schemas import DocType, Execute, FieldPatch, LinkCreate, LinkPatch
+from app.schemas import DocumentTypePatch, Execute, FieldPatch, LinkCreate, LinkPatch, UploadDocType
 from app.security import case, case_document, check_version, current_user, document, workplace
 
 router = APIRouter(tags=["Documents & Review"])
@@ -211,7 +212,7 @@ async def upload_workplace(
     workplace_id: int,
     request: Request,
     file: UploadFile = File(...),
-    documentType: DocType = Form(...),
+    documentType: UploadDocType = Form(...),
     source: Literal["USER_UPLOAD"] = Form("USER_UPLOAD"),
     applicableFrom: date | None = Form(None),
     applicableTo: date | None = Form(None),
@@ -236,7 +237,7 @@ async def upload_case(
     case_id: int,
     request: Request,
     file: UploadFile = File(...),
-    documentType: DocType = Form(...),
+    documentType: UploadDocType = Form(...),
     source: Literal["USER_UPLOAD"] = Form("USER_UPLOAD"),
     user=Depends(current_user),
 ):
@@ -433,7 +434,7 @@ def confirm_replacement(
 def library(
     request: Request,
     workplaceId: int | None = None,
-    documentType: DocType | None = None,
+    documentType: UploadDocType | None = None,
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
     user=Depends(current_user),
@@ -486,6 +487,75 @@ def case_documents(
 def original(workplace_id: int, document_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         return ok(doc_dto(con, document(con, workplace_id, document_id, user["id"])))
+
+
+@router.patch("/workplaces/{workplace_id}/documents/{document_id}", status_code=202, response_model=API[DocumentDTO])
+def change_document_type(
+    workplace_id: int, document_id: int, body: DocumentTypePatch, request: Request, user=Depends(current_user)
+):
+    """Set the document type (or AUTO) and extract again with it.
+
+    Used after DOCUMENT_TYPE_MISMATCH / DOCUMENT_TYPE_UNRESOLVED. Refused once the
+    user has reviewed any value, so no confirmation or edit is ever discarded.
+    """
+    with request.app.state.db.connect(write=True) as con:
+        doc = document(con, workplace_id, document_id, user["id"])
+        running = con.execute(
+            "SELECT 1 FROM agent_jobs WHERE document_id=? AND status IN ('PENDING','RUNNING')", (document_id,)
+        ).fetchone()
+        if running or doc["processing_status"] in ("UPLOADED", "PROCESSING"):
+            raise ApiError(409, "DOCUMENT_STILL_PROCESSING")
+        reviewed = con.execute(
+            """SELECT 1 FROM fields f WHERE f.document_id=? AND (f.edited=1
+            OR f.status IN ('CONFIRMED','DEFERRED','NEEDS_RECONFIRMATION')
+            OR EXISTS (SELECT 1 FROM field_overrides o WHERE o.field_id=f.id)
+            OR EXISTS (SELECT 1 FROM field_history h WHERE h.field_id=f.id))
+            UNION SELECT 1 FROM document_confirmations WHERE document_id=? LIMIT 1""",
+            (document_id, document_id),
+        ).fetchone()
+        if reviewed:
+            raise ApiError(
+                409,
+                "DOCUMENT_REVIEW_STARTED",
+                "확인하거나 수정한 값이 있어 문서 유형을 바꿀 수 없습니다. 새 문서로 다시 올려 주세요.",
+            )
+        unchanged = (
+            body.documentType == doc["document_type"]
+            and doc["error_code"] is None
+            and doc["processing_status"] in ("READY", "REVIEW_REQUIRED")
+        )
+        if unchanged:
+            return ok(doc_dto(con, doc), 202)
+        ref = source_ref(con, document_id, user["id"])
+        read = con.execute(
+            "SELECT 1 FROM document_ocr WHERE document_id=? AND document_version=? AND content_hash=? LIMIT 1",
+            (document_id, ref.document_version, ref.content_hash),
+        ).fetchone()
+        metadata = load(doc["ai_metadata"]) or {}
+        metadata.pop("detectedType", None)
+        metadata["legacyAutoExtract"] = True
+        # Unreviewed candidates of the previous type would otherwise linger beside the new ones.
+        con.execute("DELETE FROM fields WHERE document_id=?", (document_id,))
+        # READ_READY reuses the stored reading (no second OCR); the document worker extracts next.
+        con.execute(
+            "UPDATE documents SET document_type=?,processing_status=?,progress=?,error_code=NULL,ai_metadata=? WHERE id=?",
+            (
+                body.documentType,
+                "READ_READY" if read else "UPLOADED",
+                40 if read else 10,
+                dump(metadata),
+                document_id,
+            ),
+        )
+        con.execute(
+            """UPDATE comparison_groups SET needs_review=1,version=version+1,updated_at=? WHERE id IN
+            (SELECT group_id FROM group_documents WHERE document_id=?)""",
+            (now(), document_id),
+        )
+        for link in con.execute("SELECT case_id FROM document_links WHERE document_id=?", (document_id,)).fetchall():
+            schedule(con, link["case_id"], delay=request.app.state.settings.recompute_debounce_seconds)
+        updated = con.execute("SELECT * FROM documents WHERE id=?", (document_id,)).fetchone()
+        return ok({**doc_dto(con, updated), "processingStatus": "PROCESSING" if read else "UPLOADED"}, 202)
 
 
 @router.get("/cases/{case_id}/documents/{document_id}", response_model=API[DocumentDTO])

@@ -5,6 +5,21 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue, field_validator, m
 
 Money = Annotated[int, Field(strict=True, ge=0, le=10**12)]
 DocType = Literal["CONTRACT", "ATTENDANCE", "PAYSLIP", "DEPOSIT"]
+# AUTO: the agent classifies the document; it stays AUTO (outside case calculations) until then.
+UploadDocType = Literal["CONTRACT", "ATTENDANCE", "PAYSLIP", "DEPOSIT", "AUTO"]
+AGENT_DOCUMENT_TYPES = {
+    "contract": "CONTRACT",
+    "attendance": "ATTENDANCE",
+    "payslip": "PAYSLIP",
+    "payslip_ocr": "PAYSLIP",
+    "deposit": "DEPOSIT",
+}
+TYPE_REVIEW_REASONS = ("DOCUMENT_TYPE_MISMATCH", "DOCUMENT_TYPE_UNRESOLVED")
+
+
+class DocumentTypePatch(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    documentType: UploadDocType
 
 
 class Input(BaseModel):

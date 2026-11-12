@@ -16,6 +16,7 @@ from agent.services.hashing import content_hash
 from app.agent_ports import DatabaseAgentPorts
 from app.db import dump, load, now
 from app.errors import ApiError
+from app.schemas import AGENT_DOCUMENT_TYPES, TYPE_REVIEW_REASONS
 from app.integration_store import (
     IntegrationStore,
     check_job,
@@ -611,6 +612,18 @@ class AgentService:
             if temporary:
                 temporary.unlink(missing_ok=True)
 
+    @staticmethod
+    def _set_detected_type(con, document_id, detected):
+        """Record (or clear) the agent's document-type judgement in aiMetadata.detectedType."""
+        doc = con.execute("SELECT ai_metadata FROM documents WHERE id=?", (document_id,)).fetchone()
+        if doc is None:
+            return
+        metadata = load(doc["ai_metadata"]) or {}
+        metadata.pop("detectedType", None)
+        if detected:
+            metadata["detectedType"] = detected
+        con.execute("UPDATE documents SET ai_metadata=? WHERE id=?", (dump(metadata), document_id))
+
     def _schedule_document_cases(self, con, document_id):
         from app.compatibility import schedule
 
@@ -649,11 +662,19 @@ class AgentService:
             if outcome.job_id != context.job_id or outcome.run_id != context.run_id:
                 raise IntegrityError("Outcome belongs to another execution")
             if outcome.status != "completed":
+                # A document-type conflict is a user decision, not a broken document:
+                # surface its specific code and keep the document reviewable.
+                type_review = (
+                    row["task_kind"] == "extract_document"
+                    and outcome.status == "failed"
+                    and outcome.error.reason in TYPE_REVIEW_REASONS
+                )
+                code = outcome.error.reason if type_review else outcome.error.code
                 con.execute(
                     "UPDATE agent_jobs SET status=?,error_code=?,error_message=?,completed_at=?,execution_hash=NULL WHERE id=?",
                     (
                         "CANCELLED" if outcome.status == "cancelled" else "FAILED",
-                        outcome.error.code,
+                        code,
                         outcome.error.message,
                         now(),
                         row["id"],
@@ -661,11 +682,18 @@ class AgentService:
                 )
                 from app.compatibility import complete_job
 
-                complete_job(con, row, error_code=outcome.error.code)
-                if row["document_id"]:
+                complete_job(con, row, error_code=code)
+                if row["document_id"] and type_review:
+                    detected = AGENT_DOCUMENT_TYPES.get(outcome.error.detected_document_type or "")
+                    self._set_detected_type(con, row["document_id"], detected)
+                    con.execute(
+                        "UPDATE documents SET processing_status='REVIEW_REQUIRED',error_code=?,progress=100 WHERE id=? AND deleted_at IS NULL",
+                        (code, row["document_id"]),
+                    )
+                elif row["document_id"]:
                     con.execute(
                         "UPDATE documents SET processing_status='FAILED',error_code=?,progress=100 WHERE id=? AND deleted_at IS NULL",
-                        (outcome.error.code, row["document_id"]),
+                        (code, row["document_id"]),
                     )
                 return
             output = outcome.payload.model_dump(mode="json")
@@ -783,6 +811,17 @@ class AgentService:
                         (SELECT group_id FROM group_documents WHERE document_id=?)""",
                         (now(), row["document_id"]),
                     )
+                detected = None
+                if payload["document_type"] == "auto":
+                    # AUTO uploads take the type the agent verified; an explicit type is never overwritten.
+                    detected = AGENT_DOCUMENT_TYPES.get(output["document_type"])
+                    if detected:
+                        con.execute(
+                            "UPDATE documents SET document_type=? WHERE id=? AND document_type='AUTO'",
+                            (detected, row["document_id"]),
+                        )
+                # Also clears a judgement left by an earlier type conflict.
+                self._set_detected_type(con, row["document_id"], detected)
                 self._schedule_document_cases(con, row["document_id"])
                 con.execute(
                     "UPDATE documents SET processing_status='REVIEW_REQUIRED',progress=100,error_code=NULL WHERE id=?",

@@ -15,6 +15,36 @@
           "default": false,
           "title": "Retryable",
           "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "detected_document_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "contract",
+                "attendance",
+                "payslip",
+                "deposit"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detected Document Type"
         }
       },
       "required": [
