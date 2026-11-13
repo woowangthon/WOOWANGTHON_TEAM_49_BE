@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 
 from app.ai import AIAdapter
+from app.chat_memory import catch_up_summaries
 from app.i18n import Localizer
 from app.config import Settings
 from app.centers import seed_centers
@@ -51,6 +52,10 @@ def create_app(settings=None, ai_client=None, *, provider=None, recognizer=None,
         app.state.ai = AIAdapter(settings, ai_client)
         app.state.localizer = Localizer(settings, app.state.db, translation_client)
         app.state.chat_runs = {}
+        app.state.summary_tasks, app.state.summary_running, app.state.summary_dirty = set(), set(), set()
+        catch_up = asyncio.create_task(catch_up_summaries(app.state))
+        app.state.summary_tasks.add(catch_up)
+        catch_up.add_done_callback(app.state.summary_tasks.discard)
         tasks = ([asyncio.create_task(document_worker(app.state))] +
             [asyncio.create_task(agent_worker(app.state)) for _ in range(settings.worker_concurrency)]) if settings.workers_enabled else []
         app.state.worker_tasks = tasks
@@ -61,9 +66,10 @@ def create_app(settings=None, ai_client=None, *, provider=None, recognizer=None,
                 control.cancelled.set()
                 if control.task:
                     control.task.cancel()
-            for task in tasks:
+            background = [*tasks, *app.state.summary_tasks]
+            for task in background:
                 task.cancel()
-            await asyncio.gather(*tasks, return_exceptions=True)
+            await asyncio.gather(*background, return_exceptions=True)
             await app.state.ai.close()
 
     app = FastAPI(title='월급잇다 Integrated Backend', version='1.0.0', lifespan=lifespan,

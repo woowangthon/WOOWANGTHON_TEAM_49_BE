@@ -151,6 +151,11 @@ CREATE TABLE IF NOT EXISTS idempotency_responses (
  fingerprint TEXT NOT NULL, data_json TEXT NOT NULL, status_code INTEGER NOT NULL,
  created_at TEXT NOT NULL, expires_at TEXT NOT NULL,
  PRIMARY KEY(user_id,path,key_hash));
+CREATE TABLE IF NOT EXISTS chat_summaries (
+ chat_id INTEGER NOT NULL REFERENCES chats(id), scope_key TEXT NOT NULL, summary TEXT NOT NULL,
+ message_ids TEXT NOT NULL, last_message_id INTEGER NOT NULL, updated_at TEXT NOT NULL,
+ PRIMARY KEY(chat_id,scope_key));
+CREATE INDEX IF NOT EXISTS messages_chat ON messages(chat_id,id);
 CREATE TABLE IF NOT EXISTS translations (
  language TEXT NOT NULL, source_hash TEXT NOT NULL, translated TEXT NOT NULL, created_at TEXT NOT NULL,
  PRIMARY KEY(language,source_hash));
