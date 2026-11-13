@@ -1,7 +1,7 @@
 """Public core response schemas for Swagger and frontend type generation."""
 from typing import Generic, Literal, TypeVar
 
-from pydantic import BaseModel, JsonValue
+from pydantic import BaseModel, Field, JsonValue
 
 T = TypeVar('T')
 
@@ -119,11 +119,6 @@ class ReviewDTO(BaseModel):
     canCompleteReview: bool
 
 
-class FieldMutationDTO(ReviewFieldMetadata):
-    model_config = {"extra": "allow"}
-    fieldId: int
-
-
 class FieldDTO(ReviewFieldMetadata):
     fieldId: int
     key: str
@@ -133,10 +128,20 @@ class FieldDTO(ReviewFieldMetadata):
     valueType: str
     status: Literal['UNCONFIRMED', 'CONFIRMED', 'MISSING', 'UNREADABLE', 'CONFLICTED', 'DEFERRED', 'NEEDS_RECONFIRMATION']
     editedByUser: bool
-    effectiveValueOrigin: Literal['SHARED_DEFAULT', 'CASE_OVERRIDE']
-    hasCaseOverride: bool
+    effectiveValueOrigin: Literal['SHARED_DEFAULT', 'CASE_OVERRIDE'] = Field(description='Actual effective value source; resolution-only Case PATCH may remain SHARED_DEFAULT.')
+    hasCaseOverride: bool = Field(description='Whether a field_overrides value record exists for this Case. A Case resolution mutation alone does not create one.', examples=[False, True])
     confirmedAt: str | None
     source: dict[str, JsonValue] | None
+
+
+class FieldMutationDTO(FieldDTO):
+    """A Case mutation need not create a value override (e.g. resolution only)."""
+    model_config = {"extra": "allow"}
+    previousValue: JsonValue
+    affectedCaseIds: list[int]
+    caseUpdates: dict[str, JsonValue]
+    inputVersion: int
+    recompute: dict[str, JsonValue]
 
 
 class FieldsDTO(BaseModel):
@@ -170,6 +175,7 @@ class ResultItem(BaseModel):
     comparisonBasis: dict[str, JsonValue] | None
     sources: list[dict[str, JsonValue]]
     confirmedAt: str | None
+    reasonCodes: list[str] = []
     nextAction: str | None
 
 

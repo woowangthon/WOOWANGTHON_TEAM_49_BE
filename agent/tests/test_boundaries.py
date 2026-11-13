@@ -235,3 +235,15 @@ def test_payroll_detail_source_period_mismatch_holds_time_comparison(setup_agent
     assert result.reason_codes == ["SOURCE_PERIOD_MISMATCH"]
     assert result.delta is None
     assert terms(ctx)[0].status == "match"
+
+
+async def test_confirmed_payment_total_survives_missing_payslip_net(setup_agent):
+    task, ports, settings = setup_agent
+    snapshot = task.payload.snapshot
+    expected = sum(t.amount for t in snapshot.transaction_allocations if t.confirmed and t.linked and not t.duplicate)
+    snapshot.confirmed_fields = [f for f in snapshot.confirmed_fields if f.field_id != "net"]
+    rehash(task)
+    out = await run_task(task, ports=ports, settings=settings)
+    payment = next(c for c in out.payload.comparisons if c.rule_id == "R-06")
+    assert payment.status == "insufficient" and payment.lhs is None
+    assert payment.rhs == expected

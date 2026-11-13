@@ -30,6 +30,9 @@ async def test_document_row_provenance_reaches_real_bank_comparison(h):
     quote = "2026-04-30 PAYROLL-REF-001 1800000 KRW"
     doc_id = h.document(pdf_bytes(["SYNTHETIC BANK DEPOSIT", quote]), cid=1)
 
+    with h.db.connect(write=True) as con:
+        con.execute("UPDATE documents SET document_type='DEPOSIT' WHERE id=?", (doc_id,))
+
     class DepositProvider:
         async def invoke(self, operation, data):
             assert operation == "extract"
@@ -46,6 +49,12 @@ async def test_document_row_provenance_reaches_real_bank_comparison(h):
     candidate = load(extraction["output_json"])
     row_fields = {item["field_id"]: item for item in candidate["candidate"]["fields"]}
     assert row_fields["transaction_1_deposit_amount"]["validation_status"] == "valid", row_fields
+    from app.routers.payments import deposit_candidates
+    query = SimpleNamespace(app=SimpleNamespace(state=SimpleNamespace(db=h.db)))
+    candidates = json.loads(deposit_candidates(1, query, user={"id": 1}).body)['data']['items']
+    assert len(candidates) == 1 and candidates[0]['registerable']
+    assert candidates[0]['registration']['confirmationStatus'] == 'USER_REPORTED'
+    assert candidates[0]['requiresUserConfirmation'] and candidates[0]['requiresCaseAllocation']
     data = {"paymentMethod": "BANK_TRANSFER", "transactionDate": "2026-04-30", "amount": 1800000,
         "source": "DOCUMENT", "confirmationStatus": "USER_CONFIRMED", "sourceDocumentId": doc_id,
         "sourceCandidateId": candidate["candidate_id"], "sourceRowId": "transaction_1"}

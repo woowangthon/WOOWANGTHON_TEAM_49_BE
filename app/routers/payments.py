@@ -87,6 +87,40 @@ def duplicate_candidates(workplace_id: int, request: Request, user=Depends(curre
         return ok({'candidates': [{'transactionIds': list(pair), 'reason': 'SAME_DATE_AMOUNT_METHOD'} for pair in pairs]})
 
 
+@router.get('/workplaces/{workplace_id}/deposit-candidates', response_model=Envelope)
+def deposit_candidates(workplace_id: int, request: Request, user=Depends(current_user)):
+    """Expose current extracted rows for explicit ledger registration and confirmation."""
+    import re
+    from app.agent_mapping import candidate_value, prepare_transaction_provenance, same_document_row
+    with request.app.state.db.connect() as con:
+        workplace(con, workplace_id, user['id'])
+        items = []
+        for doc in con.execute("SELECT * FROM documents WHERE workplace_id=? AND document_type='DEPOSIT' AND deleted_at IS NULL", (workplace_id,)):
+            candidate = con.execute("SELECT * FROM extraction_candidates WHERE document_id=? AND document_version=? AND method='text' ORDER BY created_at DESC,id DESC LIMIT 1", (doc['id'], doc['document_version'])).fetchone()
+            if not candidate:
+                continue
+            fields = load(candidate['data_json'])['fields']
+            rows = sorted({m[1] for f in fields if (m := re.fullmatch(r'(transaction_[1-9]\d*)_deposit_amount', f['field_id']))})
+            for row_id in rows:
+                values = {f['field_id'].removeprefix(row_id + '_'): candidate_value(f) for f in fields if f['field_id'].startswith(row_id + '_')}
+                body = {'source': 'DOCUMENT', 'sourceDocumentId': doc['id'], 'sourceCandidateId': candidate['id'],
+                        'sourceRowId': row_id, 'paymentMethod': 'BANK_TRANSFER', 'transactionDate': values.get('date'),
+                        'amount': values.get('deposit_amount'), 'confirmationStatus': 'USER_REPORTED'}
+                reason, existing_id = None, None
+                try:
+                    provenance = prepare_transaction_provenance(con, workplace_id, body)
+                    for tx in con.execute('SELECT id,provenance_json FROM payment_transactions WHERE workplace_id=?', (workplace_id,)):
+                        previous = load(tx['provenance_json']) or {}
+                        if same_document_row(provenance, previous) or provenance.get('bank_reference') and provenance.get('bank_reference') == previous.get('bank_reference'):
+                            existing_id = tx['id']
+                except ApiError as exc:
+                    reason = exc.code
+                items.append({'registration': body, 'registerable': reason is None and existing_id is None,
+                              'reasonCode': reason, 'existingTransactionId': existing_id,
+                              'requiresUserConfirmation': True, 'requiresCaseAllocation': True})
+        return ok({'items': items})
+
+
 @router.get('/workplaces/{workplace_id}/payment-transactions/{transaction_id}', response_model=Envelope)
 def get_transaction(workplace_id: int, transaction_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:

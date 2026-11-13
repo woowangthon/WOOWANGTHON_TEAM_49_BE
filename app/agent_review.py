@@ -35,6 +35,7 @@ def invalidate_document_confirmations(con, document_id, reason):
     ).fetchone()
     if doc is None:
         return
+    con.execute("UPDATE document_links SET review_status='IN_PROGRESS' WHERE document_id=?", (document_id,))
     con.execute("INSERT INTO field_history(field_id,case_id,user_id,previous_json,new_json,created_at) SELECT r.field_id,r.case_id,r.user_id,json_object('reviewResolution',r.resolution),json_object('reviewResolution','NONE'),? FROM field_review_resolutions r JOIN fields f ON f.id=r.field_id WHERE f.document_id=?", (now(), document_id))
     con.execute("DELETE FROM field_review_resolutions WHERE field_id IN (SELECT id FROM fields WHERE document_id=?)", (document_id,))
     # An override is tied to the old source just as the shared confirmation is.

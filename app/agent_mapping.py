@@ -181,6 +181,8 @@ references on USER_INPUT remain explicitly user-reported/confirmed identifiers.
     values = {key: candidate_value(value) for key, value in row.items()}
     if not values.get("date") or values.get("deposit_amount") is None or not any(values.get(key) for key in ("reference", "sender", "description")):
         raise ApiError(422, "TRANSACTION_ROW_REVIEW_REQUIRED")
+    if values.get("withdrawal_amount") is not None and Decimal(values["withdrawal_amount"]) != 0:
+        raise ApiError(422, "TRANSACTION_ROW_REVIEW_REQUIRED")
     if values["date"] != str(data["transactionDate"]) or Decimal(values["deposit_amount"]) != Decimal(str(data["amount"])):
         raise ApiError(422, "TRANSACTION_ROW_VALUE_MISMATCH")
     if data.get("sender") is not None and data["sender"].strip() != (values.get("sender") or "").strip():

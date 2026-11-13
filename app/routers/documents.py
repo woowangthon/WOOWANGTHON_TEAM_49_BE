@@ -21,7 +21,7 @@ from app.errors import ApiError, ok
 from app.integration_store import source_ref
 from app.outputs import API, DocumentDTO, FieldsDTO, Page, ReviewDTO, FieldMutationDTO
 from app.routers.workspaces import page_data
-from app.schemas import DocumentTypePatch, Execute, FieldPatch, LinkCreate, LinkPatch, UploadDocType
+from app.schemas import StatementScopePatch, DocumentTypePatch, Execute, FieldPatch, LinkCreate, LinkPatch, UploadDocType
 from app.security import case, case_document, check_version, current_user, document, workplace
 
 router = APIRouter(tags=["Documents & Review"])
@@ -993,8 +993,7 @@ def patch_case_field(
         doc, _ = case_document(con, case_id, document_id, user["id"])
         result = update_field(con, doc, field_id, body, user["id"], request.app.state.settings, case_id)
         effective = next(f for f in effective_fields(con, case_id, document_id) if f["fieldId"] == field_id)
-        from app.outputs import ReviewFieldMetadata
-        result.update(ReviewFieldMetadata.model_validate(effective).model_dump())
+        result.update(public_field(effective))
         return ok(result)
 
 
@@ -1025,13 +1024,17 @@ def remove_override(
             raise ApiError(404, "RESOURCE_NOT_FOUND")
         con.execute("INSERT INTO field_history(field_id,case_id,user_id,previous_json,new_json,created_at) SELECT field_id,case_id,?,json_object('reviewResolution',resolution),json_object('reviewResolution','NONE'),? FROM field_review_resolutions WHERE case_id=? AND field_id=?", (user["id"], now(), case_id, field_id))
         con.execute("DELETE FROM field_review_resolutions WHERE case_id=? AND field_id=?", (case_id, field_id))
+        previous = next(f for f in effective_fields(con, case_id, document_id) if f["fieldId"] == field_id)["value"]
         con.execute("DELETE FROM field_overrides WHERE case_id=? AND field_id=?", (case_id, field_id))
         from app.review_policy import sync_reviews
         sync_reviews(con, case_id, document_id, started=True)
         return ok(
             {
-                "fieldId": field_id,
-                **schedule(con, case_id, delay=request.app.state.settings.recompute_debounce_seconds),
+                **public_field(next(f for f in effective_fields(con, case_id, document_id) if f["fieldId"] == field_id)),
+                "previousValue": previous,
+                **(mutation := schedule(con, case_id, delay=request.app.state.settings.recompute_debounce_seconds)),
+                "affectedCaseIds": [case_id],
+                "caseUpdates": {str(case_id): mutation},
             }
         )
 
@@ -1087,3 +1090,37 @@ def confirm_review(case_id: int, document_id: int, request: Request, user=Depend
         data["reviewStatus"] = "CONFIRMED" if data["canCompleteReview"] else "IN_PROGRESS"
         con.execute("UPDATE document_links SET review_status=? WHERE id=?", (data["reviewStatus"], link["id"]))
         return ok(data)
+
+
+@router.put("/cases/{case_id}/documents/{document_id}/statement-scope", response_model=Envelope)
+def confirm_statement_scope(case_id: int, document_id: int, body: StatementScopePatch, request: Request, user=Depends(current_user)):
+    """Attest that the displayed detail rows cover the entire original table."""
+    from app.compatibility import collect
+    from app.statement_scope import scope_hash
+    with request.app.state.db.connect(write=True) as con:
+        current = case(con, case_id, user["id"])
+        check_version(current, body.expectedInputVersion)
+        doc, _ = case_document(con, case_id, document_id, user["id"])
+        if doc["document_type"] != "PAYSLIP":
+            raise ApiError(422, "INVALID_DOCUMENT_TYPE")
+        fields = effective_fields(con, case_id, document_id)
+        conditions = load(current["conditions"])
+        scopes = conditions.setdefault("statement_scopes", {})
+        for key, prefix in (("paymentItems", "earning_"), ("deductionItems", "deduction_")):
+            value = getattr(body, key)
+            if value is None:
+                continue
+            if not value:
+                scopes.pop(key, None)
+                continue
+            selected = [f for f in fields if f["key"] == key or f["key"].startswith(prefix) and f["key"].endswith(("_amount", "_label"))]
+            if not selected or any(not f["usableForAnalysis"] for f in selected):
+                raise ApiError(422, "STATEMENT_ITEMS_REVIEW_REQUIRED")
+            keys = {f["key"] for f in selected}
+            if any(f["key"].endswith("_amount") and f["key"].removesuffix("_amount") + "_label" not in keys for f in selected):
+                raise ApiError(422, "STATEMENT_ITEMS_REVIEW_REQUIRED")
+            if len(collect(con, case_id)["groups"]["PAYSLIP"]) != 1:
+                raise ApiError(409, "STATEMENT_SOURCE_CONFLICT")
+            scopes[key] = {"documentId": document_id, "hash": scope_hash(con, case_id, document_id), "confirmedAt": now(), "userId": user["id"]}
+        con.execute("UPDATE cases SET conditions=? WHERE id=?", (dump(conditions), case_id))
+        return ok({"statementScopes": scopes, **schedule(con, case_id, delay=request.app.state.settings.recompute_debounce_seconds)})

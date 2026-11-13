@@ -148,7 +148,7 @@ def payments(context):
     selected = [
         t
         for t in s.transaction_allocations
-        if t.linked and not t.duplicate and (legacy or (t.confirmed and t.kind == "bank"))
+        if t.linked and not t.duplicate and t.confirmed and (legacy or t.kind == "bank")
     ]
     if len({t.transaction_id for t in selected}) != len(selected):
         reasons.append("DUPLICATE_TRANSACTION")
@@ -159,8 +159,14 @@ def payments(context):
     if any(source_period_mismatch(s, item.evidence_refs) for item in selected):
         reasons.append("SOURCE_PERIOD_MISMATCH")
         conflict = True
+    if any(t.linked and not t.confirmed for t in s.transaction_allocations):
+        reasons.append("PAYMENT_SCOPE_UNCONFIRMED")
+    if any(t.duplicate for t in s.transaction_allocations):
+        reasons.append("DUPLICATE_TRANSACTION")
+        conflict = True
     if not s.payment_scope_confirmed or not selected:
         reasons.append("PAYMENT_SCOPE_UNCONFIRMED")
-    amount = sum((t.amount for t in selected), Decimal(0)) if selected and s.payment_scope_confirmed else None
+    payment_blockers = {"PAYMENT_SCOPE_UNCONFIRMED", "DUPLICATE_TRANSACTION", "INVALID_ALLOCATION", "SOURCE_PERIOD_MISMATCH"}
+    amount = sum((t.amount for t in selected), Decimal(0)) if selected and s.payment_scope_confirmed and not payment_blockers.intersection(reasons) else None
     refs += [e for t in selected for e in t.evidence_refs]
     return [comparison("R-06", net, amount, refs=refs, reasons=reasons, conflict=conflict)]

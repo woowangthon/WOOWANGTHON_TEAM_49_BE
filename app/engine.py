@@ -126,6 +126,7 @@ def results(con, case_id):
                     "stated": body["linkedPaymentTotal"],
                     "difference": body["difference"],
                     "status": body["status"],
+                    "reasonCodes": body.get("reasonCodes", []),
                 }
             ]
         )
@@ -133,6 +134,7 @@ def results(con, case_id):
             items.append(
                 {
                     "id": check["type"],
+                    "reasonCodes": check.get("reasonCodes", []),
                     "title": titles.get(check["type"], check["type"]),
                     "status": check["status"],
                     "calculatedValue": check.get("calculated"),

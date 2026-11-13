@@ -776,6 +776,10 @@ class AgentService:
                         "SELECT data_json FROM document_ocr WHERE id=?", (payload["ocr_result_id"],)
                     ).fetchone()
                     recognized = load(reading["data_json"]) if reading else None
+                    current_keys = {field["field_id"] for field in output["fields"]}
+                    for old in con.execute("SELECT id,key FROM fields WHERE document_id=?", (row["document_id"],)).fetchall():
+                        if old["key"] not in current_keys:
+                            con.execute("UPDATE fields SET status='NEEDS_RECONFIRMATION',confirmed_at=NULL WHERE id=?", (old["id"],))
                     for field in output["fields"]:
                         source = {
                             "documentId": row["document_id"],
@@ -788,6 +792,7 @@ class AgentService:
                             "evidenceRefs": field["evidence_refs"],
                             "candidateId": candidate_id,
                             "documentVersion": output["document_version"],
+                            "unit": field["unit"],
                         }
                         con.execute(
                             """INSERT INTO fields(document_id,key,label,value_json,value_type,status,source_json)
@@ -799,7 +804,7 @@ class AgentService:
                                 field["field_id"],
                                 dump(field["normalized_value"]),
                                 "TEXT",
-                                "MISSING" if field["normalized_value"] is None else "UNCONFIRMED",
+                                "MISSING" if field["normalized_value"] is None else "UNCONFIRMED" if field["validation_status"] == "valid" else "CONFLICTED",
                                 dump(source),
                             ),
                         )

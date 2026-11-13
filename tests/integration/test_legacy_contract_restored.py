@@ -69,7 +69,7 @@ def test_saved_manual_records_reach_real_agent_and_independent_views(api):
         c,
         "POST",
         f"/workplaces/{wid}/payment-transactions",
-        {"paymentMethod": "CASH", "amount": 2090000, "transactionDate": "2026-11-01", "source": "USER_INPUT"},
+        {"paymentMethod": "CASH", "amount": 2090000, "transactionDate": "2026-11-01", "source": "USER_INPUT", "confirmationStatus": "USER_CONFIRMED"},
         201,
     )
     request(
@@ -88,7 +88,7 @@ def test_saved_manual_records_reach_real_agent_and_independent_views(api):
     assert after["versions"]["payslipValidation"] == refs["payslipValidation"]
     deposit = after["depositComparison"]
     assert deposit["status"] == "MATCH" and deposit["linkedCashPaymentTotal"] == 2090000
-    assert deposit["deposits"][0]["confirmationStatus"] == "USER_REPORTED"
+    assert deposit["deposits"][0]["confirmationStatus"] == "USER_CONFIRMED"
     assert deposit["version"] == 2
     assert request(c, "GET", f"/cases/{cid}/recompute-status")["latestJob"]["status"] == "SUCCEEDED"
 

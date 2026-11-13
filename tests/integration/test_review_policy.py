@@ -148,6 +148,7 @@ def test_optional_reaches_real_agent_with_unverified_provenance(api):
     base = f"/cases/{cid}/documents/{did}"
     assert request(c, "POST", base + "/review/confirm")["canCompleteReview"]
     request(c, "PATCH", base + f"/fields/{ids['paymentItems']}", {"value": [800, 200]})
+    request(c, "PUT", base + "/statement-scope", {"paymentItems": True})
     with app.state.db.connect(write=True) as con:
         snapshot, *_ = prepare_snapshot(con, cid, "inspect")
         assert snapshot.earnings[0].confirmed is False
@@ -173,6 +174,7 @@ def test_optional_reaches_real_agent_with_unverified_provenance(api):
             for e in item["evidence_refs"]
         )
     request(c, "PATCH", base + f"/fields/{ids['paymentItems']}", {"value": [1000, 200]})
+    request(c, "PUT", base + "/statement-scope", {"paymentItems": True})
     drain(app)
     assert (
         request(c, "GET", f"/cases/{cid}/results")["payslipValidation"]["paymentTotal"]["status"]

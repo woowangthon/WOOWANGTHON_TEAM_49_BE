@@ -100,9 +100,11 @@ def sync_reviews(con, case_id, document_id=None, started=False):
     ).fetchall():
         if document_id is not None and link["document_id"] != document_id:
             continue
-        complete = summary(effective_fields(con, case_id, link["document_id"]), processing_status(link))[
-            "canCompleteReview"
-        ]
+        # Processing transitions alone do not invalidate reviewed inputs.
+        fields = effective_fields(con, case_id, link["document_id"])
+        complete = bool(fields) and not any(
+            f["requiresUserReview"] and not f["reviewResolved"] for f in fields
+        )
         if (link["review_status"] == "CONFIRMED" and not complete) or (
             started and link["review_status"] != "CONFIRMED"
         ):

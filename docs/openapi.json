@@ -812,6 +812,102 @@
         ]
       }
     },
+    "/api/v1/users/me/language": {
+      "patch": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Change Language",
+        "operationId": "change_language_api_v1_users_me_language_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LanguagePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_LanguageDTO_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/users/me/deletion": {
       "get": {
         "tags": [
@@ -3063,7 +3159,8 @@
                     "CONTRACT",
                     "ATTENDANCE",
                     "PAYSLIP",
-                    "DEPOSIT"
+                    "DEPOSIT",
+                    "AUTO"
                   ],
                   "type": "string"
                 },
@@ -3206,6 +3303,121 @@
         ],
         "responses": {
           "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_DocumentDTO_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Documents & Review"
+        ],
+        "summary": "Change Document Type",
+        "description": "Set the document type (or AUTO) and extract again with it.\n\nUsed after DOCUMENT_TYPE_MISMATCH / DOCUMENT_TYPE_UNRESOLVED. Refused once the\nuser has reviewed any value, so no confirmation or edit is ever discarded.",
+        "operationId": "change_document_type_api_v1_workplaces__workplace_id__documents__document_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workplace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Workplace Id"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentTypePatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
             "description": "Successful Response",
             "content": {
               "application/json": {
@@ -4396,7 +4608,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/API_FieldMutationDTO_"
                 }
               }
             }
@@ -4857,7 +5069,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/API_ReviewDTO_"
                 }
               }
             }
@@ -4957,6 +5169,123 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ReviewDTO_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cases/{case_id}/documents/{document_id}/statement-scope": {
+      "put": {
+        "tags": [
+          "Documents & Review"
+        ],
+        "summary": "Confirm Statement Scope",
+        "description": "Attest that the displayed detail rows cover the entire original table.",
+        "operationId": "confirm_statement_scope_api_v1_cases__case_id__documents__document_id__statement_scope_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatementScopePatch"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -7576,6 +7905,104 @@
         ],
         "summary": "Duplicate Candidates",
         "operationId": "duplicate_candidates_api_v1_workplaces__workplace_id__payment_transactions_duplicate_candidates_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workplace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Workplace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workplaces/{workplace_id}/deposit-candidates": {
+      "get": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Deposit Candidates",
+        "description": "Expose current extracted rows for explicit ledger registration and confirmation.",
+        "operationId": "deposit_candidates_api_v1_workplaces__workplace_id__deposit_candidates_get",
         "security": [
           {
             "HTTPBearer": []
@@ -14568,6 +14995,28 @@
         ],
         "title": "API[ErrorData]"
       },
+      "API_FieldMutationDTO_": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "data": {
+            "$ref": "#/components/schemas/FieldMutationDTO"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "title": "API[FieldMutationDTO]"
+      },
       "API_FieldsDTO_": {
         "properties": {
           "code": {
@@ -14589,6 +15038,28 @@
           "data"
         ],
         "title": "API[FieldsDTO]"
+      },
+      "API_LanguageDTO_": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "data": {
+            "$ref": "#/components/schemas/LanguageDTO"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "title": "API[LanguageDTO]"
       },
       "API_LoginDTO_": {
         "properties": {
@@ -14721,6 +15192,28 @@
           "data"
         ],
         "title": "API[ResultsDTO]"
+      },
+      "API_ReviewDTO_": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ReviewDTO"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "title": "API[ReviewDTO]"
       },
       "API_UserDTO_": {
         "properties": {
@@ -14979,7 +15472,8 @@
               "CONTRACT",
               "ATTENDANCE",
               "PAYSLIP",
-              "DEPOSIT"
+              "DEPOSIT",
+              "AUTO"
             ],
             "title": "Documenttype"
           },
@@ -15010,7 +15504,8 @@
               "CONTRACT",
               "ATTENDANCE",
               "PAYSLIP",
-              "DEPOSIT"
+              "DEPOSIT",
+              "AUTO"
             ],
             "title": "Documenttype"
           },
@@ -15639,7 +16134,8 @@
               "CONTRACT",
               "ATTENDANCE",
               "PAYSLIP",
-              "DEPOSIT"
+              "DEPOSIT",
+              "AUTO"
             ],
             "title": "Documenttype"
           },
@@ -15747,6 +16243,27 @@
           "aiMetadata"
         ],
         "title": "DocumentDTO"
+      },
+      "DocumentTypePatch": {
+        "properties": {
+          "documentType": {
+            "type": "string",
+            "enum": [
+              "CONTRACT",
+              "ATTENDANCE",
+              "PAYSLIP",
+              "DEPOSIT",
+              "AUTO"
+            ],
+            "title": "Documenttype"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "documentType"
+        ],
+        "title": "DocumentTypePatch"
       },
       "Envelope": {
         "properties": {
@@ -15942,6 +16459,54 @@
       },
       "FieldDTO": {
         "properties": {
+          "requiresUserReview": {
+            "type": "boolean",
+            "title": "Requiresuserreview"
+          },
+          "reviewReason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "REQUIRED",
+                  "MISSING",
+                  "UNREADABLE",
+                  "CONFLICTED",
+                  "RECONFIRMATION"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewreason"
+          },
+          "reviewResolution": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "NOT_IN_DOCUMENT",
+              "UNKNOWN"
+            ],
+            "title": "Reviewresolution"
+          },
+          "reviewResolved": {
+            "type": "boolean",
+            "title": "Reviewresolved"
+          },
+          "usableForAnalysis": {
+            "type": "boolean",
+            "title": "Usableforanalysis"
+          },
+          "analysisValueOrigin": {
+            "type": "string",
+            "enum": [
+              "USER_CONFIRMED",
+              "SYSTEM_EXTRACTED_UNVERIFIED",
+              "NONE"
+            ],
+            "title": "Analysisvalueorigin"
+          },
           "fieldId": {
             "type": "integer",
             "title": "Fieldid"
@@ -15995,11 +16560,17 @@
               "SHARED_DEFAULT",
               "CASE_OVERRIDE"
             ],
-            "title": "Effectivevalueorigin"
+            "title": "Effectivevalueorigin",
+            "description": "Actual effective value source; resolution-only Case PATCH may remain SHARED_DEFAULT."
           },
           "hasCaseOverride": {
             "type": "boolean",
-            "title": "Hascaseoverride"
+            "title": "Hascaseoverride",
+            "description": "Whether a field_overrides value record exists for this Case. A Case resolution mutation alone does not create one.",
+            "examples": [
+              false,
+              true
+            ]
           },
           "confirmedAt": {
             "anyOf": [
@@ -16029,6 +16600,12 @@
         },
         "type": "object",
         "required": [
+          "requiresUserReview",
+          "reviewReason",
+          "reviewResolution",
+          "reviewResolved",
+          "usableForAnalysis",
+          "analysisValueOrigin",
           "fieldId",
           "key",
           "label",
@@ -16124,6 +16701,204 @@
         ],
         "title": "FieldError"
       },
+      "FieldMutationDTO": {
+        "properties": {
+          "requiresUserReview": {
+            "type": "boolean",
+            "title": "Requiresuserreview"
+          },
+          "reviewReason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "REQUIRED",
+                  "MISSING",
+                  "UNREADABLE",
+                  "CONFLICTED",
+                  "RECONFIRMATION"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewreason"
+          },
+          "reviewResolution": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "NOT_IN_DOCUMENT",
+              "UNKNOWN"
+            ],
+            "title": "Reviewresolution"
+          },
+          "reviewResolved": {
+            "type": "boolean",
+            "title": "Reviewresolved"
+          },
+          "usableForAnalysis": {
+            "type": "boolean",
+            "title": "Usableforanalysis"
+          },
+          "analysisValueOrigin": {
+            "type": "string",
+            "enum": [
+              "USER_CONFIRMED",
+              "SYSTEM_EXTRACTED_UNVERIFIED",
+              "NONE"
+            ],
+            "title": "Analysisvalueorigin"
+          },
+          "fieldId": {
+            "type": "integer",
+            "title": "Fieldid"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "value": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "agentKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agentkey"
+          },
+          "valueType": {
+            "type": "string",
+            "title": "Valuetype"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "UNCONFIRMED",
+              "CONFIRMED",
+              "MISSING",
+              "UNREADABLE",
+              "CONFLICTED",
+              "DEFERRED",
+              "NEEDS_RECONFIRMATION"
+            ],
+            "title": "Status"
+          },
+          "editedByUser": {
+            "type": "boolean",
+            "title": "Editedbyuser"
+          },
+          "effectiveValueOrigin": {
+            "type": "string",
+            "enum": [
+              "SHARED_DEFAULT",
+              "CASE_OVERRIDE"
+            ],
+            "title": "Effectivevalueorigin",
+            "description": "Actual effective value source; resolution-only Case PATCH may remain SHARED_DEFAULT."
+          },
+          "hasCaseOverride": {
+            "type": "boolean",
+            "title": "Hascaseoverride",
+            "description": "Whether a field_overrides value record exists for this Case. A Case resolution mutation alone does not create one.",
+            "examples": [
+              false,
+              true
+            ]
+          },
+          "confirmedAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmedat"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "previousValue": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "affectedCaseIds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Affectedcaseids"
+          },
+          "caseUpdates": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "title": "Caseupdates"
+          },
+          "inputVersion": {
+            "type": "integer",
+            "title": "Inputversion"
+          },
+          "recompute": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "title": "Recompute"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "requiresUserReview",
+          "reviewReason",
+          "reviewResolution",
+          "reviewResolved",
+          "usableForAnalysis",
+          "analysisValueOrigin",
+          "fieldId",
+          "key",
+          "label",
+          "value",
+          "valueType",
+          "status",
+          "editedByUser",
+          "effectiveValueOrigin",
+          "hasCaseOverride",
+          "confirmedAt",
+          "source",
+          "previousValue",
+          "affectedCaseIds",
+          "caseUpdates",
+          "inputVersion",
+          "recompute"
+        ],
+        "title": "FieldMutationDTO",
+        "description": "A Case mutation need not create a value override (e.g. resolution only)."
+      },
       "FieldPatch": {
         "properties": {
           "expectedInputVersion": {
@@ -16137,6 +16912,22 @@
               }
             ],
             "title": "Expectedinputversion"
+          },
+          "reviewResolution": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "NONE",
+                  "NOT_IN_DOCUMENT",
+                  "UNKNOWN"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewresolution"
           },
           "value": {
             "$ref": "#/components/schemas/JsonValue"
@@ -16447,6 +17238,47 @@
         "title": "JobAction"
       },
       "JsonValue": {},
+      "LanguageDTO": {
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "ko",
+              "en",
+              "vi",
+              "zh",
+              "km"
+            ],
+            "title": "Language"
+          }
+        },
+        "type": "object",
+        "required": [
+          "language"
+        ],
+        "title": "LanguageDTO"
+      },
+      "LanguagePatch": {
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "ko",
+              "en",
+              "vi",
+              "zh",
+              "km"
+            ],
+            "title": "Language"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "language"
+        ],
+        "title": "LanguagePatch"
+      },
       "LinkCreate": {
         "properties": {
           "expectedInputVersion": {
@@ -17268,6 +18100,14 @@
             ],
             "title": "Confirmedat"
           },
+          "reasonCodes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasoncodes",
+            "default": []
+          },
           "nextAction": {
             "anyOf": [
               {
@@ -17453,6 +18293,78 @@
         "type": "object",
         "title": "ReviewCreate"
       },
+      "ReviewDTO": {
+        "properties": {
+          "documentId": {
+            "type": "integer",
+            "title": "Documentid"
+          },
+          "processingStatus": {
+            "type": "string",
+            "title": "Processingstatus"
+          },
+          "reviewStatus": {
+            "type": "string",
+            "title": "Reviewstatus"
+          },
+          "unconfirmedFieldIds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Unconfirmedfieldids"
+          },
+          "totalFieldCount": {
+            "type": "integer",
+            "title": "Totalfieldcount"
+          },
+          "confirmedFieldCount": {
+            "type": "integer",
+            "title": "Confirmedfieldcount"
+          },
+          "requiredReviewCount": {
+            "type": "integer",
+            "title": "Requiredreviewcount"
+          },
+          "resolvedRequiredCount": {
+            "type": "integer",
+            "title": "Resolvedrequiredcount"
+          },
+          "pendingRequiredFieldIds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Pendingrequiredfieldids"
+          },
+          "optionalUnconfirmedFieldIds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Optionalunconfirmedfieldids"
+          },
+          "canCompleteReview": {
+            "type": "boolean",
+            "title": "Cancompletereview"
+          }
+        },
+        "type": "object",
+        "required": [
+          "documentId",
+          "processingStatus",
+          "reviewStatus",
+          "unconfirmedFieldIds",
+          "totalFieldCount",
+          "confirmedFieldCount",
+          "requiredReviewCount",
+          "resolvedRequiredCount",
+          "pendingRequiredFieldIds",
+          "optionalUnconfirmedFieldIds",
+          "canCompleteReview"
+        ],
+        "title": "ReviewDTO"
+      },
       "ReviewUpdate": {
         "properties": {
           "revision": {
@@ -17612,6 +18524,47 @@
           "name"
         ],
         "title": "Signup"
+      },
+      "StatementScopePatch": {
+        "properties": {
+          "expectedInputVersion": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expectedinputversion"
+          },
+          "paymentItems": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paymentitems"
+          },
+          "deductionItems": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deductionitems"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "StatementScopePatch"
       },
       "SupplementTarget": {
         "properties": {
@@ -17902,13 +18855,25 @@
           "name": {
             "type": "string",
             "title": "Name"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "ko",
+              "en",
+              "vi",
+              "zh",
+              "km"
+            ],
+            "title": "Language"
           }
         },
         "type": "object",
         "required": [
           "userId",
           "email",
-          "name"
+          "name",
+          "language"
         ],
         "title": "UserDTO"
       },

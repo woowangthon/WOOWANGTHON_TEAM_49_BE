@@ -294,3 +294,8 @@ class Envelope(BaseModel):
     code: int
     message: str
     data: JsonValue
+
+
+class StatementScopePatch(Versioned):
+    paymentItems: bool | None = None
+    deductionItems: bool | None = None
