@@ -94,6 +94,20 @@ async def test_cash_and_duplicate_excluded(setup_agent):
     assert out.payload.comparisons[5].rhs == Decimal("1800000")
 
 
+async def test_selected_duplicate_transaction_id_blocks_payment_total(setup_agent):
+    task, ports, settings = setup_agent
+    allocation = task.payload.snapshot.transaction_allocations[0]
+    assert allocation.linked and allocation.confirmed and not allocation.duplicate
+    task.payload.snapshot.transaction_allocations.append(allocation.model_copy(deep=True))
+    rehash(task)
+    out = await run_task(task, ports=ports, settings=settings)
+    assert out.status == "completed", out.error
+    payment = next(result for result in out.payload.comparisons if result.rule_id == "R-06")
+    assert payment.status == "needs_review"
+    assert payment.rhs is None and payment.delta is None
+    assert "DUPLICATE_TRANSACTION" in payment.reason_codes
+
+
 @pytest.mark.parametrize("change", ["unit", "time_kind", "period"])
 async def test_semantic_mismatch_holds_comparison(setup_agent, change):
     task, ports, settings = setup_agent

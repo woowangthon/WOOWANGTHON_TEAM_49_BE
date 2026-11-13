@@ -161,9 +161,6 @@ def payments(context):
         conflict = True
     if any(t.linked and not t.confirmed for t in s.transaction_allocations):
         reasons.append("PAYMENT_SCOPE_UNCONFIRMED")
-    if any(t.duplicate for t in s.transaction_allocations):
-        reasons.append("DUPLICATE_TRANSACTION")
-        conflict = True
     if not s.payment_scope_confirmed or not selected:
         reasons.append("PAYMENT_SCOPE_UNCONFIRMED")
     payment_blockers = {"PAYMENT_SCOPE_UNCONFIRMED", "DUPLICATE_TRANSACTION", "INVALID_ALLOCATION", "SOURCE_PERIOD_MISMATCH"}
