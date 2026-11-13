@@ -8,6 +8,7 @@ from fastapi.responses import StreamingResponse
 
 from app.db import dump, load, now
 from app.engine import effective_fields, results
+from app.i18n import user_language
 from app.errors import ApiError, ok
 from app.routers.workspaces import page_data
 from app.schemas import ChatCreate, ChatPatch, MessageCreate
@@ -528,6 +529,8 @@ async def start_message(workplace_id, chat_id, body, request, user, retry_of=Non
         "content": body.content,
         "history": history,
         "context": context,
+        # Read per request: a changed preference applies from the next message on.
+        "language": user_language(user),
     }
     control = RunControl()
     state.chat_runs[run_id] = control

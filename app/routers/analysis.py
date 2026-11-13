@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Query, Request, Response
 from app.db import dump, load, now
 from app.engine import ALL_CHECKS, latest, results, schedule, snapshot_accessible, snapshot_dto
 from app.errors import ApiError, ok
+from app.i18n import localize_conditions, localize_results, user_language
 from app.idempotency import idempotency_header, replay, remember
 from app.routers.workspaces import page_data
 from app.schemas import ConditionsPut, Execute, Inquiry, ManualCreate, ManualPatch
@@ -162,7 +163,7 @@ def readiness_data(con, case_id):
 def get_conditions(case_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         case(con, case_id, user["id"])
-        return ok(condition_dto(con, case_id))
+        return ok(localize_conditions(condition_dto(con, case_id), user_language(user)))
 
 
 @router.put("/cases/{case_id}/conditions", response_model=Envelope)
@@ -353,7 +354,7 @@ def delete_manual(case_id: int, record_id: int, request: Request, user=Depends(c
 def get_results(case_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         case(con, case_id, user["id"])
-        return ok(results(con, case_id))
+        return ok(localize_results(results(con, case_id), user_language(user)))
 
 
 @router.get("/cases/{case_id}/recompute-status", response_model=API[RecomputeDTO])
@@ -531,21 +532,25 @@ def questions(case_id: int, request: Request, user=Depends(current_user)):
                 "SELECT data_json FROM agent_results WHERE id=?", (body["_agentResultId"],)
             ).fetchone()[0]
         )
-        return ok(
+        questions = [
             {
-                "questions": [
-                    {
-                        "questionId": i + row["id"] * 1000,
-                        "agentQuestionId": q["question_id"],
-                        "type": q["reason_code"],
-                        "question": q["text"],
-                        "reason": q.get("reason", ""),
-                        "relatedItemId": None,
-                    }
-                    for i, q in enumerate(result["questions"])
-                ]
+                "questionId": i + row["id"] * 1000,
+                "agentQuestionId": q["question_id"],
+                "type": q["reason_code"],
+                "question": q["text"],
+                "reason": q.get("reason", ""),
+                "relatedItemId": None,
             }
-        )
+            for i, q in enumerate(result["questions"])
+        ]
+    # No database transaction is held across the translation call.
+    language = user_language(user)
+    texts = request.app.state.localizer.translate(
+        [text for q in questions for text in (q["question"], q["reason"])], language
+    )
+    for index, q in enumerate(questions):
+        q["question"], q["reason"] = texts[2 * index], texts[2 * index + 1]
+    return ok({"questions": questions})
 
 
 @router.post("/cases/{case_id}/company-inquiry", response_model=Envelope)
@@ -583,9 +588,15 @@ def inquiry(case_id: int, body: Inquiry, request: Request, user=Depends(current_
         request.app.state.service.inquiry(user["id"], rid, rule_ids=rules) for rid, rules in grouped.items()
     ]
     text = {**generated[0], "text": "\n\n".join(g["text"] for g in generated)}
+    language = user_language(user)
+    if language != "ko":
+        # The draft is sent to a Korean employer, so `text` stays Korean; this copy helps the user read it.
+        lines = text["text"].split("\n")
+        text["localizedText"] = "\n".join(request.app.state.localizer.translate(lines, language))
     return ok(
         {
             **text,
+            "language": language,
             "basedOnResultVersions": versions,
             "requiresUserReview": True,
             "selectedResultItemIds": selected,

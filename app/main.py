@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 
 from app.ai import AIAdapter
+from app.i18n import Localizer
 from app.config import Settings
 from app.centers import seed_centers
 from app.db import Database, load
@@ -21,7 +22,8 @@ from app.agent_service import AgentService
 from agent.schemas.public.errors import AgentError
 
 
-def create_app(settings=None, ai_client=None, *, provider=None, recognizer=None, review_model=None):
+def create_app(settings=None, ai_client=None, *, provider=None, recognizer=None, review_model=None,
+               translation_client=None):
     settings = settings or Settings()
 
     @asynccontextmanager
@@ -47,6 +49,7 @@ def create_app(settings=None, ai_client=None, *, provider=None, recognizer=None,
             con.execute("UPDATE jobs SET status='PENDING' WHERE status='RUNNING'")
             con.execute("UPDATE messages SET status='FAILED' WHERE status='STREAMING'")
         app.state.ai = AIAdapter(settings, ai_client)
+        app.state.localizer = Localizer(settings, app.state.db, translation_client)
         app.state.chat_runs = {}
         tasks = ([asyncio.create_task(document_worker(app.state))] +
             [asyncio.create_task(agent_worker(app.state)) for _ in range(settings.worker_concurrency)]) if settings.workers_enabled else []

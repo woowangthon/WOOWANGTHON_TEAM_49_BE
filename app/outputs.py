@@ -30,10 +30,18 @@ class Page(BaseModel, Generic[T]):
     total: int
 
 
+Language = Literal['ko', 'en', 'vi', 'zh', 'km']
+
+
 class UserDTO(BaseModel):
     userId: int
     email: str
     name: str
+    language: Language
+
+
+class LanguageDTO(BaseModel):
+    language: Language
 
 
 class LoginDTO(BaseModel):

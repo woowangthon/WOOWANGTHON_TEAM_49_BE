@@ -10,15 +10,16 @@ from fastapi import APIRouter, Depends, Request, Response
 
 from app.db import dump, now
 from app.errors import ApiError, ok
-from app.outputs import API, LoginDTO, UserDTO
-from app.schemas import DeleteAccount, ForgotPassword, Login, ResetPassword, Signup
+from app.i18n import user_language
+from app.outputs import API, LanguageDTO, LoginDTO, UserDTO
+from app.schemas import DeleteAccount, ForgotPassword, LanguagePatch, Login, ResetPassword, Signup
 from app.security import current_user, digest, issue_session, password_hash, verify_password
 
 router = APIRouter(tags=['Auth'])
 
 
 def user_dto(user):
-    return {'userId': user['id'], 'email': user['email'], 'name': user['name']}
+    return {'userId': user['id'], 'email': user['email'], 'name': user['name'], 'language': user_language(user)}
 
 
 def session_response(con, user, settings):
@@ -114,6 +115,14 @@ def reset_password(body: ResetPassword, request: Request):
 @router.get('/users/me', response_model=API[UserDTO])
 def me(user=Depends(current_user)):
     return ok(user_dto(user))
+
+
+@router.patch('/users/me/language', response_model=API[LanguageDTO])
+def change_language(body: LanguagePatch, request: Request, user=Depends(current_user)):
+    # Server-written sentences follow the stored preference from the next request on.
+    with request.app.state.db.connect(write=True) as con:
+        con.execute('UPDATE users SET language=? WHERE id=?', (body.language, user['id']))
+    return ok({'language': body.language}, message='언어 설정이 변경되었습니다.')
 
 
 @router.delete('/users/me', status_code=202, response_model=Envelope)

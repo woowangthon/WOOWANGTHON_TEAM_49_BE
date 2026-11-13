@@ -37,6 +37,10 @@ class Login(Input):
     password: str
 
 
+class LanguagePatch(Input):
+    language: Literal["ko", "en", "vi", "zh", "km"]
+
+
 class ForgotPassword(Input):
     email: str = Field(min_length=3, max_length=254, pattern=r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 

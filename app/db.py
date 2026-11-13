@@ -23,7 +23,7 @@ def load(value):
 SCHEMA = '''
 CREATE TABLE IF NOT EXISTS users (
  id INTEGER PRIMARY KEY, email TEXT UNIQUE NOT NULL, name TEXT NOT NULL,
- password_hash TEXT NOT NULL, deleted_at TEXT);
+ password_hash TEXT NOT NULL, deleted_at TEXT, language TEXT NOT NULL DEFAULT 'ko');
 CREATE TABLE IF NOT EXISTS sessions (
  id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id),
  access_hash TEXT UNIQUE NOT NULL, refresh_hash TEXT UNIQUE NOT NULL,
@@ -111,6 +111,9 @@ CREATE TABLE IF NOT EXISTS idempotency_responses (
  fingerprint TEXT NOT NULL, data_json TEXT NOT NULL, status_code INTEGER NOT NULL,
  created_at TEXT NOT NULL, expires_at TEXT NOT NULL,
  PRIMARY KEY(user_id,path,key_hash));
+CREATE TABLE IF NOT EXISTS translations (
+ language TEXT NOT NULL, source_hash TEXT NOT NULL, translated TEXT NOT NULL, created_at TEXT NOT NULL,
+ PRIMARY KEY(language,source_hash));
 CREATE INDEX IF NOT EXISTS jobs_status ON jobs(status,ready_at);
 CREATE INDEX IF NOT EXISTS links_document ON document_links(document_id);
 '''
@@ -150,6 +153,10 @@ class Database:
             payment_columns = {row['name'] for row in con.execute('PRAGMA table_info(payment_transactions)')}
             if 'provenance_json' not in payment_columns:
                 con.execute('ALTER TABLE payment_transactions ADD COLUMN provenance_json TEXT')
+            user_columns = {row['name'] for row in con.execute('PRAGMA table_info(users)')}
+            if 'language' not in user_columns:
+                # Existing accounts start in Korean.
+                con.execute("ALTER TABLE users ADD COLUMN language TEXT NOT NULL DEFAULT 'ko'")
         self._migrate_monotonic_ids()
 
     def _migrate_monotonic_ids(self):
