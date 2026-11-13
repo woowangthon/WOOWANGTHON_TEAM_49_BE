@@ -14,6 +14,8 @@ from pypdf import PdfReader
 from app.ai import validate_field_value
 from app.db import dump, load, now
 from app.engine import effective_fields, schedule
+from app.field_labels import localize_fields
+from app.i18n import user_language
 from app.compatibility import public_field
 from app.errors import ApiError, ok
 from app.integration_store import source_ref
@@ -298,15 +300,15 @@ def replacement_row(con, case_id, replacement_id, user_id):
 def get_replacement(case_id: int, replacement_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         row, original, candidate = replacement_row(con, case_id, replacement_id, user["id"])
-        return ok(
-            {
-                "replacementId": replacement_id,
-                "status": row["status"],
-                "original": doc_dto(con, original, case_id),
-                "candidate": doc_dto(con, candidate, case_id),
-                "fields": effective_fields(con, case_id, candidate["id"]),
-            }
-        )
+        body = {
+            "replacementId": replacement_id,
+            "status": row["status"],
+            "original": doc_dto(con, original, case_id),
+            "candidate": doc_dto(con, candidate, case_id),
+            "fields": effective_fields(con, case_id, candidate["id"]),
+        }
+    body["fields"] = localize_fields(body["fields"], user_language(user), request.app.state.localizer)
+    return ok(body)
 
 
 @router.post("/cases/{case_id}/document-replacements/{replacement_id}/confirm", response_model=Envelope)
@@ -778,15 +780,16 @@ def retry_document(case_id: int, document_id: int, request: Request, user=Depend
 def fields(case_id: int, document_id: int, request: Request, user=Depends(current_user)):
     with request.app.state.db.connect() as con:
         doc, link = case_document(con, case_id, document_id, user["id"])
-        return ok(
-            {
-                "documentId": document_id,
-                "caseId": case_id,
-                "processingStatus": public_processing_status(doc),
-                "reviewStatus": link["review_status"],
-                "fields": [public_field(f) for f in effective_fields(con, case_id, document_id)],
-            }
-        )
+        body = {
+            "documentId": document_id,
+            "caseId": case_id,
+            "processingStatus": public_processing_status(doc),
+            "reviewStatus": link["review_status"],
+            "fields": [public_field(f) for f in effective_fields(con, case_id, document_id)],
+        }
+    # Display names follow the user's language; values stay as written in the document.
+    body["fields"] = localize_fields(body["fields"], user_language(user), request.app.state.localizer)
+    return ok(body)
 
 
 def update_field(con, doc, field_id, body, user_id, settings, case_id=None):
