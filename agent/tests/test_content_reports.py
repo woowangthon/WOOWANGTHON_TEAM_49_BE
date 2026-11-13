@@ -441,3 +441,19 @@ def test_zero_total_difference_explains_component_cancellation_in_inquiry_and_pd
     assert "manual-internal-abcdef123456" not in text and "internal-statement-abcdef123456" not in text
     assert "internal-statement-abcdef123456" in result.model_dump_json()
     assert "자정을 넘는" in question_reason("HOLIDAY_BOUNDARY_REVIEW")
+
+
+def test_pdf_names_confirmed_document_fields_in_korean_not_by_code():
+    result, display, _ = content_fixture()
+    display = ReportDisplayContext.model_validate({**display.model_dump(), "conditions": [
+        {"label": "work_start", "value": "09:00", "state": "known"},
+        {"label": "payday", "value": "25", "state": "known"},
+        {"label": "transaction_1_date", "value": "2026-10-25", "state": "known"},
+        {"label": "employer_address", "value": "충북 청주시", "state": "known"},
+    ]})
+    pdf = render_pdf(result, template_explanation(result), AgentSettings(), result.created_at, display)
+    text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(pdf)).pages)
+    for expected in ["출근 시각: 09:00", "지급일: 25", "거래 내역 1 · 거래일: 2026-10-25", "업체 소재지: 충북 청주시"]:
+        assert expected in text, expected
+    for code in ["work_start", "payday", "transaction_1_date", "employer_address"]:
+        assert code not in text

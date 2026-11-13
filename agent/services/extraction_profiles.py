@@ -152,6 +152,23 @@ PROFILES["payslip_ocr"] = {
 PROFILES["auto"] = {"label": "AI 문서 유형 자동 분류", "fields": {}, "rows": {}}
 
 
+_ROW_FIELD = re.compile(r"^(?P<row>[a-z]+)_(?P<number>\d+)_(?P<column>[a-z_]+)$")
+
+
+def korean_field_label(field_id):
+    """Korean display name of an extracted field or table cell, or None when unknown."""
+    for profile in PROFILES.values():
+        if field_id in profile["fields"]:
+            return profile["fields"][field_id]["label"]
+    match = _ROW_FIELD.match(field_id or "")
+    if match:
+        for profile in PROFILES.values():
+            row = profile["rows"].get(match["row"])
+            if row and match["column"] in row["fields"]:
+                return f"{row['label']} {match['number']} · {row['fields'][match['column']]['label']}"
+    return None
+
+
 def validate_document_type(document_type):
     if not isinstance(document_type, str) or document_type not in PROFILES:
         raise ValueError("지원하지 않는 문서 유형입니다.")

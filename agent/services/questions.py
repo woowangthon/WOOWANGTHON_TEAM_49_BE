@@ -84,7 +84,14 @@ def question_reason(code):
 
 def condition_label(field_id):
     key = field_id.removeprefix("wage_conditions.")
-    return CONDITION_LABELS.get(key, CONDITION_LABELS.get(key.split(".")[0], key))
+    label = CONDITION_LABELS.get(key, CONDITION_LABELS.get(key.split(".")[0]))
+    if label is None:
+        # Confirmed document fields are named after their extraction profile, never the raw code.
+        from agent.review.registry import ROLE_FIELDS
+        from agent.services.extraction_profiles import korean_field_label
+
+        label = korean_field_label(key) or ROLE_FIELDS.get(key, {}).get("label")
+    return label or key
 
 
 def _materials(field_id):
