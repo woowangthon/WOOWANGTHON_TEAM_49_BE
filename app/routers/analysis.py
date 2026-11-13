@@ -590,13 +590,12 @@ def inquiry(case_id: int, body: Inquiry, request: Request, user=Depends(current_
     text = {**generated[0], "text": "\n\n".join(g["text"] for g in generated)}
     language = user_language(user)
     if language != "ko":
-        # The draft is sent to a Korean employer, so `text` stays Korean; this copy helps the user read it.
+        # The draft is written in the user's language; lines that cannot be translated safely stay Korean.
         lines = text["text"].split("\n")
-        text["localizedText"] = "\n".join(request.app.state.localizer.translate(lines, language))
+        text["text"] = "\n".join(request.app.state.localizer.translate(lines, language))
     return ok(
         {
             **text,
-            "language": language,
             "basedOnResultVersions": versions,
             "requiresUserReview": True,
             "selectedResultItemIds": selected,

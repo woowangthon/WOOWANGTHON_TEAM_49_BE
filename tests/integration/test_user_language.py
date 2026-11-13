@@ -215,3 +215,21 @@ def test_chat_payload_follows_a_language_change_on_the_next_message(tmp_path):
         client.patch('/api/v1/users/me/language', json={'language': 'zh'})
         assert '"status":"COMPLETED"' in client.post(path, json={'content': '질문 2', 'scope': scope}).text
     assert [call['language'] for call in model.calls] == ['ko', 'zh']
+
+
+def test_company_inquiry_draft_is_written_in_the_users_language(api, monkeypatch):
+    wid = api.client.post('/api/v1/workplaces', json={'name': '테스트 사업장'}).json()['data']['workplaceId']
+    cid = api.client.post('/api/v1/cases', json={'workplaceId': wid, 'payType': 'HOURLY',
+        'periodStart': '2026-10-01', 'periodEnd': '2026-10-31'}).json()['data']['caseId']
+    draft = '급여 자료 확인 요청\n\n확인할 급여기간: 2026-10-01 ~ 2026-10-31\n1. 통상시급을(를) 확인해 주세요.'
+    monkeypatch.setattr(analysis, 'results', lambda con, case_id: {
+        'freshness': {'overall': 'CURRENT'}, 'versions': {'comparison': {'version': 3}}, 'items': [{'id': 'netPay'}]})
+    monkeypatch.setattr(analysis, 'latest', lambda con, case_id, kind=None: ({'data_json': dump({'_agentResultId': 'r-1'})}, None))
+    monkeypatch.setattr(api.app.state.service, 'inquiry', lambda owner, rid, rule_ids=None: {'inquiry_id': 'i-1', 'text': draft})
+    korean = api.client.post(f'/api/v1/cases/{cid}/company-inquiry', json={}).json()['data']
+    assert korean['text'] == draft and api.translator.calls == []
+    api.client.patch('/api/v1/users/me/language', json={'language': 'en'})
+    english = api.client.post(f'/api/v1/cases/{cid}/company-inquiry', json={}).json()['data']
+    assert english['text'] == '\n'.join('[en] ' + line if line else '' for line in draft.split('\n'))
+    assert 'localizedText' not in english
+    assert {k: v for k, v in english.items() if k != 'text'} == {k: v for k, v in korean.items() if k != 'text'}
