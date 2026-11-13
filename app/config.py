@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     worker_concurrency: int = Field(default=1, ge=1, le=4)
     workers_enabled: bool = True
     recompute_debounce_seconds: float = Field(default=0.3, ge=0)
+    chat_summary_idle_seconds: float = Field(default=300, ge=0)
+    chat_summary_refresh_timeout_seconds: float = Field(default=45, gt=0)
     upload_max_bytes: int = Field(default=20 * 1024 * 1024, gt=0)
     cookie_secure: bool = False
     password_reset_delivery: Literal['file', 'disabled'] = 'file'

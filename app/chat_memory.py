@@ -4,6 +4,10 @@ Every chat keeps one Korean summary per scope. A message is sent to the model
 together with the summaries of the *other* chats in the same scope (a table of
 contents); the model may then ask to open some of those chats before answering.
 
+Summaries are written lazily to keep model calls low: once after a chat has been
+quiet for a while, and immediately when another chat of the scope asks a question
+while a summary is still behind.
+
 Access never widens: a CASE question only sees chats of that case, and every
 summary or opened chat is rebuilt from messages that pass the same live source
 access filter as the chat history itself. A summary built from a message that
@@ -171,38 +175,98 @@ async def _summarize_once(state, workplace_id, chat_id, scope):
 
 
 async def update_summary(state, workplace_id, chat_id, scope):
-    """Bring one chat summary up to date; concurrent requests for the same chat are coalesced."""
+    """Bring one chat summary up to date. Callers for the same chat wait for each other."""
     key = (chat_id, scope_key(scope))
-    if key in state.summary_running:
-        state.summary_dirty.add(key)
-        return
-    state.summary_running.add(key)
-    try:
-        while True:
-            state.summary_dirty.discard(key)
-            try:
-                await _summarize_once(state, workplace_id, chat_id, scope)
-            except asyncio.CancelledError:
-                raise
-            except Exception:
-                logger.warning("chat_summary_failed chat=%s scope=%s", chat_id, key[1], exc_info=True)
-            if key not in state.summary_dirty:
-                return
-    finally:
-        state.summary_running.discard(key)
+    lock = state.summary_locks.setdefault(key, asyncio.Lock())
+    async with lock:
+        try:
+            await _summarize_once(state, workplace_id, chat_id, scope)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.warning("chat_summary_failed chat=%s scope=%s", chat_id, key[1], exc_info=True)
 
 
 def schedule_summary(state, workplace_id, chat_id, scope):
-    task = asyncio.create_task(update_summary(state, workplace_id, chat_id, scope))
+    """Summarize once the chat has been quiet for a while; each new answer restarts the wait."""
+    if not state.ai.can_summarize:
+        return
+    key = (chat_id, scope_key(scope))
+    previous = state.summary_timers.pop(key, None)
+    if previous is not None:
+        previous.cancel()
+
+    async def later():
+        await asyncio.sleep(state.settings.chat_summary_idle_seconds)
+        # Only the wait is cancelled by a newer answer; a summary already being written finishes.
+        if state.summary_timers.get(key) is task:
+            del state.summary_timers[key]
+        await update_summary(state, workplace_id, chat_id, scope)
+
+    task = asyncio.create_task(later())
+    state.summary_timers[key] = task
     state.summary_tasks.add(task)
     task.add_done_callback(state.summary_tasks.discard)
-    return task
+
+
+def _behind(con, workplace_id, chat_id, scope):
+    """Other chats of this scope whose summary is missing or older than their latest message."""
+    allowed = _allowed_keys(con, workplace_id, scope)
+    current = (chat_id, scope_key(scope))
+    latest = {}
+    for row in con.execute(
+        """SELECT m.chat_id,m.scope_json,MAX(m.id) AS latest FROM messages m JOIN chats c ON c.id=m.chat_id
+        WHERE c.workplace_id=? AND m.status='COMPLETED' GROUP BY m.chat_id,m.scope_json""",
+        (workplace_id,),
+    ):
+        key = (row["chat_id"], scope_key(load(row["scope_json"])))
+        if key != current and key[1] in allowed:
+            latest[key] = max(latest.get(key, 0), row["latest"])
+    done = {
+        (row["chat_id"], row["scope_key"]): row["last_message_id"]
+        for row in con.execute(
+            "SELECT s.* FROM chat_summaries s JOIN chats c ON c.id=s.chat_id WHERE c.workplace_id=?",
+            (workplace_id,),
+        )
+    }
+    recent = sorted(latest.items(), key=lambda item: -item[1])[:MAX_OTHER_CHATS]
+    return [(key[0], key_scope(key[1])) for key, newest in recent if done.get(key, 0) < newest]
+
+
+async def refresh_before_answer(state, workplace_id, chat_id, scope, own_before=None):
+    """Make what this question may recall current: other chats that fell behind, revoked summaries,
+    and this chat's own summary when turns up to `own_before` have left the history window."""
+    if not state.ai.can_summarize:
+        return
+    with state.db.connect() as con:
+        targets = _behind(con, workplace_id, chat_id, scope)
+        targets += other_chats(con, workplace_id, chat_id, scope)[2]
+        if own_before is not None:
+            row = con.execute(
+                "SELECT * FROM chat_summaries WHERE chat_id=? AND scope_key=?", (chat_id, scope_key(scope))
+            ).fetchone()
+            if (
+                row is None
+                or row["last_message_id"] < own_before
+                or not _valid(row, visible_messages(con, workplace_id, chat_id, scope))
+            ):
+                targets.append((chat_id, scope))
+    unique = {(cid, scope_key(target)): (cid, target) for cid, target in targets}
+    if not unique:
+        return
+    try:
+        await asyncio.wait_for(
+            asyncio.gather(*(update_summary(state, workplace_id, cid, target) for cid, target in unique.values())),
+            state.settings.chat_summary_refresh_timeout_seconds,
+        )
+    except TimeoutError:
+        # Answer with the summaries that are ready; the rest are picked up by a later question.
+        logger.warning("chat_summary_refresh_timeout chat=%s pending=%d", chat_id, len(unique))
 
 
 async def catch_up_summaries(state):
-    """Startup pass for chats whose summary is missing or behind (e.g. chats older than this feature).
-
-    After one successful pass there is nothing left to do, because every answer updates its own chat.
+    """Startup pass for chats whose summary is missing or behind (chats older than this feature, or
+    a quiet-period timer lost to a restart). Once caught up there is nothing left to do here.
     """
     if not state.ai.can_summarize:
         return

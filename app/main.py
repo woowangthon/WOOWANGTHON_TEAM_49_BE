@@ -52,7 +52,7 @@ def create_app(settings=None, ai_client=None, *, provider=None, recognizer=None,
         app.state.ai = AIAdapter(settings, ai_client)
         app.state.localizer = Localizer(settings, app.state.db, translation_client)
         app.state.chat_runs = {}
-        app.state.summary_tasks, app.state.summary_running, app.state.summary_dirty = set(), set(), set()
+        app.state.summary_tasks, app.state.summary_timers, app.state.summary_locks = set(), {}, {}
         catch_up = asyncio.create_task(catch_up_summaries(app.state))
         app.state.summary_tasks.add(catch_up)
         catch_up.add_done_callback(app.state.summary_tasks.discard)

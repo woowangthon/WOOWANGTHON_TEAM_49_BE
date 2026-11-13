@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from fastapi import APIRouter, Depends, Query, Request, Response
 from fastapi.responses import StreamingResponse
 
-from app.chat_memory import open_chats, other_chats, own_summary, schedule_summary
+from app.chat_memory import open_chats, other_chats, own_summary, refresh_before_answer, schedule_summary
 from app.db import dump, load, now
 from app.engine import effective_fields, results
 from app.i18n import user_language
@@ -490,9 +490,8 @@ async def start_message(workplace_id, chat_id, body, request, user, retry_of=Non
             visible = message_dto(con, previous, workplace_id)
             if (retry_user is None or previous["id"] != retry_user["id"]) and visible is not None:
                 history_rows.append(visible)
-        # Older turns survive as this chat's summary; other chats of the same scope as a table of contents.
-        earlier = own_summary(con, workplace_id, chat_id, scope) if len(history_rows) > HISTORY_LIMIT else None
-        recallable, recalled_links, stale_summaries = other_chats(con, workplace_id, chat_id, scope)
+        # Turns that left the window survive as this chat's summary (see call_model).
+        left_window = history_rows[-HISTORY_LIMIT - 1]["messageId"] if len(history_rows) > HISTORY_LIMIT else None
         history_rows = history_rows[-HISTORY_LIMIT:]
         history = [{"role": previous["role"], "content": previous["content"]} for previous in history_rows]
         context_links = [
@@ -503,7 +502,7 @@ async def start_message(workplace_id, chat_id, body, request, user, retry_of=Non
         inherited_links = [previous["sourceLinks"] for previous in history_rows]
         if retry_user is not None:
             inherited_links.append(message_dto(con, retry_user, workplace_id)["sourceLinks"])
-        source_links = merge_source_links(context_links, *inherited_links, *recalled_links)
+        source_links = merge_source_links(context_links, *inherited_links)
         metadata = {
             "inputVersions": input_versions,
             "aiMode": state.settings.ai_mode,
@@ -539,13 +538,7 @@ async def start_message(workplace_id, chat_id, body, request, user, retry_of=Non
         # Read per request: a changed preference applies from the next message on.
         "language": user_language(user),
     }
-    if earlier:
-        payload["conversation_summary"] = earlier
-    if recallable:
-        payload["other_chats"] = recallable
-    for stale_chat_id, stale_scope in stale_summaries:
-        schedule_summary(state, workplace_id, stale_chat_id, stale_scope)
-    opened_chat_ids = []
+    memory = {"offered": [], "opened": []}
     control = RunControl()
     state.chat_runs[run_id] = control
 
@@ -563,16 +556,31 @@ async def start_message(workplace_id, chat_id, body, request, user, retry_of=Non
         # Recheck at actual execution, immediately before external transmission.
         with state.db.connect() as con:
             live_access(con)
+        # Other chats of this scope are offered as summaries; bring late ones up to date first.
+        await refresh_before_answer(state, workplace_id, chat_id, scope, left_window)
+        with state.db.connect() as con:
+            live_access(con)
+            recallable, recalled_links, _ = other_chats(con, workplace_id, chat_id, scope)
+            earlier = own_summary(con, workplace_id, chat_id, scope) if left_window is not None else None
+        if earlier:
+            payload["conversation_summary"] = earlier
+        if recallable:
+            payload["other_chats"] = recallable
+            memory["offered"] = [entry["chat_id"] for entry in recallable]
+            # This answer is revoked together with the sources of the chats it was shown.
+            metadata["sourceLinks"] = merge_source_links(metadata["sourceLinks"], *recalled_links)
+            metadata["documentIds"] = sorted({source["documentId"] for source in metadata["sourceLinks"]})
 
         async def read_past(chat_ids):
             # Opened on the model's request; rechecked against live access like everything else sent out.
             with state.db.connect() as con:
                 live_access(con)
                 opened = open_chats(con, workplace_id, chat_id, scope, chat_ids)
-            opened_chat_ids.extend(item["chat_id"] for item in opened)
+            memory["opened"].extend(item["chat_id"] for item in opened)
             return opened
 
-        return await state.ai.chat(payload, read_past)
+        # Without other chats to open, the call is exactly what it was before this feature.
+        return await (state.ai.chat(payload, read_past) if recallable else state.ai.chat(payload))
 
     async def stream():
         completed = False
@@ -658,10 +666,10 @@ async def start_message(workplace_id, chat_id, body, request, user, retry_of=Non
                 if ref["snapshotId"] is not None
             ]
             metadata.update(sources=sources, resultRefs=refs, upstreamThreadId=answer.thread_id)
-            if recallable:
+            if memory["offered"]:
                 metadata["memory"] = {
-                    "offeredChatIds": [entry["chat_id"] for entry in recallable],
-                    "openedChatIds": sorted(set(opened_chat_ids)),
+                    "offeredChatIds": memory["offered"],
+                    "openedChatIds": sorted(set(memory["opened"])),
                 }
             with state.db.connect(write=True) as con:
                 live_access(con)

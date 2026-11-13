@@ -36,8 +36,9 @@ class ChatOnlyModel:
         return {"content": "답변", "sources": []}
 
 
-def make_app(tmp_path, model):
-    return create_app(Settings(_env_file=None, data_dir=tmp_path / "data", workers_enabled=False), ai_client=model)
+def make_app(tmp_path, model, idle=0.05):
+    return create_app(Settings(_env_file=None, data_dir=tmp_path / "data", workers_enabled=False,
+                               chat_summary_idle_seconds=idle), ai_client=model)
 
 
 def login(client, email="memory@example.test"):
@@ -247,3 +248,59 @@ def test_chats_older_than_the_feature_are_summarized_once_at_startup(tmp_path):
     with TestClient(make_app(tmp_path, again)) as client:
         time.sleep(0.2)
     assert again.summary_calls == []
+
+
+def lazy_harness(tmp_path, idle):
+    model = MemoryModel()
+    app = make_app(tmp_path, model, idle)
+    client = TestClient(app)
+    client.__enter__()
+    client.headers.update(login(client))
+    wid = client.post("/api/v1/workplaces", json={"name": "테스트 사업장"}).json()["data"]["workplaceId"]
+    harness = SimpleNamespace(client=client, app=app, model=model, wid=wid)
+    harness.cid, harness.lid = new_case(harness, wid)
+    return harness
+
+
+def test_a_single_chat_costs_no_summary_calls_until_it_goes_quiet(tmp_path):
+    h = lazy_harness(tmp_path, idle=3600)
+    try:
+        chat = new_chat(h, h.cid)
+        for index in range(3):
+            send(h, chat, f"질문 {index}")
+        time.sleep(0.2)
+        assert h.model.summary_calls == [] and summary(h, chat) is None
+    finally:
+        h.client.__exit__(None, None, None)
+
+
+def test_quick_answers_are_summarized_once_after_the_quiet_period(tmp_path):
+    h = lazy_harness(tmp_path, idle=0.4)
+    try:
+        chat = new_chat(h, h.cid)
+        for index in range(3):
+            send(h, chat, f"질문 {index}")
+        assert h.model.summary_calls == []
+        row = wait_summary(h, chat, "질문 2")
+        assert len(h.model.summary_calls) == 1 and len(load(row["message_ids"])) == 6
+    finally:
+        h.client.__exit__(None, None, None)
+
+
+def test_another_chat_asking_brings_a_late_summary_up_to_date_first(tmp_path):
+    h = lazy_harness(tmp_path, idle=3600)
+    try:
+        first = new_chat(h, h.cid, "첫 대화")
+        send(h, first, "11월 5일에 퇴사했어")
+        send(h, first, "답변은 짧게 해 줘")
+        assert summary(h, first) is None
+        second = new_chat(h, h.cid)
+        send(h, second, "내 상황 알아?")
+        assert [c["summary"] for c in h.model.calls[-1]["other_chats"]] == ["요약: 11월 5일에 퇴사했어 / 답변은 짧게 해 줘"]
+        assert len(h.model.summary_calls) == 1
+        # Nothing changed in the first chat, so the next question does not summarize again.
+        send(h, second, "고마워")
+        assert len(h.model.summary_calls) == 1
+        assert last_message(h, second)["memory"] == {"offeredChatIds": [first], "openedChatIds": []}
+    finally:
+        h.client.__exit__(None, None, None)
