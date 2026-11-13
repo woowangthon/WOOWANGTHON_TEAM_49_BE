@@ -35,7 +35,7 @@ CONTENT_FIELDS = set(InputSnapshot.model_fields) - SERVER_FIELDS
 
 def build_snapshot(confirmed, *, snapshot_id, input_version, owner_id, workplace_id,
                    case_id, period, authorized_sources, evidence_catalog=None):
-    """Freeze explicitly confirmed public inputs without guessing missing semantics.
+    """Freeze confirmed and separately tagged extracted inputs without guessing semantics.
 
 The caller supplies trusted identities and source permissions. This pure mapper
 does not read candidates, infer wages, or change source evidence.
@@ -380,7 +380,7 @@ same allocation; selecting it does not consume the transaction a second time.
     if not confirmed:
         raise ApiError(409, "CONFIRMED_INPUT_REQUIRED")
     unknown = set(confirmed) - CONTENT_FIELDS - CONFIRMATION_METADATA
-    if unknown or "transaction_allocations" in confirmed:
+    if unknown or "transaction_allocations" in confirmed or confirmed.get("extracted_fields"):
         raise ApiError(422, "INVALID_CONFIRMED_INPUT", details={"unsupported_fields": sorted(unknown),
             "allocation_policy": "Use selected_transaction_ids from the case allocation ledger"})
     profile = {"HOURLY": "H-STD", "MONTHLY": "M-STD"}.get(case["pay_type"])

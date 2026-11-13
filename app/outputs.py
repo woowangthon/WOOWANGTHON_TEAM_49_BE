@@ -96,7 +96,35 @@ class DocumentDTO(BaseModel):
     workplaceName: str | None = None
 
 
-class FieldDTO(BaseModel):
+class ReviewFieldMetadata(BaseModel):
+    requiresUserReview: bool
+    reviewReason: Literal['REQUIRED', 'MISSING', 'UNREADABLE', 'CONFLICTED', 'RECONFIRMATION'] | None
+    reviewResolution: Literal['NONE', 'NOT_IN_DOCUMENT', 'UNKNOWN']
+    reviewResolved: bool
+    usableForAnalysis: bool
+    analysisValueOrigin: Literal['USER_CONFIRMED', 'SYSTEM_EXTRACTED_UNVERIFIED', 'NONE']
+
+
+class ReviewDTO(BaseModel):
+    documentId: int
+    processingStatus: str
+    reviewStatus: str
+    unconfirmedFieldIds: list[int]
+    totalFieldCount: int
+    confirmedFieldCount: int
+    requiredReviewCount: int
+    resolvedRequiredCount: int
+    pendingRequiredFieldIds: list[int]
+    optionalUnconfirmedFieldIds: list[int]
+    canCompleteReview: bool
+
+
+class FieldMutationDTO(ReviewFieldMetadata):
+    model_config = {"extra": "allow"}
+    fieldId: int
+
+
+class FieldDTO(ReviewFieldMetadata):
     fieldId: int
     key: str
     label: str

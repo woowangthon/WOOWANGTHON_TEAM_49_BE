@@ -7,6 +7,7 @@ from pydantic import BaseModel, SecretStr
 
 SET_FIELDS = {
     "confirmed_fields",
+    "extracted_fields",
     "condition_states",
     "authorized_sources",
     "evidence_catalog",
@@ -62,6 +63,11 @@ def snapshot_hash(snapshot) -> str:
     # Additive defaults must not rewrite signed snapshots saved before wage support.
     if data.get("wage_conditions") is None:
         data.pop("wage_conditions", None)
+    if not data.get("extracted_fields"):
+        data.pop("extracted_fields", None)
+    for item in [*data.get("earnings", []), *data.get("deductions", [])]:
+        if item.get("analysis_value_origin") == "USER_CONFIRMED":
+            item.pop("analysis_value_origin", None)
     return digest(data)
 
 

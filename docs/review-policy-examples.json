@@ -1,0 +1,234 @@
+{
+  "GET fields": {
+    "code": 200,
+    "message": "요청이 처리되었습니다.",
+    "data": {
+      "documentId": 1,
+      "caseId": 1,
+      "processingStatus": "READY",
+      "reviewStatus": "NOT_STARTED",
+      "fields": [
+        {
+          "fieldId": 1,
+          "key": "periodStart",
+          "label": "periodStart",
+          "value": "2026-10-01",
+          "valueType": "TEXT",
+          "status": "CONFIRMED",
+          "editedByUser": false,
+          "confirmedAt": null,
+          "effectiveValueOrigin": "SHARED_DEFAULT",
+          "hasCaseOverride": false,
+          "source": null,
+          "requiresUserReview": true,
+          "reviewReason": "REQUIRED",
+          "reviewResolution": "NONE",
+          "reviewResolved": true,
+          "usableForAnalysis": true,
+          "analysisValueOrigin": "USER_CONFIRMED",
+          "agentKey": "periodStart"
+        },
+        {
+          "fieldId": 2,
+          "key": "periodEnd",
+          "label": "periodEnd",
+          "value": "2026-10-31",
+          "valueType": "TEXT",
+          "status": "CONFIRMED",
+          "editedByUser": false,
+          "confirmedAt": null,
+          "effectiveValueOrigin": "SHARED_DEFAULT",
+          "hasCaseOverride": false,
+          "source": null,
+          "requiresUserReview": true,
+          "reviewReason": "REQUIRED",
+          "reviewResolution": "NONE",
+          "reviewResolved": true,
+          "usableForAnalysis": true,
+          "analysisValueOrigin": "USER_CONFIRMED",
+          "agentKey": "periodEnd"
+        },
+        {
+          "fieldId": 3,
+          "key": "payType",
+          "label": "payType",
+          "value": "HOURLY",
+          "valueType": "TEXT",
+          "status": "CONFIRMED",
+          "editedByUser": false,
+          "confirmedAt": null,
+          "effectiveValueOrigin": "SHARED_DEFAULT",
+          "hasCaseOverride": false,
+          "source": null,
+          "requiresUserReview": true,
+          "reviewReason": "REQUIRED",
+          "reviewResolution": "NONE",
+          "reviewResolved": true,
+          "usableForAnalysis": true,
+          "analysisValueOrigin": "USER_CONFIRMED",
+          "agentKey": "payType"
+        },
+        {
+          "fieldId": 4,
+          "key": "regularMinutes",
+          "label": "regularMinutes",
+          "value": 100,
+          "valueType": "MONEY_KRW",
+          "status": "CONFIRMED",
+          "editedByUser": false,
+          "confirmedAt": null,
+          "effectiveValueOrigin": "SHARED_DEFAULT",
+          "hasCaseOverride": false,
+          "source": null,
+          "requiresUserReview": true,
+          "reviewReason": "REQUIRED",
+          "reviewResolution": "NONE",
+          "reviewResolved": true,
+          "usableForAnalysis": true,
+          "analysisValueOrigin": "USER_CONFIRMED",
+          "agentKey": "regularMinutes"
+        },
+        {
+          "fieldId": 5,
+          "key": "memo",
+          "label": "memo",
+          "value": "ok",
+          "valueType": "TEXT",
+          "status": "UNCONFIRMED",
+          "editedByUser": false,
+          "confirmedAt": null,
+          "effectiveValueOrigin": "SHARED_DEFAULT",
+          "hasCaseOverride": false,
+          "source": null,
+          "requiresUserReview": false,
+          "reviewReason": null,
+          "reviewResolution": "NONE",
+          "reviewResolved": false,
+          "usableForAnalysis": true,
+          "analysisValueOrigin": "SYSTEM_EXTRACTED_UNVERIFIED",
+          "agentKey": "memo"
+        },
+        {
+          "fieldId": 6,
+          "key": "missing",
+          "label": "missing",
+          "value": null,
+          "valueType": "TEXT",
+          "status": "MISSING",
+          "editedByUser": false,
+          "confirmedAt": null,
+          "effectiveValueOrigin": "SHARED_DEFAULT",
+          "hasCaseOverride": false,
+          "source": null,
+          "requiresUserReview": true,
+          "reviewReason": "MISSING",
+          "reviewResolution": "NONE",
+          "reviewResolved": false,
+          "usableForAnalysis": false,
+          "analysisValueOrigin": "NONE",
+          "agentKey": "missing"
+        }
+      ]
+    }
+  },
+  "GET review": {
+    "code": 200,
+    "message": "요청이 처리되었습니다.",
+    "data": {
+      "documentId": 1,
+      "processingStatus": "READY",
+      "reviewStatus": "NOT_STARTED",
+      "totalFieldCount": 6,
+      "confirmedFieldCount": 4,
+      "requiredReviewCount": 5,
+      "resolvedRequiredCount": 4,
+      "pendingRequiredFieldIds": [
+        6
+      ],
+      "unconfirmedFieldIds": [
+        5,
+        6
+      ],
+      "optionalUnconfirmedFieldIds": [
+        5
+      ],
+      "canCompleteReview": false
+    }
+  },
+  "PATCH field UNKNOWN": {
+    "code": 200,
+    "message": "요청이 처리되었습니다.",
+    "data": {
+      "fieldId": 6,
+      "key": "missing",
+      "label": "missing",
+      "value": null,
+      "valueType": "TEXT",
+      "status": "MISSING",
+      "editedByUser": false,
+      "confirmedAt": null,
+      "effectiveValueOrigin": "SHARED_DEFAULT",
+      "hasCaseOverride": false,
+      "source": null,
+      "requiresUserReview": true,
+      "reviewReason": "MISSING",
+      "reviewResolution": "UNKNOWN",
+      "reviewResolved": true,
+      "usableForAnalysis": false,
+      "analysisValueOrigin": "NONE",
+      "agentKey": "missing",
+      "previousValue": null,
+      "affectedCaseIds": [
+        1
+      ],
+      "caseUpdates": {
+        "1": {
+          "inputVersion": 2,
+          "recompute": {
+            "scheduled": true,
+            "jobId": "job-951e10df25234d6b825d42f75fe4f44f",
+            "affectedChecks": [
+              "CONTRACT_ATTENDANCE_COMPARISON",
+              "DEPOSIT_COMPARISON",
+              "PAYSLIP_VALIDATION",
+              "WAGE_CALCULATION"
+            ]
+          }
+        }
+      },
+      "inputVersion": 2,
+      "recompute": {
+        "scheduled": true,
+        "jobId": "job-951e10df25234d6b825d42f75fe4f44f",
+        "affectedChecks": [
+          "CONTRACT_ATTENDANCE_COMPARISON",
+          "DEPOSIT_COMPARISON",
+          "PAYSLIP_VALIDATION",
+          "WAGE_CALCULATION"
+        ]
+      }
+    }
+  },
+  "POST review/confirm": {
+    "code": 200,
+    "message": "요청이 처리되었습니다.",
+    "data": {
+      "documentId": 1,
+      "processingStatus": "READY",
+      "reviewStatus": "CONFIRMED",
+      "totalFieldCount": 6,
+      "confirmedFieldCount": 4,
+      "requiredReviewCount": 5,
+      "resolvedRequiredCount": 5,
+      "pendingRequiredFieldIds": [],
+      "unconfirmedFieldIds": [
+        5,
+        6
+      ],
+      "optionalUnconfirmedFieldIds": [
+        5
+      ],
+      "canCompleteReview": true
+    }
+  }
+}

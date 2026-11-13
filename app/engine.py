@@ -231,4 +231,10 @@ def effective_fields(con, case_id, document_id):
                 ),
             }
         )
+    from app.review_policy import metadata
+    doc = con.execute("SELECT document_type FROM documents WHERE id=?", (document_id,)).fetchone()
+    case = con.execute("SELECT pay_type FROM cases WHERE id=?", (case_id,)).fetchone()
+    for field in result:
+        row = con.execute("SELECT resolution FROM field_review_resolutions WHERE case_id=? AND field_id=?", (case_id, field["fieldId"])).fetchone()
+        field.update(metadata(field, doc[0], case[0] if case else None, row[0] if row else "NONE"))
     return result

@@ -52,7 +52,31 @@ class ConfirmedField(ContractModel):
         return self
 
 
+class ExtractedField(ContractModel):
+    """Usable optional extraction; never a user confirmation."""
+    field_id: str
+    value: Money
+    unit: str
+    evidence_refs: list[str] = Field(min_length=1)
+    state: Literal["known"] = "known"
+    period: Period | None = None
+    time_kind: Literal["actual", "paid"] | None = None
+    analysis_value_origin: Literal["SYSTEM_EXTRACTED_UNVERIFIED"] = "SYSTEM_EXTRACTED_UNVERIFIED"
+
+    @model_validator(mode="after")
+    def integral_minutes(self):
+        if self.unit == "minute" and self.value != self.value.to_integral_value():
+            raise ValueError("Minutes must be integral")
+        return self
+
+
 class StatementItem(ContractModel):
+    analysis_value_origin: Literal["USER_CONFIRMED", "SYSTEM_EXTRACTED_UNVERIFIED"] = "USER_CONFIRMED"
+
+    @property
+    def usable(self):
+        return self.confirmed or self.analysis_value_origin == "SYSTEM_EXTRACTED_UNVERIFIED"
+
     item_id: str
     amount: Money | None
     evidence_refs: list[str]
@@ -88,6 +112,10 @@ class ConditionState(ContractModel):
 
 
 class InputSnapshot(ContractModel):
+    @property
+    def analysis_fields(self):
+        return [*self.confirmed_fields, *self.extracted_fields]
+
     snapshot_id: str
     input_version: int = Field(ge=1)
     snapshot_hash: str = ""
@@ -98,6 +126,7 @@ class InputSnapshot(ContractModel):
     timezone: str = "Asia/Seoul"
     profile: Literal["H-STD", "M-STD"] = "H-STD"
     confirmed_fields: list[ConfirmedField] = Field(default_factory=list)
+    extracted_fields: list[ExtractedField] = Field(default_factory=list)
     condition_states: list[ConditionState] = Field(default_factory=list)
     authorized_sources: list[SourceRef] = Field(default_factory=list)
     evidence_catalog: list[EvidenceRef] = Field(default_factory=list)

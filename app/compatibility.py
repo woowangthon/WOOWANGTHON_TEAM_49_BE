@@ -1,7 +1,7 @@
 """Legacy Case API adapters over the real agent, with independent immutable views.
 
-Only explicitly user-confirmed fields/manual records enter this adapter. It does
-not promote an extraction candidate, invent wage conditions or call a model.
+User-confirmed inputs and eligible optional extractions retain separate trust
+contracts. Missing wage conditions are never invented.
 """
 
 import time
@@ -103,10 +103,13 @@ def collect(con, case_id):
         AND d.deleted_at IS NULL ORDER BY d.id""",
         (case_id,),
     ):
-        if row["document_type"] not in groups or row["purpose"] == "context":
+        if row["document_type"] not in groups or row["purpose"] == "context" or row["processing_status"] not in {"READY", "REVIEW_REQUIRED"}:
             continue
         fields = [public_field(f) for f in effective_fields(con, case_id, row["id"])]
-        confirmed = [f for f in fields if f["status"] == "CONFIRMED" and f["value"] is not None]
+        scalar_keys = set(SCALARS.get(row["document_type"], {}))
+        if row["document_type"] == "PAYSLIP":
+            scalar_keys.update({"paymentItems", "deductionItems"})
+        confirmed = [f for f in fields if f["usableForAnalysis"] and f["key"] in scalar_keys]
         if not confirmed:
             continue
         narrowed = (row["applicable_from"] and row["applicable_from"] > case["period_start"]) or (
@@ -120,6 +123,7 @@ def collect(con, case_id):
                 "page": (f["source"] or {}).get("page"),
                 "boundingBox": (f["source"] or {}).get("boundingBox"),
                 "confirmedAt": f["confirmedAt"],
+                "analysisValueOrigin": f["analysisValueOrigin"],
                 "sourceType": row["document_type"],
                 "linkId": row["link_id"],
                 "linkVersion": row["link_version"],
@@ -238,6 +242,8 @@ def fingerprint(con, case_id, kind, data=None):
 def schedule(con, case_id, checks=None, delay=0.3, increment=True):
     from app.integration_store import ensure_default_group
 
+    from app.review_policy import sync_reviews
+    sync_reviews(con, case_id)
     checks = checks or list(KINDS.values())
     if not set(checks) <= set(KINDS.values()):
         raise ApiError(422, "INVALID_CHECK_TYPE")
@@ -342,7 +348,7 @@ def prepare_snapshot(con, case_id, snapshot_id):
             ref = source_ref(con, row[0], uid, case_id)
             refs.append(ref)
             by_doc[row[0]] = ref
-    catalog, fields, conditions = [], [], []
+    catalog, fields, extracted, conditions = [], [], [], []
 
     def evidence(source):
         eid = "legacy:" + digest(source)[:28]
@@ -351,11 +357,11 @@ def prepare_snapshot(con, case_id, snapshot_id):
             catalog.append(
                 {
                     "evidence_id": eid,
-                    "source_id": ref.source_id if ref and source.get("page") else mid,
+                    "source_id": ref.source_id if ref and (source.get("page") or source.get("analysisValueOrigin") == "SYSTEM_EXTRACTED_UNVERIFIED") else mid,
                     "page": source.get("page"),
-                    "quote": "사용자가 확인한 입력",
+                    "quote": "자동 추출 미확인 값" if source.get("analysisValueOrigin") == "SYSTEM_EXTRACTED_UNVERIFIED" else "사용자가 확인한 입력",
                     "locator": dump(source),
-                    "verification_method": "manual_confirmed",
+                    "verification_method": "ocr_unverified" if source.get("analysisValueOrigin") == "SYSTEM_EXTRACTED_UNVERIFIED" else "manual_confirmed",
                 }
             )
         return eid
@@ -364,7 +370,6 @@ def prepare_snapshot(con, case_id, snapshot_id):
     for kind, mapping in SCALARS.items():
         values, conflict, sources = _single(data, kind)
         all_sources.extend(sources)
-        evs = [evidence(s) for s in sources]
         for name, (key, unit) in mapping.items():
             value = values.get(name)
             if value is None and not conflict:
@@ -374,12 +379,15 @@ def prepare_snapshot(con, case_id, snapshot_id):
                 allowed = data["conditions"].get("comparison_basis_confirmed") is True
             if key in ("worked_minutes", "slip_minutes"):
                 allowed = data["conditions"].get("hours_basis_confirmed") is True
-            fields.append(
+            relevant = [s for s in sources if s.get("key", name) == name]
+            evs = [evidence(s) for s in relevant]
+            automatic = any(s.get("analysisValueOrigin") == "SYSTEM_EXTRACTED_UNVERIFIED" for s in relevant) and not conflict
+            (extracted if automatic else fields).append(
                 {
                     "field_id": key,
                     "value": str(value) if value is not None and not conflict else None,
                     "unit": unit,
-                    "confirmation_id": "legacy-user",
+                    **({"analysis_value_origin": "SYSTEM_EXTRACTED_UNVERIFIED"} if automatic else {"confirmation_id": "legacy-user"}),
                     "state": "conflict" if conflict else "known",
                     "period": {"start": c["period_start"], "end": c["period_end"]},
                     "evidence_refs": evs,
@@ -413,12 +421,23 @@ def prepare_snapshot(con, case_id, snapshot_id):
                 {
                     "item_id": key + ":" + str(i),
                     "amount": str(value),
-                    "evidence_refs": [evidence(s) for s in payslip_sources],
+                    "evidence_refs": [evidence(s) for s in payslip_sources if s.get("key", key) == key],
+                    "confirmed": not any(s.get("analysisValueOrigin") == "SYSTEM_EXTRACTED_UNVERIFIED" for s in payslip_sources if s.get("key", key) == key),
+                    "analysis_value_origin": "SYSTEM_EXTRACTED_UNVERIFIED" if any(s.get("analysisValueOrigin") == "SYSTEM_EXTRACTED_UNVERIFIED" for s in payslip_sources if s.get("key", key) == key) else "USER_CONFIRMED",
                 }
                 for i, value in enumerate(payslip.get(key) or [])
             ]
             if not payslip_conflict
             else []
+        )
+
+    def items_complete(key):
+        if payslip_conflict or key not in payslip:
+            return False
+        # An empty automatic list does not establish a complete zero-value scope.
+        return bool(payslip[key]) or all(
+            s.get("analysisValueOrigin", "USER_CONFIRMED") == "USER_CONFIRMED"
+            for s in payslip_sources if s.get("key", key) == key
         )
 
     transactions = []
@@ -452,12 +471,13 @@ def prepare_snapshot(con, case_id, snapshot_id):
     snapshot = build_snapshot(
         {
             "confirmed_fields": fields,
+            "extracted_fields": extracted,
             "condition_states": conditions,
             "evidence_catalog": catalog,
             "earnings": items("paymentItems"),
             "deductions": items("deductionItems"),
-            "earnings_complete": not payslip_conflict and "paymentItems" in payslip,
-            "deductions_complete": not payslip_conflict and "deductionItems" in payslip,
+            "earnings_complete": items_complete("paymentItems"),
+            "deductions_complete": items_complete("deductionItems"),
             "payment_scope_confirmed": bool(transactions) and not missing_payment_source,
             "transaction_allocations": transactions,
             "profile": "H-STD" if c["pay_type"] == "HOURLY" else "M-STD",

@@ -37,7 +37,7 @@ def build_calculation_context(snapshot: InputSnapshot, owner_id: str, case_id: s
         raise IntegrityError("Snapshot ownership does not match job")
     if snapshot.snapshot_hash != snapshot_hash(snapshot):
         raise IntegrityError("Snapshot hash mismatch")
-    fields = [f.field_id for f in snapshot.confirmed_fields]
+    fields = [f.field_id for f in snapshot.analysis_fields]
     if len({r.record_id for r in snapshot.work_records}) != len(snapshot.work_records):
         raise IntegrityError("Duplicate work record IDs")
     sources = {s.source_id: s for s in snapshot.authorized_sources}
@@ -48,7 +48,7 @@ def build_calculation_context(snapshot: InputSnapshot, owner_id: str, case_id: s
         or len(evidence) != len(snapshot.evidence_catalog)
     ):
         raise IntegrityError("Duplicate input IDs")
-    field_map = {f.field_id: f for f in snapshot.confirmed_fields}
+    field_map = {f.field_id: f for f in snapshot.analysis_fields}
     if len({c.field_id for c in snapshot.condition_states}) != len(snapshot.condition_states):
         raise IntegrityError("Duplicate condition state")
     for condition in snapshot.condition_states:
@@ -70,10 +70,10 @@ def build_calculation_context(snapshot: InputSnapshot, owner_id: str, case_id: s
     for ev in evidence.values():
         if ev.source_id not in sources:
             raise IntegrityError("Evidence refers to unauthorized source")
-        if sources[ev.source_id].kind == "document" and ev.page is None:
+        if sources[ev.source_id].kind == "document" and ev.page is None and not (ev.verification_method == "ocr_unverified" and ev.locator):
             raise IntegrityError("Document evidence requires a page")
     for record in [
-        *snapshot.confirmed_fields,
+        *snapshot.analysis_fields,
         *snapshot.earnings,
         *snapshot.deductions,
         *snapshot.transaction_allocations,
@@ -87,7 +87,19 @@ def build_calculation_context(snapshot: InputSnapshot, owner_id: str, case_id: s
             and getattr(record, "confirmed", True)
         ):
             raise IntegrityError("Confirmed input requires evidence")
-    for field in snapshot.confirmed_fields:
+    for item in [*snapshot.earnings, *snapshot.deductions]:
+        if item.analysis_value_origin == "SYSTEM_EXTRACTED_UNVERIFIED":
+            if item.confirmed or not item.evidence_refs or any(
+                sources[evidence[ref].source_id].kind != "document" or evidence[ref].verification_method == "manual_confirmed"
+                for ref in item.evidence_refs
+            ):
+                raise IntegrityError("Extracted statement item requires unconfirmed document evidence")
+    for field in snapshot.extracted_fields:
+        for ref in field.evidence_refs:
+            ev = evidence[ref]
+            if sources[ev.source_id].kind != "document" or ev.verification_method == "manual_confirmed":
+                raise IntegrityError("Extracted input requires unconfirmed document evidence")
+    for field in snapshot.analysis_fields:
         if field.state == "known":
             for ref in field.evidence_refs:
                 src = sources[evidence[ref].source_id]

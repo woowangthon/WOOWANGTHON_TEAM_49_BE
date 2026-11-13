@@ -340,7 +340,7 @@ def evaluate_wage(rule_id, context):
         src.kind == "manual" and src.source_id.startswith("legacy-api:") for src in s.authorized_sources
     )
     if rule_id == "W-01" and c is None and legacy:
-        values = {f.field_id: f for f in s.confirmed_fields if f.state == "known"}
+        values = {f.field_id: f for f in s.analysis_fields if f.state == "known"}
         accepted = values.get("legacy_base_confirmed")
         base, refs, operands = None, [], {}
         if accepted and accepted.value == 1:
@@ -562,7 +562,7 @@ def compare_wages(context, section):
         src.kind == "manual" and src.source_id.startswith("legacy-api:") for src in s.authorized_sources
     )
     if c is None and legacy:
-        values = {f.field_id: f for f in s.confirmed_fields if f.state == "known"}
+        values = {f.field_id: f for f in s.analysis_fields if f.state == "known"}
         accepted = values.get("legacy_base_compare")
         base = next((i for i in section.items if i.rule_id == "W-01"), None)
         stated = values.get("base")

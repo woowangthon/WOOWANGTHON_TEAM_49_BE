@@ -64,7 +64,7 @@ class RuleRegistry:
         if not candidates:
             return WageItemResult(rule_id=rule_id, status="needs_review", reason_codes=["RULE_UNVERIFIED"])
         rule = candidates[0]
-        fields = {f.field_id: f for f in snapshot.confirmed_fields}
+        fields = {f.field_id: f for f in snapshot.analysis_fields}
         selected = [fields.get(key) for key in rule.required_fields]
         conditions = {c.field_id: c.state for c in snapshot.condition_states}
         conflict = any(f is not None and f.state == "conflict" for f in selected) or any(

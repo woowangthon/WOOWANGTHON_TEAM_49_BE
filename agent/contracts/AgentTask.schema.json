@@ -573,6 +573,79 @@
       "title": "ExplanationInput",
       "type": "object"
     },
+    "ExtractedField": {
+      "additionalProperties": false,
+      "description": "Usable optional extraction; never a user confirmation.",
+      "properties": {
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "state": {
+          "const": "known",
+          "default": "known",
+          "title": "State",
+          "type": "string"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Period"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "time_kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "actual",
+                "paid"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Kind"
+        },
+        "analysis_value_origin": {
+          "const": "SYSTEM_EXTRACTED_UNVERIFIED",
+          "default": "SYSTEM_EXTRACTED_UNVERIFIED",
+          "title": "Analysis Value Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_id",
+        "value",
+        "unit",
+        "evidence_refs"
+      ],
+      "title": "ExtractedField",
+      "type": "object"
+    },
     "ExtractionInput": {
       "additionalProperties": false,
       "properties": {
@@ -777,6 +850,13 @@
             "$ref": "#/$defs/ConfirmedField"
           },
           "title": "Confirmed Fields",
+          "type": "array"
+        },
+        "extracted_fields": {
+          "items": {
+            "$ref": "#/$defs/ExtractedField"
+          },
+          "title": "Extracted Fields",
           "type": "array"
         },
         "condition_states": {
@@ -1370,6 +1450,15 @@
     "StatementItem": {
       "additionalProperties": false,
       "properties": {
+        "analysis_value_origin": {
+          "default": "USER_CONFIRMED",
+          "enum": [
+            "USER_CONFIRMED",
+            "SYSTEM_EXTRACTED_UNVERIFIED"
+          ],
+          "title": "Analysis Value Origin",
+          "type": "string"
+        },
         "item_id": {
           "title": "Item Id",
           "type": "string"

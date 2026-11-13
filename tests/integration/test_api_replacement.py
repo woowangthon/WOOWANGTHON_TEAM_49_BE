@@ -49,3 +49,4 @@ def test_replacement_preserves_group_confirmation_and_case_override(api):
     fields=client.get(f'/api/v1/cases/{cid}/documents/{new_id}/fields').json()['data']['fields']
     carried=next(f for f in fields if f['key']=='grossPay')
     assert carried['value']==2100000 and carried['status']=='UNCONFIRMED'
+    assert carried['reviewReason']=='RECONFIRMATION' and not carried['usableForAnalysis']

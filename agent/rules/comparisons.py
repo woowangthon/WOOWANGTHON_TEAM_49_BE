@@ -28,7 +28,7 @@ def comparison(rule_id, lhs=None, rhs=None, *, unit="KRW", refs=(), reasons=(), 
 
 
 def field(snapshot, key, unit=None):
-    value = next((f for f in snapshot.confirmed_fields if f.field_id == key), None)
+    value = next((f for f in snapshot.analysis_fields if f.field_id == key), None)
     if value is None:
         return None, [], ["FIELD_MISSING"], False
     condition = next((c for c in snapshot.condition_states if c.field_id == key), None)
@@ -61,8 +61,8 @@ def terms(context):
     rate = comparison("R-01", a, b, unit=unit, refs=ar + br, reasons=ae + be, conflict=ac or bc)
     a, ar, ae, ac = field(s, "slip_minutes", "minute")
     b, br, be, bc = field(s, "worked_minutes", "minute")
-    left = next((f for f in s.confirmed_fields if f.field_id == "slip_minutes"), None)
-    right = next((f for f in s.confirmed_fields if f.field_id == "worked_minutes"), None)
+    left = next((f for f in s.analysis_fields if f.field_id == "slip_minutes"), None)
+    right = next((f for f in s.analysis_fields if f.field_id == "worked_minutes"), None)
     meaning = not left or not right or left.time_kind is None or left.time_kind != right.time_kind
     if meaning:
         ae.append("TIME_MEANING_UNCONFIRMED")
@@ -114,8 +114,8 @@ def statements(context):
         if len({i.item_id for i in items}) != len(items):
             errors.append("DUPLICATE_STATEMENT_ITEM")
             conflict = True
-        valid = complete and all(i.confirmed and i.amount is not None for i in detail)
-        if any(i.confirmed and source_period_mismatch(s, i.evidence_refs) for i in detail):
+        valid = complete and all(i.usable and i.amount is not None for i in detail)
+        if any(i.usable and source_period_mismatch(s, i.evidence_refs) for i in detail):
             errors.append("SOURCE_PERIOD_MISMATCH")
             conflict = True
         if not valid:

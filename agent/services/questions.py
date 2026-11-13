@@ -131,7 +131,7 @@ def build_questions(wage_items, comparisons, *, snapshot=None):
     Comparison-only users are not asked to start an unrelated wage calculation.
     This function does not turn unknown/pending/conflicting facts into known data.
     """
-    fields = {f.field_id: f for f in snapshot.confirmed_fields} if snapshot is not None else {}
+    fields = {f.field_id: f for f in snapshot.analysis_fields} if snapshot is not None else {}
     wage_requested = (
         snapshot is None
         or snapshot.wage_conditions is not None

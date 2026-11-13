@@ -64,6 +64,46 @@ CREATE TABLE IF NOT EXISTS field_overrides (
  case_id INTEGER NOT NULL REFERENCES cases(id), field_id INTEGER NOT NULL REFERENCES fields(id),
  value_json TEXT NOT NULL, status TEXT NOT NULL, confirmed_at TEXT, source_json TEXT,
  PRIMARY KEY(case_id,field_id));
+CREATE TABLE IF NOT EXISTS field_review_resolutions (
+ case_id INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+ field_id INTEGER NOT NULL REFERENCES fields(id) ON DELETE CASCADE,
+ resolution TEXT NOT NULL CHECK(resolution IN ('NONE','NOT_IN_DOCUMENT','UNKNOWN')),
+ resolved_at TEXT NOT NULL, user_id INTEGER NOT NULL REFERENCES users(id),
+ PRIMARY KEY(case_id,field_id));
+CREATE TRIGGER IF NOT EXISTS reset_field_resolution AFTER UPDATE OF value_json,status,source_json ON fields
+BEGIN
+ INSERT INTO field_history(field_id,case_id,user_id,previous_json,new_json,created_at)
+ SELECT field_id,case_id,user_id,json_object('reviewResolution',resolution),json_object('reviewResolution','NONE'),strftime('%Y-%m-%dT%H:%M:%fZ','now')
+ FROM field_review_resolutions WHERE field_id=NEW.id;
+ DELETE FROM field_review_resolutions WHERE field_id=NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS reset_override_resolution AFTER UPDATE ON field_overrides
+BEGIN
+ INSERT INTO field_history(field_id,case_id,user_id,previous_json,new_json,created_at)
+ SELECT field_id,case_id,user_id,json_object('reviewResolution',resolution),json_object('reviewResolution','NONE'),strftime('%Y-%m-%dT%H:%M:%fZ','now')
+ FROM field_review_resolutions WHERE case_id=NEW.case_id AND field_id=NEW.field_id;
+ DELETE FROM field_review_resolutions WHERE case_id=NEW.case_id AND field_id=NEW.field_id;
+END;
+CREATE TRIGGER IF NOT EXISTS insert_override_resolution AFTER INSERT ON field_overrides
+BEGIN
+ INSERT INTO field_history(field_id,case_id,user_id,previous_json,new_json,created_at)
+ SELECT field_id,case_id,user_id,json_object('reviewResolution',resolution),json_object('reviewResolution','NONE'),strftime('%Y-%m-%dT%H:%M:%fZ','now')
+ FROM field_review_resolutions WHERE case_id=NEW.case_id AND field_id=NEW.field_id;
+ DELETE FROM field_review_resolutions WHERE case_id=NEW.case_id AND field_id=NEW.field_id;
+END;
+CREATE TRIGGER IF NOT EXISTS remove_override_resolution AFTER DELETE ON field_overrides
+BEGIN
+ INSERT INTO field_history(field_id,case_id,user_id,previous_json,new_json,created_at)
+ SELECT field_id,case_id,user_id,json_object('reviewResolution',resolution),json_object('reviewResolution','NONE'),strftime('%Y-%m-%dT%H:%M:%fZ','now')
+ FROM field_review_resolutions WHERE case_id=OLD.case_id AND field_id=OLD.field_id;
+ DELETE FROM field_review_resolutions WHERE case_id=OLD.case_id AND field_id=OLD.field_id;
+END;
+CREATE TRIGGER IF NOT EXISTS clear_deleted_document_resolution AFTER UPDATE OF deleted_at ON documents
+WHEN NEW.deleted_at IS NOT NULL
+BEGIN DELETE FROM field_review_resolutions WHERE field_id IN (SELECT id FROM fields WHERE document_id=NEW.id); END;
+CREATE TRIGGER IF NOT EXISTS clear_deleted_case_resolution AFTER UPDATE OF deleted_at ON cases
+WHEN NEW.deleted_at IS NOT NULL
+BEGIN DELETE FROM field_review_resolutions WHERE case_id=NEW.id; END;
 CREATE TABLE IF NOT EXISTS document_replacements (
  id INTEGER PRIMARY KEY, case_id INTEGER NOT NULL REFERENCES cases(id),
  original_document_id INTEGER NOT NULL REFERENCES documents(id),

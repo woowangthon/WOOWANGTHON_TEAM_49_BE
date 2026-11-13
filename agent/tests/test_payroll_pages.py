@@ -123,5 +123,7 @@ def test_legacy_stored_hashes_survive_additive_schema_fields():
 
     task, _, _ = analysis_fixture()
     snapshot = task.payload.snapshot
-    old = snapshot.model_dump(exclude={"snapshot_hash", "snapshot_id", "wage_conditions"})
+    old = snapshot.model_dump(exclude={"snapshot_hash", "snapshot_id", "wage_conditions", "extracted_fields"})
+    for item in [*old.get("earnings", []), *old.get("deductions", [])]:
+        item.pop("analysis_value_origin", None)
     assert snapshot_hash(snapshot) == digest(old)

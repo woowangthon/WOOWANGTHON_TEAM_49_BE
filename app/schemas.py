@@ -118,12 +118,13 @@ class LinkPatch(Versioned):
 
 
 class FieldPatch(Versioned):
+    reviewResolution: Literal["NONE", "NOT_IN_DOCUMENT", "UNKNOWN"] | None = None
     value: JsonValue = None
     confirmed: bool | None = None
 
     @model_validator(mode="after")
     def has_change(self):
-        if not {"value", "confirmed"} & self.model_fields_set:
+        if not {"value", "confirmed", "reviewResolution"} & self.model_fields_set:
             raise ValueError("value or confirmed is required")
         return self
 
