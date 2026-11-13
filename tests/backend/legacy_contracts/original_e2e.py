@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from pypdf import PdfReader
 
 from app.main import create_app
-from tests.backend.conftest import create_case, create_workplace, image_file, manual_payslip, register, upload, wait_for, wait_results
+from tests.backend.conftest import create_case, create_workplace, manual_payslip, register, upload, wait_for, wait_results
 
 
 def test_upload_confirm_calculate_chat_restart(client, auth, workspace, settings):

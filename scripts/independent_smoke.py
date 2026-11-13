@@ -11,8 +11,8 @@ import urllib.request
 
 root = Path(__file__).resolve().parents[1]
 os.chdir(root)
-import app.main
-import agent
+import app.main  # noqa: E402 - verify imports after selecting the distribution root
+import agent  # noqa: E402
 
 assert Path(app.main.__file__).resolve().is_relative_to(root)
 assert Path(agent.__file__).resolve().is_relative_to(root)

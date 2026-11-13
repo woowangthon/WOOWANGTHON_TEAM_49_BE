@@ -138,3 +138,28 @@ async def test_distinct_confirmed_bank_references_separate_same_date_amount(h):
     result, snapshot, _ = await h.analysis("distinct-references")
     assert not any(item["duplicate"] for item in snapshot["transaction_allocations"])
     assert next(item for item in result.comparisons if item.rule_id == "R-06").status == "match"
+
+
+async def test_duplicate_exclusions_preserve_normal_total_and_projection(h):
+    from app.db import dump
+    from app.compatibility import enqueue_current
+    from app.engine import results
+    ids = []
+    with h.db.connect(write=True) as con:
+        for amount, reference in ((100, 'duplicate-a'), (100, 'duplicate-b'), (1800000, 'normal')):
+            tid = insert_transaction(con, 1, {"paymentMethod": "BANK_TRANSFER", "transactionDate": "2026-04-30",
+                "amount": amount, "source": "USER_INPUT", "confirmationStatus": "USER_CONFIRMED", "bankReference": reference})
+            insert_allocation(con, 1, tid, amount)
+            ids.append(tid)
+        # Simulate historical duplicate rows that predate registration guards.
+        con.execute('UPDATE payment_transactions SET provenance_json=? WHERE id IN (?,?)',
+                    (dump({'kind': 'manual', 'bank_reference': 'same-transfer'}), *ids[:2]))
+    h.group('default-1', payment_confirmation(ids))
+    with h.db.connect(write=True) as con:
+        jid = enqueue_current(con, h.service, 1)
+    job = await h.execute(jid)
+    assert job['status'] == 'COMPLETED', job
+    with h.db.connect() as con:
+        view = results(con, 1)['depositComparison']
+        assert view['status'] == 'MATCH'
+        assert view['linkedPaymentTotal'] == view['linkedBankDepositTotal'] == 1800000

@@ -19,7 +19,7 @@ from app.i18n import user_language
 from app.compatibility import public_field
 from app.errors import ApiError, ok
 from app.integration_store import source_ref
-from app.outputs import API, DocumentDTO, FieldsDTO, Page, ReviewDTO, FieldMutationDTO
+from app.outputs import API, DocumentDTO, FieldsDTO, Page, ReviewDTO, FieldMutationDTO, StatementScopeDTO
 from app.routers.workspaces import page_data
 from app.schemas import StatementScopePatch, DocumentTypePatch, Execute, FieldPatch, LinkCreate, LinkPatch, UploadDocType
 from app.security import case, case_document, check_version, current_user, document, workplace
@@ -1092,11 +1092,22 @@ def confirm_review(case_id: int, document_id: int, request: Request, user=Depend
         return ok(data)
 
 
+@router.get("/cases/{case_id}/documents/{document_id}/statement-scope", response_model=API[StatementScopeDTO])
+def get_statement_scope(case_id: int, document_id: int, request: Request, user=Depends(current_user)):
+    """Return source table coverage separately from field confirmation."""
+    from app.statement_scope import scope_state
+    with request.app.state.db.connect() as con:
+        doc, _ = case_document(con, case_id, document_id, user["id"])
+        if doc["document_type"] != "PAYSLIP":
+            raise ApiError(422, "INVALID_DOCUMENT_TYPE")
+        return ok(scope_state(con, case_id, document_id))
+
+
 @router.put("/cases/{case_id}/documents/{document_id}/statement-scope", response_model=Envelope)
 def confirm_statement_scope(case_id: int, document_id: int, body: StatementScopePatch, request: Request, user=Depends(current_user)):
     """Attest that the displayed detail rows cover the entire original table."""
     from app.compatibility import collect
-    from app.statement_scope import scope_hash
+    from app.statement_scope import scope_hash, scope_state
     with request.app.state.db.connect(write=True) as con:
         current = case(con, case_id, user["id"])
         check_version(current, body.expectedInputVersion)
@@ -1123,4 +1134,5 @@ def confirm_statement_scope(case_id: int, document_id: int, body: StatementScope
                 raise ApiError(409, "STATEMENT_SOURCE_CONFLICT")
             scopes[key] = {"documentId": document_id, "hash": scope_hash(con, case_id, document_id), "confirmedAt": now(), "userId": user["id"]}
         con.execute("UPDATE cases SET conditions=? WHERE id=?", (dump(conditions), case_id))
-        return ok({"statementScopes": scopes, **schedule(con, case_id, delay=request.app.state.settings.recompute_debounce_seconds)})
+        mutation = schedule(con, case_id, delay=request.app.state.settings.recompute_debounce_seconds)
+        return ok({**scope_state(con, case_id, document_id), **mutation})

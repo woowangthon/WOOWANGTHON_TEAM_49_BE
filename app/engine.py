@@ -44,18 +44,16 @@ def latest(con, case_id, kind=None, data=None):
     if row is not None and not snapshot_accessible(con, row):
         row = None
     c = con.execute("SELECT input_version FROM cases WHERE id=?", (case_id,)).fetchone()
-    fresh = "CURRENT" if row and row["fingerprint"] == fingerprint(con, case_id, kind, data) else "STALE"
+    current_fp = fingerprint(con, case_id, kind, data)
+    fresh = "CURRENT" if row and row["fingerprint"] == current_fp else "STALE"
+    relevant = next(
+        (j for j in con.execute(
+            "SELECT * FROM jobs WHERE case_id=? AND input_version=? ORDER BY created_at DESC",
+            (case_id, c[0]),
+        ) if KINDS[kind] in load(j["checks_json"]) and j["status"] != "SUPERSEDED"),
+        None,
+    )
     if fresh != "CURRENT":
-        relevant = next(
-            (
-                j
-                for j in con.execute(
-                    "SELECT * FROM jobs WHERE case_id=? ORDER BY created_at DESC", (case_id,)
-                )
-                if KINDS[kind] in load(j["checks_json"]) and j["status"] != "SUPERSEDED"
-            ),
-            None,
-        )
         if relevant:
             fresh = (
                 "UPDATING"
@@ -68,6 +66,13 @@ def latest(con, case_id, kind=None, data=None):
         "inputVersion": row["input_version"] if row else c[0],
         "createdAt": row["created_at"] if row else None,
         "freshness": fresh,
+        "currentInputVersion": c[0],
+        "snapshotFingerprint": row["fingerprint"] if row else None,
+        "currentFingerprint": current_fp,
+        "fingerprintMatches": bool(row and row["fingerprint"] == current_fp),
+        "latestJobId": relevant["id"] if relevant else None,
+        "latestJobStatus": relevant["status"] if relevant else None,
+        "latestJobErrorCode": relevant["error_code"] if relevant else None,
     }
 
 

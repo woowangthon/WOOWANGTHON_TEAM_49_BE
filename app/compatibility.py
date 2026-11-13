@@ -195,25 +195,38 @@ def fingerprint(con, case_id, kind, data=None):
     body = {
         "period": [data["case"]["period_start"], data["case"]["period_end"]],
         "payType": data["case"]["pay_type"],
-        "adapterVersion": "legacy-agent-2",
+        "adapterVersion": "legacy-agent-3",
     }
     groups, conditions = data["groups"], data["conditions"]
+
+    def payslip_inputs(keys, details=False):
+        return [
+            {**row,
+             "values": {k: v for k, v in row["values"].items() if k in keys or details and re.fullmatch(r"(?:earning|deduction)_[1-9]\d*_(?:label|amount)", k)},
+             "sources": [s for s in row["sources"] if s.get("key") in keys or details and re.fullmatch(r"(?:earning|deduction)_[1-9]\d*_(?:label|amount)", s.get("key", "")) or "recordId" in s]}
+            for row in groups["PAYSLIP"]
+        ]
+
     if kind == "calculation":
         body.update(
             groups={k: groups[k] for k in ("CONTRACT", "ATTENDANCE")},
-            conditions={k: conditions.get(k) for k in ("base_scope_confirmed", "regular_minutes")},
+            conditions={k: conditions.get(k) for k in ("base_scope_confirmed", "regular_minutes", "comparison_basis_confirmed")},
         )
     elif kind == "comparison":
-        body.update(groups=groups, conditions=conditions)
+        body.update(groups={**groups, "PAYSLIP": payslip_inputs({"hourlyWage", "workedMinutes", "basePay"})}, conditions={k: conditions.get(k) for k in (
+            "comparison_basis_confirmed", "hours_basis_confirmed", "base_pay_basis_confirmed",
+            "base_scope_confirmed", "regular_minutes",
+        )})
     elif kind == "payslipValidation":
-        body["payslip"] = groups["PAYSLIP"]
+        body["payslip"] = payslip_inputs({"grossPay", "totalDeductions", "netPay", "paymentItems", "deductionItems"}, details=True)
         body["statementScopes"] = conditions.get("statement_scopes", {})
     else:
-        body.update(payslip=groups["PAYSLIP"], payments=data["payments"])
+        body.update(payslip=payslip_inputs({"netPay"}), payments=data["payments"])
     default = con.execute(
-        "SELECT confirmed_json,version FROM comparison_groups WHERE id=?", (f"default-{case_id}",)
+        "SELECT confirmed_json,version,needs_review FROM comparison_groups WHERE id=?", (f"default-{case_id}",)
     ).fetchone()
-    confirmed = load(default[0]) if default else {}
+    confirmed = load(default[0]) if default and not default["needs_review"] else {}
+    body["inputMode"] = "CONFIRMED_GROUP" if confirmed else "CASE_FIELDS"
     if confirmed:
         types = {
             "calculation": {"CONTRACT", "ATTENDANCE"},
@@ -245,6 +258,15 @@ def fingerprint(con, case_id, kind, data=None):
     body["groupFields"] = [
         f for f in (confirmed or {}).get("confirmed_fields", []) if f.get("field_id") in allowed_fields
     ]
+    if confirmed:
+        # Identity and evidence validation affect every check, even when amounts
+        # are unchanged. Keep runtime group versions out of semantic identity.
+        body["groupContext"] = {k: confirmed.get(k) for k in (
+            "subjects_confirmed", "source_identity", "evidence_catalog",
+        )}
+        body["groupConditionStates"] = [
+            f for f in confirmed.get("condition_states", []) if f.get("field_id") in allowed_fields
+        ]
     return digest(body)
 
 
@@ -266,6 +288,16 @@ def schedule(con, case_id, checks=None, delay=0.3, increment=True):
             (now(), case_id),
         )
     version = con.execute("SELECT input_version FROM cases WHERE id=?", (case_id,)).fetchone()[0]
+    if not increment:
+        for active in con.execute(
+            "SELECT * FROM jobs WHERE case_id=? AND input_version=? AND status IN ('PENDING','RUNNING') ORDER BY created_at DESC",
+            (case_id, version),
+        ):
+            if set(checks) <= set(load(active["checks_json"])):
+                return {
+                    "inputVersion": version,
+                    "recompute": {"scheduled": True, "jobId": active["id"], "affectedChecks": load(active["checks_json"])},
+                }
     wanted = set(checks)
     for row in con.execute(
         "SELECT checks_json FROM jobs WHERE case_id=? AND status IN ('PENDING','RUNNING')", (case_id,)
@@ -333,7 +365,7 @@ def prepare_snapshot(con, case_id, snapshot_id):
         (gid, case_id, now(), now()),
     )
     con.execute(
-        "UPDATE comparison_groups SET needs_review=0,version=version+1,updated_at=? WHERE id=?", (now(), gid)
+        "UPDATE comparison_groups SET needs_review=0,updated_at=? WHERE id=? AND needs_review!=0", (now(), gid)
     )
     group = con.execute("SELECT * FROM comparison_groups WHERE id=?", (gid,)).fetchone()
     mid = "legacy-api:" + str(case_id)
@@ -669,10 +701,15 @@ def project(con, result, checks=None, fingerprints=None):
         )
     data = collect(con, c["id"])
     rows = data["payments"]
+    frozen = load(con.execute(
+        "SELECT data_json FROM agent_snapshots WHERE id=?", (row["snapshot_id"],)
+    ).fetchone()[0])
+    eligible = [t for t in frozen.get("transaction_allocations", [])
+                if t.get("linked", True) and t.get("confirmed", True) and not t.get("duplicate", False)]
     bank = (
-        sum(r["allocated_amount"] for r in rows if r["payment_method"] == "BANK_TRANSFER") if rows else None
+        sum(money(t["amount"]) for t in eligible if t.get("kind", "bank") == "bank") if eligible else None
     )
-    cash = sum(r["allocated_amount"] for r in rows if r["payment_method"] == "CASH") if rows else None
+    cash = sum(money(t["amount"]) for t in eligible if t.get("kind") == "cash_memo") if eligible else None
     payment = check("R-06")
     bodies = {
         "calculation": calculation,
@@ -818,7 +855,8 @@ def enqueue_current(con, service, case_id, checks=None, metadata=None):
 
 def complete_job(con, agent_job, outcome=None, error_code=None):
     """Finish the Case job in the same transaction as actual agent publication."""
-    jid = (load(agent_job["metadata_json"]) or {}).get("legacyJobId")
+    metadata = load(agent_job["metadata_json"]) or {}
+    jid = metadata.get("legacyJobId")
     if not jid:
         return
     job = con.execute("SELECT * FROM jobs WHERE id=? AND status='RUNNING'", (jid,)).fetchone()
@@ -829,6 +867,14 @@ def complete_job(con, agent_job, outcome=None, error_code=None):
         status = "SUPERSEDED"
     elif outcome is None:
         status = "FAILED"
+    elif any(
+        saved != fingerprint(con, job["case_id"], kind)
+        for kind, saved in metadata.get("fingerprints", {}).items()
+        if KINDS[kind] in load(job["checks_json"])
+    ):
+        # Group confirmations can change independently of Case inputVersion.
+        # A job whose projection was rejected must not claim current success.
+        status = "SUPERSEDED"
     else:
         checks = load(job["checks_json"])
         rules = {

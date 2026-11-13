@@ -15,6 +15,8 @@ def test_resolution_wire_contract_and_persistent_review(api, override):
     c, app, wid, cid = api
     did, ids = seed(app, wid, cid, fields=[("memo", None, "MISSING")])
     base = f"/cases/{cid}/documents/{did}"
+    with app.state.db.connect(write=True) as con:
+        con.execute("UPDATE documents SET processing_status='REVIEW_REQUIRED' WHERE id=?", (did,))
     if override:
         with app.state.db.connect(write=True) as con:
             con.execute("INSERT INTO field_overrides(case_id,field_id,value_json,status) VALUES(?,?,?,'MISSING')", (cid, ids['memo'], dump(None)))
@@ -29,6 +31,7 @@ def test_resolution_wire_contract_and_persistent_review(api, override):
         schedule(con, cid, delay=0, increment=False)
     drain(app)
     assert request(c, "GET", base + "/review")['reviewStatus'] == 'CONFIRMED'
+    assert request(c, "GET", base + "/review")['processingStatus'] == 'REVIEW_REQUIRED'
     assert request(c, "GET", base)['reviewStatus'] == 'CONFIRMED'
     assert request(c, "GET", f"/cases/{cid}/documents")['items'][0]['reviewStatus'] == 'CONFIRMED'
     request(c, "GET", f"/cases/{cid}/readiness")
@@ -49,9 +52,12 @@ def test_detail_rows_scope_and_recompute(api):
         assert not snapshot.earnings_complete
         schedule(con, cid, delay=0)
     drain(app)
+    assert request(c, 'GET', base + '/statement-scope')['scopeStatus']['paymentItems'] == 'UNCONFIRMED'
     result = request(c, "GET", f"/cases/{cid}/results")
     assert 'ITEM_SCOPE_INCOMPLETE' in result['payslipValidation']['paymentTotal']['reasonCodes']
-    request(c, "PUT", base + '/statement-scope', {'paymentItems': True, 'deductionItems': True})
+    scope = request(c, "PUT", base + '/statement-scope', {'paymentItems': True, 'deductionItems': True})
+    assert scope['scopeStatus'] == {'paymentItems': 'CONFIRMED', 'deductionItems': 'CONFIRMED'}
+    assert request(c, 'GET', base + '/statement-scope')['scopeStatus'] == scope['scopeStatus']
     drain(app)
     result = request(c, "GET", f"/cases/{cid}/results")['payslipValidation']
     for name, total in (('paymentTotal', 3272727), ('deductionTotal', 280000), ('netPay', 2992727)):
@@ -61,6 +67,7 @@ def test_detail_rows_scope_and_recompute(api):
         snapshot, *_ = prepare_snapshot(con, cid, 'attested')
         assert all(not i.confirmed and i.analysis_value_origin == 'SYSTEM_EXTRACTED_UNVERIFIED' for i in snapshot.earnings)
     request(c, 'PATCH', base + f"/fields/{ids['earning_3_amount']}", {'value': 1})
+    assert request(c, 'GET', base + '/statement-scope')['scopeStatus']['paymentItems'] == 'NEEDS_RECONFIRMATION'
     drain(app)
     assert request(c, 'GET', f'/cases/{cid}/results')['payslipValidation']['paymentTotal']['itemSum'] is None
     request(c, 'PUT', base + '/statement-scope', {'paymentItems': True})

@@ -5244,6 +5244,111 @@
       }
     },
     "/api/v1/cases/{case_id}/documents/{document_id}/statement-scope": {
+      "get": {
+        "tags": [
+          "Documents & Review"
+        ],
+        "summary": "Get Statement Scope",
+        "description": "Return source table coverage separately from field confirmation.",
+        "operationId": "get_statement_scope_api_v1_cases__case_id__documents__document_id__statement_scope_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Document Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_StatementScopeDTO_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 필요/토큰 만료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 자원/권한 없음/삭제",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "버전/배분/처리 상태 충돌",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "입력 검증 오류 (표준 래퍼)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI 통신/응답 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "AI 타임아웃",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API_ErrorData_"
+                }
+              }
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "Documents & Review"
@@ -15215,6 +15320,28 @@
         ],
         "title": "API[ReviewDTO]"
       },
+      "API_StatementScopeDTO_": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "data": {
+            "$ref": "#/components/schemas/StatementScopeDTO"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "title": "API[StatementScopeDTO]"
+      },
       "API_UserDTO_": {
         "properties": {
           "code": {
@@ -16153,7 +16280,8 @@
               "REVIEW_REQUIRED",
               "FAILED"
             ],
-            "title": "Processingstatus"
+            "title": "Processingstatus",
+            "description": "Extraction lifecycle. REVIEW_REQUIRED can coexist with reviewStatus=CONFIRMED; use reviewStatus and pendingRequiredFieldIds for user review completion."
           },
           "reviewStatus": {
             "type": "string",
@@ -16162,7 +16290,8 @@
               "IN_PROGRESS",
               "CONFIRMED"
             ],
-            "title": "Reviewstatus"
+            "title": "Reviewstatus",
+            "description": "Case-specific required user review, independent of extraction status, analysis readiness and result freshness."
           },
           "progress": {
             "type": "integer",
@@ -18525,6 +18654,45 @@
         ],
         "title": "Signup"
       },
+      "StatementScopeDTO": {
+        "properties": {
+          "documentId": {
+            "type": "integer",
+            "title": "Documentid"
+          },
+          "inputVersion": {
+            "type": "integer",
+            "title": "Inputversion"
+          },
+          "statementScopes": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "title": "Statementscopes"
+          },
+          "scopeStatus": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "UNCONFIRMED",
+                "CONFIRMED",
+                "NEEDS_RECONFIRMATION"
+              ]
+            },
+            "type": "object",
+            "title": "Scopestatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "documentId",
+          "inputVersion",
+          "statementScopes",
+          "scopeStatus"
+        ],
+        "title": "StatementScopeDTO"
+      },
       "StatementScopePatch": {
         "properties": {
           "expectedInputVersion": {
@@ -18965,6 +19133,62 @@
               "FAILED"
             ],
             "title": "Freshness"
+          },
+          "currentInputVersion": {
+            "type": "integer",
+            "title": "Currentinputversion"
+          },
+          "snapshotFingerprint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshotfingerprint"
+          },
+          "currentFingerprint": {
+            "type": "string",
+            "title": "Currentfingerprint"
+          },
+          "fingerprintMatches": {
+            "type": "boolean",
+            "title": "Fingerprintmatches"
+          },
+          "latestJobId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestjobid"
+          },
+          "latestJobStatus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestjobstatus"
+          },
+          "latestJobErrorCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestjoberrorcode"
           }
         },
         "type": "object",
@@ -18973,7 +19197,14 @@
           "version",
           "inputVersion",
           "createdAt",
-          "freshness"
+          "freshness",
+          "currentInputVersion",
+          "snapshotFingerprint",
+          "currentFingerprint",
+          "fingerprintMatches",
+          "latestJobId",
+          "latestJobStatus",
+          "latestJobErrorCode"
         ],
         "title": "VersionRef"
       },

@@ -519,8 +519,8 @@ same allocation; selecting it does not consume the transaction a second time.
         "duplicate": row["id"] in duplicate_ids,
         "kind": "bank" if row["payment_method"] == "BANK_TRANSFER" else "cash_memo",
     } for row in transactions]
-    if duplicate_ids:
-        confirmed["payment_scope_confirmed"] = False
+    # Duplicate-marked rows are excluded by R-06. Their presence does not revoke
+    # the user's scope confirmation for the remaining valid bank allocations.
     return build_snapshot(confirmed, snapshot_id=snapshot_id, input_version=case["input_version"],
         owner_id=owner_id, workplace_id=case["workplace_id"], case_id=case["id"], period=period,
         authorized_sources=sources)

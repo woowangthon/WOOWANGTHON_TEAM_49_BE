@@ -1,6 +1,5 @@
 import asyncio
 import json
-import time
 from concurrent.futures import ThreadPoolExecutor
 
 import httpx

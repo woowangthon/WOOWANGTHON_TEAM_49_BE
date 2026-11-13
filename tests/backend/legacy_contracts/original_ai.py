@@ -113,7 +113,7 @@ def test_chat_scope_filtering_and_upstream_source_validation(settings):
     with TestClient(create_app(settings, httpx.AsyncClient(transport=httpx.MockTransport(handler)))) as client:
         auth = register(client)
         wid = create_workplace(client, auth)
-        c1, c2 = create_case(client, auth, wid), create_case(client, auth, wid)
+        c1, _c2 = create_case(client, auth, wid), create_case(client, auth, wid)
         cid = client.post(f'/api/v1/workplaces/{wid}/chats', headers=auth,
             json={'defaultScope': {'scopeType': 'CASE', 'caseId': c1}}).json()['data']['chatId']
         endpoint = f'/api/v1/workplaces/{wid}/chats/{cid}/messages'

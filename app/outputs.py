@@ -85,8 +85,8 @@ class DocumentDTO(BaseModel):
     workplaceId: int
     documentType: Literal['CONTRACT', 'ATTENDANCE', 'PAYSLIP', 'DEPOSIT', 'AUTO']
     fileName: str
-    processingStatus: Literal['UPLOADED', 'PROCESSING', 'READ_READY', 'READY', 'REVIEW_REQUIRED', 'FAILED']
-    reviewStatus: Literal['NOT_STARTED', 'IN_PROGRESS', 'CONFIRMED']
+    processingStatus: Literal['UPLOADED', 'PROCESSING', 'READ_READY', 'READY', 'REVIEW_REQUIRED', 'FAILED'] = Field(description='Extraction lifecycle. REVIEW_REQUIRED can coexist with reviewStatus=CONFIRMED; use reviewStatus and pendingRequiredFieldIds for user review completion.')
+    reviewStatus: Literal['NOT_STARTED', 'IN_PROGRESS', 'CONFIRMED'] = Field(description='Case-specific required user review, independent of extraction status, analysis readiness and result freshness.')
     progress: int
     linkId: int | None
     linkedCaseIds: list[int]
@@ -117,6 +117,13 @@ class ReviewDTO(BaseModel):
     pendingRequiredFieldIds: list[int]
     optionalUnconfirmedFieldIds: list[int]
     canCompleteReview: bool
+
+
+class StatementScopeDTO(BaseModel):
+    documentId: int
+    inputVersion: int
+    statementScopes: dict[str, JsonValue]
+    scopeStatus: dict[str, Literal['UNCONFIRMED', 'CONFIRMED', 'NEEDS_RECONFIRMATION']]
 
 
 class FieldDTO(ReviewFieldMetadata):
@@ -158,6 +165,13 @@ class VersionRef(BaseModel):
     inputVersion: int
     createdAt: str | None
     freshness: Literal['CURRENT', 'STALE', 'UPDATING', 'FAILED']
+    currentInputVersion: int
+    snapshotFingerprint: str | None
+    currentFingerprint: str
+    fingerprintMatches: bool
+    latestJobId: str | None
+    latestJobStatus: str | None
+    latestJobErrorCode: str | None
 
 
 class ResultItem(BaseModel):
